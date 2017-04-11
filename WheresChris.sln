@@ -9,11 +9,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WheresChris.Android", "Wher
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WheresChris.iOS", "WheresChris\WheresChris.iOS\WheresChris.iOS.csproj", "{75CA22B5-1F6D-4030-8F61-CF40AD377F4C}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "StayTogether", "WheresChris\StayTogether\StayTogether.shproj", "{CA57673E-6A8E-4CA1-9A18-739C96517D47}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		WheresChris\StayTogether\StayTogether.projitems*{5cd7563f-f4c5-4397-a442-70e1bc59cab5}*SharedItemsImports = 4
 		WheresChris\WheresChris\WheresChris.projitems*{5cd7563f-f4c5-4397-a442-70e1bc59cab5}*SharedItemsImports = 4
 		WheresChris\WheresChris\WheresChris.projitems*{75ca22b5-1f6d-4030-8f61-cf40ad377f4c}*SharedItemsImports = 4
 		WheresChris\WheresChris\WheresChris.projitems*{a1fcc28e-569e-48ae-bf4d-befe8bbb1522}*SharedItemsImports = 13
+		WheresChris\StayTogether\StayTogether.projitems*{ca57673e-6a8e-4ca1-9a18-739c96517d47}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
