@@ -11,6 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WheresChris.iOS", "WheresCh
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		WheresChris\WheresChris\WheresChris.projitems*{5cd7563f-f4c5-4397-a442-70e1bc59cab5}*SharedItemsImports = 4
 		WheresChris\WheresChris\WheresChris.projitems*{75ca22b5-1f6d-4030-8f61-cf40ad377f4c}*SharedItemsImports = 4
 		WheresChris\WheresChris\WheresChris.projitems*{a1fcc28e-569e-48ae-bf4d-befe8bbb1522}*SharedItemsImports = 13
 	EndGlobalSection
