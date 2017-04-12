@@ -1,6 +1,9 @@
 ﻿using Android.App;
 using Android.Content.PM;
 using Android.OS;
+using Microsoft.Azure.Mobile;
+using Microsoft.Azure.Mobile.Analytics;
+using Microsoft.Azure.Mobile.Crashes;
 
 namespace WheresChris.Droid
 {
@@ -15,6 +18,10 @@ namespace WheresChris.Droid
             base.OnCreate(bundle);
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
+
+            MobileCenter.LogLevel = Microsoft.Azure.Mobile.LogLevel.Verbose;
+            MobileCenter.Start("f9f28a5e-6d54-4a4a-a1b4-e51f8da8e8c7",
+                typeof(Analytics), typeof(Crashes));
 
             LoadApplication(new App());
         }
