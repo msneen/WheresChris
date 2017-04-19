@@ -26,12 +26,11 @@ namespace WheresChris
                         Title="Main",
                         Icon = Device.OnPlatform<string>("tab_feed.png",null,null)
                     },
-
-                    new NavigationPage(new ItemsPage())
-                    {
-                        Title = "Browse",
-                        Icon = Device.OnPlatform<string>("tab_feed.png",null,null)
-                    },
+                    //new NavigationPage(new ItemsPage())
+                    //{
+                    //    Title = "Browse",
+                    //    Icon = Device.OnPlatform<string>("tab_feed.png",null,null)
+                    //},
                     new NavigationPage(new AboutPage())
                     {
                         Title = "About",
