@@ -21,6 +21,11 @@ namespace WheresChris
             {
                 Children =
                 {
+                    new NavigationPage(new MainPage()
+                    {
+                        
+                    }),
+
                     new NavigationPage(new ItemsPage())
                     {
                         Title = "Browse",

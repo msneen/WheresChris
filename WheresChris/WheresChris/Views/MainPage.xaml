@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WheresChris.Views.MainPage">
+    <ContentPage.Padding>
+        <OnPlatform x:TypeArguments="Thickness"
+                    iOS="20, 250, 20, 20"
+                    Android="20, 200, 20, 20"
+                    WinPhone="20, 200, 20, 20" />
+    </ContentPage.Padding>
+    <ContentPage.Content>
+        <StackLayout VerticalOptions="FillAndExpand"
+                     HorizontalOptions="FillAndExpand"
+                     Orientation="Vertical"
+                     Spacing="15">
+            <!--<Label Text="Your Phone#" />
+            <Entry x:Name="PhoneNumber" Text="" />
+            <Label Text="Your Name" />
+            <Entry x:Name="Nickname" Text="" />-->
+            <Button x:Name="InviteButton" Text="Invite Chris" Clicked="StartGroup" />
+            <Button x:Name="JoinButton" Text="Join Chris" Clicked="JoinGroup" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
