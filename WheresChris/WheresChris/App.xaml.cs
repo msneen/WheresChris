@@ -21,10 +21,11 @@ namespace WheresChris
             {
                 Children =
                 {
-                    new NavigationPage(new MainPage()
+                    new NavigationPage(new MainPage())
                     {
-                        
-                    }),
+                        Title="Main",
+                        Icon = Device.OnPlatform<string>("tab_feed.png",null,null)
+                    },
 
                     new NavigationPage(new ItemsPage())
                     {
