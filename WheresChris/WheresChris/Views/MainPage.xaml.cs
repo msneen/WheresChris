@@ -15,7 +15,11 @@ namespace WheresChris.Views
 
         public void StartGroup(object sender, EventArgs e)
         {
-            
+            var masterPage = Parent.Parent as TabbedPage;
+            if (masterPage != null)
+            {
+                masterPage.CurrentPage = masterPage.Children[1];
+            }
         }
         public void JoinGroup(object sender, EventArgs e)
         {
