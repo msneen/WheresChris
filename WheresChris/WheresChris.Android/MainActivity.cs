@@ -23,6 +23,8 @@ namespace WheresChris.Droid
             MobileCenter.Start("f9f28a5e-6d54-4a4a-a1b4-e51f8da8e8c7",
                 typeof(Analytics), typeof(Crashes));
 
+            Xamarin.FormsMaps.Init(this, bundle);
+
             LoadApplication(new App());
         }
     }
