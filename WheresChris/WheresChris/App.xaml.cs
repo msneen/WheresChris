@@ -31,6 +31,11 @@ namespace WheresChris
                         Title = "Invite",
                         Icon = Device.OnPlatform<string>("tab_feed.png",null,null)
                     },
+                    new NavigationPage(new JoinPage())
+                    {
+                        Title = "Join",
+                        Icon = Device.OnPlatform<string>("tab_feed.png",null,null)
+                    },
                     new NavigationPage(new AboutPage())
                     {
                         Title = "About",
