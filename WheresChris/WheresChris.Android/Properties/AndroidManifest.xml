@@ -3,7 +3,7 @@
   <uses-sdk android:minSdkVersion="19" android:targetSdkVersion="21" />
   <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyAXVq9MOAJCJ9nBYscWnxYzXywOJfYDbeY" />
   <application android:label="WheresChris">
-    <activity android:name="com.google.android.gms.ads.AdActivity" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
+   
   </application>
   <uses-permission android:name="android.permission.READ_PHONE_STATE" />
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
