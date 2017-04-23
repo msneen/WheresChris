@@ -15,6 +15,7 @@ Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		WheresChris\StayTogether\StayTogether.projitems*{5cd7563f-f4c5-4397-a442-70e1bc59cab5}*SharedItemsImports = 4
 		WheresChris\WheresChris\WheresChris.projitems*{5cd7563f-f4c5-4397-a442-70e1bc59cab5}*SharedItemsImports = 4
+		WheresChris\StayTogether\StayTogether.projitems*{75ca22b5-1f6d-4030-8f61-cf40ad377f4c}*SharedItemsImports = 4
 		WheresChris\WheresChris\WheresChris.projitems*{75ca22b5-1f6d-4030-8f61-cf40ad377f4c}*SharedItemsImports = 4
 		WheresChris\WheresChris\WheresChris.projitems*{a1fcc28e-569e-48ae-bf4d-befe8bbb1522}*SharedItemsImports = 13
 		WheresChris\StayTogether\StayTogether.projitems*{ca57673e-6a8e-4ca1-9a18-739c96517d47}*SharedItemsImports = 13
