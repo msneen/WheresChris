@@ -22,7 +22,6 @@
                 RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.3, Constant=0}"
                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.75,Constant=0}" />
         </RelativeLayout>
-
         <ListView
             x:Name="ContactsListView"
             ItemTapped="Handle_ItemTapped"
