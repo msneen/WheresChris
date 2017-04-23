@@ -26,20 +26,15 @@
             RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.75,Constant=0}" />
     </RelativeLayout>
 
-    <ListView ItemsSource="{Binding ItemsGrouped}"
+    <ListView ItemsSource="{Binding Items}"
         x:Name="ContactsListView"
         ItemTapped="Handle_ItemTapped"
         ItemSelected="Handle_ItemSelected"
-        HasUnevenRows="true"
-        GroupShortNameBinding="{Binding Key}"
-        IsGroupingEnabled="true"
-        GroupDisplayBinding="{Binding Key}"
+        HasUnevenRows="true"       
         IsPullToRefreshEnabled="true"
-        CachingStrategy="RecycleElement"
+        CachingStrategy="RetainElement"
         IsRefreshing="{Binding IsBusy, Mode=OneWay}"
-        RefreshCommand="{Binding RefreshDataCommand}"
-
-              >
+        RefreshCommand="{Binding RefreshDataCommand}">
             <ListView.Header>
                 <StackLayout Padding="10" 
                    Orientation="Horizontal"

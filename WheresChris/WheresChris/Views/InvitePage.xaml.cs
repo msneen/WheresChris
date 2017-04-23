@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using StayTogether;
 
 namespace WheresChris.Views
 {
@@ -56,16 +57,30 @@ namespace WheresChris.Views
 
         public InvitePageViewModel()
         {
-            Items = new ObservableCollection<Item>(new[]
+            var contactsHelper = new ContactsHelper();
+            var contacts = contactsHelper.GetContacts().Result;
+            var itemList = new List<Item>();
+            foreach (var contact in contacts)
             {
-                new Item { Text = "Mike Sneen", Detail = "619-928-4340" },
-                new Item { Text = "Sonny Garcia", Detail = "619-222-4341" },
-                new Item { Text = "Dave Maynard", Detail = "760-338-2842" },
-                new Item { Text = "Joe Smith", Detail = "380-282-3732" },
-                new Item { Text = "Wayne Wilson", Detail= "760-322-2800" },
-                new Item { Text = "Don Walker", Detail = "619-233-7247" },
-                new Item { Text = "Tyler Smith", Detail = "619-322-4832" },
-            });
+                var item = new Item
+                {
+                    Text = contact.Name,
+                    Detail = contact.PhoneNumber
+                };
+                itemList.Add(item);
+            }
+            Items = new ObservableCollection<Item>(itemList);
+
+            //Items = new ObservableCollection<Item>(new[]
+            //{
+            //    new Item { Text = "Mike Sneen", Detail = "619-928-4340" },
+            //    new Item { Text = "Sonny Garcia", Detail = "619-222-4341" },
+            //    new Item { Text = "Dave Maynard", Detail = "760-338-2842" },
+            //    new Item { Text = "Joe Smith", Detail = "380-282-3732" },
+            //    new Item { Text = "Wayne Wilson", Detail= "760-322-2800" },
+            //    new Item { Text = "Don Walker", Detail = "619-233-7247" },
+            //    new Item { Text = "Tyler Smith", Detail = "619-322-4832" },
+            //});
 
             var sorted = from item in Items
                          orderby item.Text
