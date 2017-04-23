@@ -23,7 +23,15 @@ namespace WheresChris.Views
 
         public void StartGroup(object sender, EventArgs e)
         {
-
+            var invitePageViewModel = BindingContext as InvitePageViewModel;
+            if (invitePageViewModel == null) return;
+            foreach (var item in invitePageViewModel.Items)
+            {
+                if (item.Selected)
+                {
+                    
+                }
+            }
         }
 
         void Handle_ItemTapped(object sender, ItemTappedEventArgs e)
@@ -33,8 +41,6 @@ namespace WheresChris.Views
         {
             if (e.SelectedItem == null)
                 return;
-
-            await DisplayAlert("Selected", e.SelectedItem.ToString(), "OK");
 
             //Deselect Item
             ((ListView)sender).SelectedItem = null;
@@ -104,6 +110,7 @@ namespace WheresChris.Views
         {
             public string Text { get; set; }
             public string Detail { get; set; }
+            public bool Selected { get; set; }
 
             public override string ToString() => Text;
         }
