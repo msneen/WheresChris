@@ -14,6 +14,9 @@ using StayTogether.Classes;
 #if __ANDROID__
 using StayTogether.Droid.Services;
 #endif
+#if __IOS__
+using WheresChris.iOS;
+#endif
 namespace WheresChris.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
