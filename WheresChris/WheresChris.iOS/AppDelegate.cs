@@ -3,6 +3,7 @@ using Foundation;
 using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
+using StayTogether.iOS.NotificationCenter;
 using UIKit;
 using WheresChris.iOS.Classes;
 
@@ -24,8 +25,15 @@ namespace WheresChris.iOS
 
             LocationManager = new LocationManager();
             LocationManager.StartLocationUpdates();
+            NotificationManager.RegisterNotifications(app);
+            NotificationManager.InitializeNotifications(options, Window);
 
             return base.FinishedLaunching(app, options);
 		}
-	}
+
+        public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
+        {
+            NotificationStrategyHandler.ReceiveNotification(notification, Window);
+        }
+    }
 }

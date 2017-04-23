@@ -288,6 +288,13 @@
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
+    <Compile Include="NotificationCenter\GroupInvitationNotification.cs" />
+    <Compile Include="NotificationCenter\InAnotherGroupNotification.cs" />
+    <Compile Include="NotificationCenter\LeftGroupNotification.cs" />
+    <Compile Include="NotificationCenter\LostNotification.cs" />
+    <Compile Include="NotificationCenter\NotificationBase.cs" />
+    <Compile Include="NotificationCenter\NotificationManager.cs" />
+    <Compile Include="NotificationCenter\NotificationStrategyHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\profile_generic.png" />
