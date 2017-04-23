@@ -166,7 +166,7 @@ namespace StayTogether
 
 	    public void ReceiveGroupMessage(string phoneNumber, string message)
 	    {
-	        AddNotification("Stay Together Update", message);
+	        AddNotification("Where's Chris Update", message);
 	    }
 
 
@@ -262,7 +262,7 @@ namespace StayTogether
             var nickName = CrossSettings.Current.GetValueOrDefault<string>("nickname");
             if (string.IsNullOrWhiteSpace(nickName))
             {
-                AddNotification("StayTogether nickname", "Please Add your nickname in settings");
+                AddNotification("Where's Chris nickname", "Please Add your nickname in settings");
             }
         }
 
@@ -272,7 +272,7 @@ namespace StayTogether
             _phoneNumber = ContactsHelper.CleanPhoneNumber( phoneNumber);
             if (string.IsNullOrWhiteSpace(_phoneNumber))
             {
-                AddNotification("StayTogether PhoneNumber", "Please Add your Phone Number in settings");
+                AddNotification("Where's Chris PhoneNumber", "Please Add your Phone Number in settings");
             }
         }
 
