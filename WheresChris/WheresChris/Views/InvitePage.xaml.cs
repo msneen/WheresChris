@@ -10,7 +10,10 @@ using System.Windows.Input;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using StayTogether;
-
+using StayTogether.Classes;
+#if __ANDROID__
+using StayTogether.Droid.Services;
+#endif
 namespace WheresChris.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
@@ -20,18 +23,47 @@ namespace WheresChris.Views
         {
 			InitializeComponent ();
             BindingContext = new InvitePageViewModel();
+            ExpirationPicker.ItemsSource = new List<ExpirationPickerViewModel>
+            {
+                new ExpirationPickerViewModel {DisplayName = "4 Hours", Hours = 4},
+                new ExpirationPickerViewModel {DisplayName = "6 Hours", Hours = 6},
+                new ExpirationPickerViewModel {DisplayName = "8 Hours", Hours = 8},
+                new ExpirationPickerViewModel {DisplayName = "12 Hours", Hours = 12},
+                new ExpirationPickerViewModel {DisplayName = "24 Hours", Hours = 24},
+                new ExpirationPickerViewModel {DisplayName = "48 Hours", Hours = 48},
+            };
+            ExpirationPicker.ItemDisplayBinding = new Binding("DisplayName");
+            ExpirationPicker.SelectedIndex = 0;
         }
 
         public void StartGroup(object sender, EventArgs e)
         {
             var invitePageViewModel = BindingContext as InvitePageViewModel;
             if (invitePageViewModel == null) return;
+            List<GroupMemberVm> selectedGroupMemberVms = new List<GroupMemberVm>();
             foreach (var item in invitePageViewModel.Items)
             {
                 if (item.Selected)
                 {
-                    
+                    selectedGroupMemberVms.Add(new GroupMemberVm
+                    {
+                        Name = item.Text,
+                        PhoneNumber = item.Detail
+                    });
                 }
+            }
+            var selectedExpirationHours = ExpirationPicker.SelectedItem as ExpirationPickerViewModel;
+
+            var expirationHours = selectedExpirationHours?.Hours ?? 4;
+            if (selectedGroupMemberVms.Any())
+            {
+#if __ANDROID__
+                LocationSenderService.Instance.StartGroup(selectedGroupMemberVms, expirationHours);
+#endif
+#if __IOS__
+                AppDelegate.LocationManager.StartGroup(selectedGroupMemberVms, expirationHours);
+#endif
+
             }
         }
 
@@ -48,12 +80,18 @@ namespace WheresChris.Views
         }
     }
 
-
+    class ExpirationPickerViewModel
+    {
+        public string DisplayName { get; set; }
+        public int Hours { get; set; }
+    }
 
     class InvitePageViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<Item> Items { get; }
-        public ObservableCollection<Grouping<string, Item>> ItemsGrouped { get; }
+        //public ObservableCollection<Grouping<string, Item>> ItemsGrouped { get; }
+
+        public object ExpirationInHoursIndex { get; set; }
 
         public InvitePageViewModel()
         {
@@ -71,23 +109,12 @@ namespace WheresChris.Views
             }
             Items = new ObservableCollection<Item>(itemList);
 
-            //Items = new ObservableCollection<Item>(new[]
-            //{
-            //    new Item { Text = "Mike Sneen", Detail = "619-928-4340" },
-            //    new Item { Text = "Sonny Garcia", Detail = "619-222-4341" },
-            //    new Item { Text = "Dave Maynard", Detail = "760-338-2842" },
-            //    new Item { Text = "Joe Smith", Detail = "380-282-3732" },
-            //    new Item { Text = "Wayne Wilson", Detail= "760-322-2800" },
-            //    new Item { Text = "Don Walker", Detail = "619-233-7247" },
-            //    new Item { Text = "Tyler Smith", Detail = "619-322-4832" },
-            //});
+            //var sorted = from item in Items
+            //             orderby item.Text
+            //             group item by item.Text[0].ToString() into itemGroup
+            //             select new Grouping<string, Item>(itemGroup.Key, itemGroup);
 
-            var sorted = from item in Items
-                         orderby item.Text
-                         group item by item.Text[0].ToString() into itemGroup
-                         select new Grouping<string, Item>(itemGroup.Key, itemGroup);
-
-            ItemsGrouped = new ObservableCollection<Grouping<string, Item>>(sorted);
+            //ItemsGrouped = new ObservableCollection<Grouping<string, Item>>(sorted);
 
             RefreshDataCommand = new Command(
                 async () => await RefreshData());

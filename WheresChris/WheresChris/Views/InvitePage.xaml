@@ -2,49 +2,46 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="WheresChris.Views.InvitePage"
-             xmlns:vm="clr-namespace:WheresChris.ViewModels;"
              xmlns:controls="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
              Title="{Binding Title}">
-    <ContentPage.BindingContext>
-        <vm:InviteViewModel />
-    </ContentPage.BindingContext>
-    <StackLayout>
-    <RelativeLayout Padding="5,0,0,0">
-        <Label Text="Phone#"
-            RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
-            RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.25,Constant=0}"/>
-        <Entry x:Name="PhoneNumber" Text=""
-            RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.3, Constant=0}"
-            RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.75,Constant=0}" />
-    </RelativeLayout>
-    <RelativeLayout Padding="5,0,0,0">
-        <Label Text="Name"
-            RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
-            RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.25,Constant=0}"/>
-        <Entry x:Name="Nickname" Text="" 
-            RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.3, Constant=0}"
-            RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.75,Constant=0}" />
-    </RelativeLayout>
 
-    <ListView ItemsSource="{Binding Items}"
-        x:Name="ContactsListView"
-        ItemTapped="Handle_ItemTapped"
-        ItemSelected="Handle_ItemSelected"
-        HasUnevenRows="true"       
-        IsPullToRefreshEnabled="true"
-        CachingStrategy="RetainElement"
-        IsRefreshing="{Binding IsBusy, Mode=OneWay}"
-        RefreshCommand="{Binding RefreshDataCommand}">
+    <StackLayout>
+        <RelativeLayout Padding="5,0,0,0">
+            <Label Text="Phone#"
+                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
+                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.25,Constant=0}"/>
+            <Entry x:Name="PhoneNumber" Text=""
+                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.3, Constant=0}"
+                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.75,Constant=0}" />
+        </RelativeLayout>
+        <RelativeLayout Padding="5,0,0,0">
+            <Label Text="Name"
+                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
+                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.25,Constant=0}"/>
+            <Entry x:Name="Nickname" Text="" 
+                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.3, Constant=0}"
+                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.75,Constant=0}" />
+        </RelativeLayout>
+
+        <ListView ItemsSource="{Binding Items}"
+            x:Name="ContactsListView"
+            ItemTapped="Handle_ItemTapped"
+            ItemSelected="Handle_ItemSelected"
+            HasUnevenRows="true"       
+            IsPullToRefreshEnabled="true"
+            CachingStrategy="RetainElement"
+            IsRefreshing="{Binding IsBusy, Mode=OneWay}"
+            RefreshCommand="{Binding RefreshDataCommand}">
             <ListView.Header>
                 <StackLayout Padding="10" 
-                   Orientation="Horizontal"
-                   HorizontalOptions="FillAndExpand"
-                   BackgroundColor="#dadada">
-                    <Label Text="Choose Contacts"
-                       HorizontalTextAlignment="Center"
+                       Orientation="Horizontal"
                        HorizontalOptions="FillAndExpand"
-                       TextColor="Black"
-                       FontAttributes="Bold"/>
+                       BackgroundColor="#dadada">
+                    <Label Text="Choose Contacts"
+                           HorizontalTextAlignment="Center"
+                           HorizontalOptions="FillAndExpand"
+                           TextColor="Black"
+                           FontAttributes="Bold"/>
                 </StackLayout>
             </ListView.Header>
             <ListView.ItemTemplate>
@@ -52,20 +49,26 @@
                     <ViewCell>
                         <RelativeLayout>
                             <Label Text="{Binding Text}" Style="{DynamicResource ListItemTextStyle}" 
-                                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
-                                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.45,Constant=0}"/>
+                                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
+                                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.45,Constant=0}"/>
                             <Label Text="{Binding Detail}" Style="{DynamicResource ListItemDetailTextStyle}"
-                                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.45, Constant=0}"
-                                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}" />
+                                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.45, Constant=0}"
+                                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}" />
                             <controls:CheckBox Checked="{Binding Selected}"
-                                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.9, Constant=0}"/>
+                                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.9, Constant=0}"/>
                         </RelativeLayout>
                     </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <Button x:Name="InviteButton" Text="Invite" Clicked="StartGroup"    />
-
+        <RelativeLayout Padding="5,0,0,0">
+            <Picker x:Name="ExpirationPicker"
+                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
+                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.25,Constant=0}"/>
+            <Button x:Name="InviteButton" Text="Invite" Clicked="StartGroup"    
+                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.3, Constant=0}"
+                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.75,Constant=0}"/>
+        </RelativeLayout>
     </StackLayout>
 
 </ContentPage>

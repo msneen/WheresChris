@@ -108,7 +108,7 @@ namespace WheresChris.iOS.Classes
             _locationSender?.SendUpdatePosition(groupMemberVm);
         }
 
-        public async void StartGroup(List<GroupMemberVm> selectedContacts)
+        public async void StartGroup(List<GroupMemberVm> selectedContacts, int expireInHours)
         {
 
             if (_lastLocation != null)
@@ -118,8 +118,6 @@ namespace WheresChris.iOS.Classes
                     Latitude = _lastLocation.Coordinate.Latitude,
                     Longitude = _lastLocation.Coordinate.Longitude
                 };
-
-                var expireInHours = 6;
 
                 var groupVm = GroupHelper.InitializeGroupVm(selectedContacts, position, UserPhoneNumber, expireInHours);
 
