@@ -23,6 +23,11 @@ namespace WheresChris.Views
         {
 			InitializeComponent ();
             BindingContext = new InvitePageViewModel();
+            InitializeExpirationPicker();
+        }
+
+        private void InitializeExpirationPicker()
+        {
             ExpirationPicker.ItemsSource = new List<ExpirationPickerViewModel>
             {
                 new ExpirationPickerViewModel {DisplayName = "4 Hours", Hours = 4},
@@ -67,6 +72,12 @@ namespace WheresChris.Views
             }
         }
 
+        protected override async void OnAppearing()
+        {
+            await ((InvitePageViewModel)BindingContext).InitializeContacts();
+            ContactsListView.ItemsSource = ((InvitePageViewModel)BindingContext).Items;
+        }
+
         void Handle_ItemTapped(object sender, ItemTappedEventArgs e)
             => ((ListView)sender).SelectedItem = null;
 
@@ -78,6 +89,8 @@ namespace WheresChris.Views
             //Deselect Item
             ((ListView)sender).SelectedItem = null;
         }
+
+
     }
 
     class ExpirationPickerViewModel
@@ -88,37 +101,43 @@ namespace WheresChris.Views
 
     class InvitePageViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<Item> Items { get; }
+        public ObservableCollection<Item> Items { get; set; }
         //public ObservableCollection<Grouping<string, Item>> ItemsGrouped { get; }
 
         public object ExpirationInHoursIndex { get; set; }
 
         public InvitePageViewModel()
         {
-            var contactsHelper = new ContactsHelper();
-            var contacts = contactsHelper.GetContacts().Result;
-            var itemList = new List<Item>();
-            foreach (var contact in contacts)
-            {
-                var item = new Item
-                {
-                    Text = contact.Name,
-                    Detail = contact.PhoneNumber
-                };
-                itemList.Add(item);
-            }
-            Items = new ObservableCollection<Item>(itemList);
-
-            //var sorted = from item in Items
-            //             orderby item.Text
-            //             group item by item.Text[0].ToString() into itemGroup
-            //             select new Grouping<string, Item>(itemGroup.Key, itemGroup);
-
-            //ItemsGrouped = new ObservableCollection<Grouping<string, Item>>(sorted);
 
             RefreshDataCommand = new Command(
                 async () => await RefreshData());
         }
+
+        public async Task InitializeContacts()
+        {
+            Items = await LoadContacts();
+        }
+
+        private Task<ObservableCollection<Item>> LoadContacts()
+        {
+            return Task.Run<ObservableCollection<Item>>(async () =>
+            {
+                var contactsHelper = new ContactsHelper();
+                var contacts = await contactsHelper.GetContacts();
+                var itemList = new List<InvitePageViewModel.Item>();
+                foreach (var contact in contacts)
+                {
+                    var item = new InvitePageViewModel.Item
+                    {
+                        Text = contact.Name,
+                        Detail = contact.PhoneNumber
+                    };
+                    itemList.Add(item);
+                }
+                return new ObservableCollection<InvitePageViewModel.Item>(itemList);
+            });
+        }
+
 
         public ICommand RefreshDataCommand { get; }
 

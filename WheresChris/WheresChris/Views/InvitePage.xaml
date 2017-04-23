@@ -23,15 +23,13 @@
                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.75,Constant=0}" />
         </RelativeLayout>
 
-        <ListView ItemsSource="{Binding Items}"
+        <ListView
             x:Name="ContactsListView"
             ItemTapped="Handle_ItemTapped"
             ItemSelected="Handle_ItemSelected"
             HasUnevenRows="true"       
             IsPullToRefreshEnabled="true"
-            CachingStrategy="RetainElement"
-            IsRefreshing="{Binding IsBusy, Mode=OneWay}"
-            RefreshCommand="{Binding RefreshDataCommand}">
+            CachingStrategy="RetainElement">
             <ListView.Header>
                 <StackLayout Padding="10" 
                        Orientation="Horizontal"
