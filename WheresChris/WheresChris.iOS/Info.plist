@@ -15,7 +15,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
-	<string>8.0</string>
+	<string>8.1</string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>
@@ -42,9 +42,15 @@
 	</array>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/AppIcon.appiconset</string>
+	<key>NSContactsUsageDescription</key>
+		<string>Getting list of contacts to add to the group</string>
+	<key>UIBackgroundModes</key>
+		  <array>
+			<string>location</string>
+		  </array>
 	<key>NSLocationAlwaysUsageDescription</key>
-    <string>Can we use your location</string>
+		<string>Can we use your location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-    <string>We are using your location</string>
+		<string>We are using your location</string>
 </dict>
 </plist>
