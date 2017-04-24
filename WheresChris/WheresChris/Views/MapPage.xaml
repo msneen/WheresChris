@@ -4,7 +4,7 @@
              xmlns:maps="clr-namespace:Xamarin.Forms.Maps;assembly=Xamarin.Forms.Maps"
              x:Class="WheresChris.Views.MapPage">
     <StackLayout VerticalOptions="StartAndExpand" Padding="30">
-        <maps:Map WidthRequest="320" HeightRequest="700"
+        <maps:Map WidthRequest="320" HeightRequest="500"
             x:Name="GroupMap"
             IsShowingUser="true"
             MapType="Hybrid"

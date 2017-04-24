@@ -88,11 +88,7 @@ namespace WheresChris.iOS.Classes
 
         private void SendPositionUpdate()
         {
-            var position = new Position
-            {
-                Latitude = _lastLocation.Coordinate.Latitude,
-                Longitude = _lastLocation.Coordinate.Longitude
-            };
+            var position = GetPosition();
 
             if (UserPhoneNumber == null || !_sendMeter.CanSend(position)) return;
 
@@ -106,6 +102,18 @@ namespace WheresChris.iOS.Classes
                 Longitude = _lastLocation.Coordinate.Longitude
             };
             _locationSender?.SendUpdatePosition(groupMemberVm);
+        }
+
+        public Position GetPosition()
+        {
+            if (_lastLocation == null) return null;
+
+            var position = new Position
+            {
+                Latitude = _lastLocation.Coordinate.Latitude,
+                Longitude = _lastLocation.Coordinate.Longitude
+            };
+            return position;
         }
 
         public async void StartGroup(List<GroupMemberVm> selectedContacts, int expireInHours)

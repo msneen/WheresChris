@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using StayTogether;
+using StayTogether.Classes;
+using StayTogether.Droid.Services;
+using WheresChris.Helpers;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.Xaml;
@@ -16,25 +19,61 @@ namespace WheresChris.Views
 		public MapPage ()
 		{
             InitializeComponent ();
-		    //try
-		    //{
-      //          var map = new Map(
-      //              MapSpan.FromCenterAndRadius(new Position(37, -122), Distance.FromMiles(0.3)))
-      //          {
-      //              IsShowingUser = true,
-      //              HeightRequest = 100,
-      //              WidthRequest = 960,
-      //              VerticalOptions = LayoutOptions.FillAndExpand
-      //          };
-      //          var stack = new StackLayout { Spacing = 0 };
-      //          stack.Children.Add(map);
-      //          Content = stack;
-      //      }
-      //      catch (Exception ex)
-		    //{
-		        
-		    //}
+		    InitializeMap();
+		}
 
-        }
+	    private void InitializeMap()
+	    {
+	        var mapPosition = GetMapPosition();
+
+	        GroupMap.MoveToRegion(
+                MapSpan.FromCenterAndRadius(
+                    mapPosition, Distance.FromMiles(1)));
+	    }
+
+	    private static Position GetMapPosition()
+	    {
+	        Plugin.Geolocator.Abstractions.Position userPosition;
+#if __ANDROID__
+	        userPosition = LocationSenderService.Instance.GetPosition();
+#endif
+#if __IOS__
+                userPosition = AppDelegate.LocationManager.GetPosition();
+#endif
+	        Xamarin.Forms.Maps.Position mapPosition = PositionConverter.Convert(userPosition);
+	        return mapPosition;
+	    }
+
+	    private void UpdateMap(GroupVm groupVm)
+	    {
+	        var groupMembers = groupVm.GroupMembers;
+	        UpdateMap(groupMembers);
+	    }
+
+	    private void UpdateMap(List<GroupMemberVm> groupMembers)
+	    {
+            GroupMap.Pins.Clear();
+            foreach (var groupMember in groupMembers)
+	        {
+	            var position = new Position(groupMember.Latitude, groupMember.Longitude);
+	            var pin = new Pin
+	            {
+	                Type = PinType.Place,
+	                Position = position,
+	                Label = groupMember.Name,
+	                Address = groupMember.PhoneNumber
+	            };
+	            GroupMap.Pins.Add(pin);
+	        }
+	    }
+
+	    private void UpdateMemberPosition(GroupMemberVm groupMemberVm)
+	    {
+	        var pin = GroupMap.Pins.FirstOrDefault(x => x.Address == groupMemberVm.PhoneNumber);
+	        if (pin == null) return;
+
+	        var position = new Position(groupMemberVm.Latitude, groupMemberVm.Longitude);
+	        pin.Position = position;
+	    }
 	}
 }

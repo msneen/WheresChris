@@ -17,6 +17,7 @@ using StayTogether.Group;
 using StayTogether.Location;
 using WheresChris.Droid;
 using StayTogether.Droid.NotificationCenter;
+using WheresChris.Helpers;
 
 namespace StayTogether.Droid.Services
 {
@@ -84,14 +85,21 @@ namespace StayTogether.Droid.Services
 
         public async void StartGroup(List<GroupMemberVm> contactList, int expireInHours)
         {
-            var position = GpsService.GetLocation();
+            var position = GetPosition();
             if (LocationSender == null || position == null) return;
 
             await CreateGroup(contactList, position, expireInHours);
         }
+
+        public Position GetPosition()
+        {
+            var position = GpsService.GetLocation();
+            return position;
+        }
+
         private async Task CreateGroup(List<GroupMemberVm> contactList, Position position, int expireInHours)
         {
-            var groupVm = GroupHelper.InitializeGroupVm(contactList, position, GetPhoneNumber(), expireInHours);
+            var groupVm = GroupHelper.InitializeGroupVm(contactList, position, SettingsHelper.GetPhoneNumber(), expireInHours);
 
             await LocationSender.StartGroup(groupVm);
         }
@@ -103,7 +111,7 @@ namespace StayTogether.Droid.Services
 
         private void StartLocationSender()
         {
-            var phoneNumber = GetPhoneNumber();
+            var phoneNumber = SettingsHelper.GetPhoneNumber();
             InitializeLocationSender(phoneNumber);
             SendFirstPositionUpdate(phoneNumber);
         }
@@ -164,20 +172,6 @@ namespace StayTogether.Droid.Services
         private void OnNotifySomeoneIsLost(GroupMemberVm groupMember)
         {
             LostNotification.DisplayLostNotification(groupMember);
-        }
-
-        public static string GetPhoneNumber()
-        {
-            var existingNumber = CrossSettings.Current.GetValueOrDefault<string>("phonenumber");
-            if (!string.IsNullOrWhiteSpace(existingNumber))
-            {
-                return existingNumber;
-            }
-
-            var info = (TelephonyManager)Application.Context.GetSystemService(TelephonyService);
-            var phoneNumber = info.Line1Number;
-            CrossSettings.Current.AddOrUpdateValue("phonenumber", phoneNumber);
-            return phoneNumber;
         }
 
         public override IBinder OnBind(Intent intent)
