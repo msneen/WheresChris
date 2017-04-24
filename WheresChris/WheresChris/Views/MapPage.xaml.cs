@@ -5,11 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using StayTogether;
 using StayTogether.Classes;
-using StayTogether.Droid.Services;
 using WheresChris.Helpers;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.Xaml;
+#if __ANDROID__
+using StayTogether.Droid.Services;
+#endif
+#if __IOS__
+                
+#endif
 
 namespace WheresChris.Views
 {
