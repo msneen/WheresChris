@@ -11,6 +11,8 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using StayTogether;
 using StayTogether.Classes;
+using WheresChris.Helpers;
+using Plugin.Settings;
 #if __ANDROID__
 using StayTogether.Droid.Services;
 #endif
@@ -46,6 +48,8 @@ namespace WheresChris.Views
 
         public void StartGroup(object sender, EventArgs e)
         {
+            CrossSettings.Current.AddOrUpdateValue("nickname", Nickname.Text);
+
             var invitePageViewModel = BindingContext as InvitePageViewModel;
             if (invitePageViewModel == null) return;
             List<GroupMemberVm> selectedGroupMemberVms = new List<GroupMemberVm>();
@@ -79,6 +83,10 @@ namespace WheresChris.Views
         {
             await ((InvitePageViewModel)BindingContext).InitializeContacts();
             ContactsListView.ItemsSource = ((InvitePageViewModel)BindingContext).Items;
+
+            PhoneNumber.Text = SettingsHelper.GetPhoneNumber();
+            Nickname.Text = CrossSettings.Current.GetValueOrDefault<string>("nickname");
+            
         }
 
         void Handle_ItemTapped(object sender, ItemTappedEventArgs e)
