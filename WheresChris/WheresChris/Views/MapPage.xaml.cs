@@ -13,7 +13,7 @@ using Xamarin.Forms.Xaml;
 using StayTogether.Droid.Services;
 #endif
 #if __IOS__
-using WheresChris.iOS;        
+//using WheresChris.iOS;        
 #endif
 
 namespace WheresChris.Views
@@ -53,7 +53,7 @@ namespace WheresChris.Views
 	        userPosition = LocationSenderService.Instance.GetPosition();
 #endif
 #if __IOS__
-                userPosition = AppDelegate.LocationManager.GetPosition();
+                //userPosition = AppDelegate.LocationManager.GetPosition();
 #endif
 	        if (userPosition == null) return new Position(32.7157, -117.1611);
 
