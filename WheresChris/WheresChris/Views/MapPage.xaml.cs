@@ -24,11 +24,16 @@ namespace WheresChris.Views
 
 	    private void InitializeMap()
 	    {
-	        var mapPosition = GetMapPosition();
+            try
+            {
+                var mapPosition = GetMapPosition();
 
-	        GroupMap.MoveToRegion(
-                MapSpan.FromCenterAndRadius(
-                    mapPosition, Distance.FromMiles(1)));
+                GroupMap.MoveToRegion(
+                    MapSpan.FromCenterAndRadius(
+                        mapPosition, Distance.FromMiles(1)));
+            }
+            catch (Exception ex) { }
+
 	    }
 
 	    private static Position GetMapPosition()
