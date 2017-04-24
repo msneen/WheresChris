@@ -48,7 +48,7 @@ namespace WheresChris.Views
 
 	    private static Position GetMapPosition()
 	    {
-	        Plugin.Geolocator.Abstractions.Position userPosition;
+	        Plugin.Geolocator.Abstractions.Position userPosition = new Plugin.Geolocator.Abstractions.Position();
 #if __ANDROID__
 	        userPosition = LocationSenderService.Instance.GetPosition();
 #endif
