@@ -19,8 +19,13 @@ namespace WheresChris.Views
 		public MapPage ()
 		{
             InitializeComponent ();
-		    InitializeMap();
 		}
+
+	    protected override async void OnAppearing()
+	    {
+            InitializeMap();
+        }
+
 
 	    private void InitializeMap()
 	    {
@@ -45,6 +50,8 @@ namespace WheresChris.Views
 #if __IOS__
                 userPosition = AppDelegate.LocationManager.GetPosition();
 #endif
+	        if (userPosition == null) return new Position(32.7157, -117.1611);
+
 	        Xamarin.Forms.Maps.Position mapPosition = PositionConverter.Convert(userPosition);
 	        return mapPosition;
 	    }

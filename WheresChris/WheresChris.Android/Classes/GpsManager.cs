@@ -16,12 +16,12 @@ namespace StayTogether.Droid.Classes
         {
             try
             {
-                if (LastLocationUpdateWasMoreThanAnHourAgo())
-                {
+                //if (LastLocationUpdateWasMoreThanAnHourAgo())
+                //{
                     var criteriaForGpsService = new Criteria
                     {
                         //A constant indicating an approximate accuracy  
-                        Accuracy = Accuracy.Coarse,
+                        Accuracy = Accuracy.Fine,
                         PowerRequirement = Power.Low
                     };
                     var locationManager =
@@ -47,7 +47,7 @@ namespace StayTogether.Droid.Classes
                     {
                         Log.WriteLine(LogPriority.Info, "GetLocation", "GPS:  Unable to turn on.  " + ex.StackTrace);
                     }
-                }
+                //}
             }
             catch(Exception ex)
             {
