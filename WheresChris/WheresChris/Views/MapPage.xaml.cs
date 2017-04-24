@@ -13,7 +13,7 @@ using Xamarin.Forms.Xaml;
 using StayTogether.Droid.Services;
 #endif
 #if __IOS__
-                
+using WheresChris.iOS;        
 #endif
 
 namespace WheresChris.Views
