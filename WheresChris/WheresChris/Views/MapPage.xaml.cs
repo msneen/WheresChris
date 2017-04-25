@@ -38,9 +38,9 @@ namespace WheresChris.Views
             {
                 var mapPosition = GetMapPosition();
 
-                GroupMap.MoveToRegion(
-                    MapSpan.FromCenterAndRadius(
-                        mapPosition, Distance.FromMiles(1)));
+                //GroupMap.MoveToRegion(
+                //    MapSpan.FromCenterAndRadius(
+                //        mapPosition, Distance.FromMiles(1)));
             }
             catch (Exception ex) { }
 
