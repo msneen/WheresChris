@@ -36,11 +36,13 @@ namespace WheresChris.Views
 	    {
             try
             {
+#if __ANDROID__
                 var mapPosition = GetMapPosition();
 
-                //GroupMap.MoveToRegion(
-                //    MapSpan.FromCenterAndRadius(
-                //        mapPosition, Distance.FromMiles(1)));
+                GroupMap.MoveToRegion(
+                    MapSpan.FromCenterAndRadius(
+                        mapPosition, Distance.FromMiles(1)));
+#endif
             }
             catch (Exception ex) { }
 
