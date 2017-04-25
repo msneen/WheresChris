@@ -2,12 +2,8 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="WheresChris.Views.JoinPage"
-             xmlns:vm="clr-namespace:WheresChris.ViewModels;"
              Title="{Binding Title}">
-    <ContentPage.BindingContext>
-        <vm:JoinViewModel />
-    </ContentPage.BindingContext>
-    <ListView ItemsSource="{Binding Items}"
+	<ListView ItemsSource="{Binding Items}"
             ItemTapped="Handle_ItemTapped"
             ItemSelected="Handle_ItemSelected"
             HasUnevenRows="true"
