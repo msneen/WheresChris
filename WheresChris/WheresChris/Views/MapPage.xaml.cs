@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using StayTogether;
 using StayTogether.Classes;
 using WheresChris.Helpers;
+using WheresChris.Views.GroupViews;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.Xaml;
@@ -93,6 +94,23 @@ namespace WheresChris.Views
 
 	        var position = new Position(groupMemberVm.Latitude, groupMemberVm.Longitude);
 	        pin.Position = position;
+	    }
+
+	    private async void AddMembersButton_OnClicked(object sender, EventArgs e)
+	    {
+	        var addMemberPage = new AddMemberPage();
+	        await Navigation.PushModalAsync(addMemberPage);
+	    }
+
+	    private async void ViewMembersButton_OnClicked(object sender, EventArgs e)
+	    {
+	        var memberPage = new MemberPage();
+	        await Navigation.PushModalAsync(memberPage);
+	    }
+
+	    private void LeaveGroupButton_OnClicked(object sender, EventArgs e)
+	    {
+	        
 	    }
 	}
 }

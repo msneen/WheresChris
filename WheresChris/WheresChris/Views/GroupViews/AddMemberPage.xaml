@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
+             x:Class="WheresChris.Views.GroupViews.AddMemberPage"
+             Title="ListView">
+    <StackLayout>
+        <ListView
+            x:Name="ContactsListView"
+            HasUnevenRows="true"
+            IsPullToRefreshEnabled="true"
+            CachingStrategy="RetainElement">
+        <ListView.Header>
+            <StackLayout Padding="10" 
+                       Orientation="Horizontal"
+                       HorizontalOptions="FillAndExpand"
+                       BackgroundColor="#dadada">
+                <Label Text="Choose Contacts"
+                           HorizontalTextAlignment="Center"
+                           HorizontalOptions="FillAndExpand"
+                           TextColor="Black"
+                           FontAttributes="Bold"/>
+            </StackLayout>
+        </ListView.Header>
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <ViewCell>
+                    <RelativeLayout>
+                        <Label Text="{Binding Text}" Style="{DynamicResource ListItemTextStyle}" 
+                                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
+                                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.45,Constant=0}"/>
+                        <Label Text="{Binding Detail}" Style="{DynamicResource ListItemDetailTextStyle}"
+                                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.45, Constant=0}"
+                                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}" />
+                        <controls:CheckBox Checked="{Binding Selected}"
+                                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.9, Constant=0}"/>
+                    </RelativeLayout>
+                </ViewCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
+        <Button x:Name="AddButton" Text="Add" Clicked="AddButton_OnClicked" />
+    </StackLayout>
+</ContentPage>

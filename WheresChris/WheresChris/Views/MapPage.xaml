@@ -4,10 +4,19 @@
              xmlns:maps="clr-namespace:Xamarin.Forms.Maps;assembly=Xamarin.Forms.Maps"
              x:Class="WheresChris.Views.MapPage">
     <StackLayout VerticalOptions="StartAndExpand" Padding="30">
-        <maps:Map WidthRequest="320" HeightRequest="500"
+        <maps:Map WidthRequest="320" HeightRequest="450"
             x:Name="GroupMap"
             IsShowingUser="true"
             MapType="Hybrid"
         />
+        <RelativeLayout Padding="5,0,0,0">
+            <Button x:Name="AddMembersButton" Text="Add" Clicked="AddMembersButton_OnClicked"  
+                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
+                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.45,Constant=0}"/>
+            <Button x:Name="ViewMembersButton" Text="Members" Clicked="ViewMembersButton_OnClicked"    
+                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=0}"
+                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}"/>
+        </RelativeLayout>
+        <Button x:Name="LeaveGroupButton" Text="Leave" Clicked="LeaveGroupButton_OnClicked" />
     </StackLayout>
 </ContentPage>
