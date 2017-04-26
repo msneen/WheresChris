@@ -102,9 +102,10 @@ namespace WheresChris.Views
 	        await Navigation.PushModalAsync(addMemberPage);
 	    }
 
-	    private void ViewMembersButton_OnClicked(object sender, EventArgs e)
+	    private async void ViewMembersButton_OnClicked(object sender, EventArgs e)
 	    {
-	        
+	        var memberPage = new MemberPage();
+	        await Navigation.PushModalAsync(memberPage);
 	    }
 
 	    private void LeaveGroupButton_OnClicked(object sender, EventArgs e)
