@@ -6,9 +6,14 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using StayTogether;
 using StayTogether.Classes;
-using StayTogether.Droid.Services;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+#if __ANDROID__
+using StayTogether.Droid.Services;
+#endif
+#if __IOS__
+using WheresChris.iOS;
+#endif
 
 namespace WheresChris.Views.GroupViews
 {
