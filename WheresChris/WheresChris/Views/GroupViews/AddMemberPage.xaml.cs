@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using StayTogether;
-using StayTogether.Classes;
 using WheresChris.Helpers;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;

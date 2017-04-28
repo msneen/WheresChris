@@ -104,9 +104,10 @@ namespace WheresChris.Views
 	        await Navigation.PushModalAsync(memberPage);
 	    }
 
-	    private void LeaveGroupButton_OnClicked(object sender, EventArgs e)
+	    private async void LeaveGroupButton_OnClicked(object sender, EventArgs e)
 	    {
-	        
+            var locationSender = LocationSenderFactory.GetLocationSender();
+	        await locationSender.LeaveGroup();
 	    }
 	}
 }
