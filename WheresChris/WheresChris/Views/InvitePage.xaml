@@ -24,8 +24,6 @@
         </RelativeLayout>
         <ListView
             x:Name="ContactsListView"
-            ItemTapped="Handle_ItemTapped"
-            ItemSelected="Handle_ItemSelected"
             HasUnevenRows="true"       
             IsPullToRefreshEnabled="true"
             CachingStrategy="RetainElement">

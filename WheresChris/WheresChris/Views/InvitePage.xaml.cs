@@ -61,45 +61,20 @@ namespace WheresChris.Views
                 }
             }
 
-            var selectedGroupMemberVms = GetSelectedGroupMembers();
+            var invitePageViewModel = BindingContext as InvitePageViewModel;
+            if (invitePageViewModel == null) return;
+            var selectedGroupMemberVms = GroupActionsHelper.GetSelectedGroupMembers(invitePageViewModel.Items);
 
             var selectedExpirationHours = ExpirationPicker.SelectedItem as ExpirationPickerViewModel;
 
             var expirationHours = selectedExpirationHours?.Hours ?? 4;
 
-            await StartGroup(selectedGroupMemberVms, userPhoneNumber, expirationHours);
+            await GroupActionsHelper.StartGroup(selectedGroupMemberVms, userPhoneNumber, expirationHours);
         }
 
-        private List<GroupMemberVm> GetSelectedGroupMembers()
-        {
-            var invitePageViewModel = BindingContext as InvitePageViewModel;
-            if (invitePageViewModel == null) return null;
-            List<GroupMemberVm> selectedGroupMemberVms = new List<GroupMemberVm>();
-            foreach (var item in invitePageViewModel.Items)
-            {
-                if (item.Selected)
-                {
-                    selectedGroupMemberVms.Add(new GroupMemberVm
-                    {
-                        Name = item.Text,
-                        PhoneNumber = item.Detail
-                    });
-                }
-            }
-            return selectedGroupMemberVms;
-        }
 
-        private static async Task StartGroup(List<GroupMemberVm> selectedGroupMemberVms, string userPhoneNumber, int expirationHours)
-        {
-            if (!selectedGroupMemberVms.Any()) return;
-            if (string.IsNullOrWhiteSpace(userPhoneNumber)) return;
-            if (expirationHours < 2) return;
 
-            var locationSender = LocationSenderFactory.GetLocationSender();
-            var userPosition = await CrossGeolocator.Current.GetLastKnownLocationAsync();
-            var groupVm = GroupHelper.InitializeGroupVm(selectedGroupMemberVms, userPosition, userPhoneNumber, expirationHours);
-            await locationSender.StartGroup(groupVm);
-        }
+
 
         protected override async void OnAppearing()
         {
@@ -109,18 +84,6 @@ namespace WheresChris.Views
             PhoneNumber.Text = SettingsHelper.GetPhoneNumber();
             Nickname.Text = CrossSettings.Current.GetValueOrDefault<string>("nickname");
             
-        }
-
-        void Handle_ItemTapped(object sender, ItemTappedEventArgs e)
-            => ((ListView)sender).SelectedItem = null;
-
-        async void Handle_ItemSelected(object sender, SelectedItemChangedEventArgs e)
-        {
-            if (e.SelectedItem == null)
-                return;
-
-            //Deselect Item
-            ((ListView)sender).SelectedItem = null;
         }
 
 
@@ -134,7 +97,7 @@ namespace WheresChris.Views
 
     class InvitePageViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<Item> Items { get; set; }
+        public ObservableCollection<ContactDisplayItemVm> Items { get; set; }
         //public ObservableCollection<Grouping<string, Item>> ItemsGrouped { get; }
 
         public object ExpirationInHoursIndex { get; set; }
@@ -151,23 +114,23 @@ namespace WheresChris.Views
             Items = await LoadContacts();
         }
 
-        private Task<ObservableCollection<Item>> LoadContacts()
+        private Task<ObservableCollection<ContactDisplayItemVm>> LoadContacts()
         {
-            return Task.Run<ObservableCollection<Item>>(async () =>
+            return Task.Run<ObservableCollection<ContactDisplayItemVm>>(async () =>
             {
                 var contactsHelper = new ContactsHelper();
                 var contacts = await contactsHelper.GetContacts();
-                var itemList = new List<InvitePageViewModel.Item>();
+                var itemList = new List<ContactDisplayItemVm>();
                 foreach (var contact in contacts)
                 {
-                    var item = new InvitePageViewModel.Item
+                    var item = new ContactDisplayItemVm
                     {
                         Text = contact.Name,
                         Detail = contact.PhoneNumber
                     };
                     itemList.Add(item);
                 }
-                return new ObservableCollection<InvitePageViewModel.Item>(itemList);
+                return new ObservableCollection<ContactDisplayItemVm>(itemList);
             });
         }
 
@@ -199,28 +162,6 @@ namespace WheresChris.Views
         public event PropertyChangedEventHandler PropertyChanged;
         void OnPropertyChanged([CallerMemberName]string propertyName = "") =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-        public class Item
-        {
-            public string Text { get; set; }
-            public string Detail { get; set; }
-            public bool Selected { get; set; }
-
-            public override string ToString() => Text;
-        }
-
-        public class Grouping<K, T> : ObservableCollection<T>
-        {
-            public K Key { get; private set; }
-
-            public Grouping(K key, IEnumerable<T> items)
-            {
-                Key = key;
-                foreach (var item in items)
-                    this.Items.Add(item);
-            }
-        }
-
 
     }
 }

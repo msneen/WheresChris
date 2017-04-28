@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using StayTogether;
 using StayTogether.Classes;
+using WheresChris.Helpers;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 #if __ANDROID__
@@ -33,30 +34,13 @@ namespace WheresChris.Views.GroupViews
 
         }
 
-        private void AddButton_OnClicked(object sender, EventArgs e)
+        private async void AddButton_OnClicked(object sender, EventArgs e)
         {
             var addMemberPageViewModel = BindingContext as AddMemberPageViewModel;
             if (addMemberPageViewModel == null) return;
-            List<GroupMemberVm> selectedGroupMemberVms = new List<GroupMemberVm>();
-            foreach (var item in addMemberPageViewModel.Items)
-            {
-                if (item.Selected)
-                {
-                    selectedGroupMemberVms.Add(new GroupMemberVm
-                    {
-                        Name = item.Text,
-                        PhoneNumber = item.Detail
-                    });
-                }
-            }
-
-            //Todo: Create Methods to addToGroup in LocationSender and AppDelegate  
-#if __ANDROID__
-           // LocationSenderService.Instance.StartGroup(selectedGroupMemberVms, expirationHours);
-#endif
-#if __IOS__
-                //AppDelegate.LocationManager.StartGroup(selectedGroupMemberVms, expirationHours);
-#endif
+            var selectedGroupMemberVms = GroupActionsHelper.GetSelectedGroupMembers(addMemberPageViewModel.Items);
+            var userPhoneNumber = SettingsHelper.GetPhoneNumber();
+            await GroupActionsHelper.StartOrAddToGroup(selectedGroupMemberVms, userPhoneNumber);
         }
     }
 
@@ -64,7 +48,7 @@ namespace WheresChris.Views.GroupViews
 
     class AddMemberPageViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<Item> Items { get; set; }
+        public ObservableCollection<ContactDisplayItemVm> Items { get; set; }
 
         public AddMemberPageViewModel()
         {
@@ -75,23 +59,23 @@ namespace WheresChris.Views.GroupViews
             Items = await LoadContacts();
         }
 
-        private Task<ObservableCollection<AddMemberPageViewModel.Item>> LoadContacts()
+        private Task<ObservableCollection<ContactDisplayItemVm>> LoadContacts()
         {
-            return Task.Run<ObservableCollection<AddMemberPageViewModel.Item>>(async () =>
+            return Task.Run<ObservableCollection<ContactDisplayItemVm>>(async () =>
             {
                 var contactsHelper = new ContactsHelper();
                 var contacts = await contactsHelper.GetContacts();
-                var itemList = new List<AddMemberPageViewModel.Item>();
+                var itemList = new List<ContactDisplayItemVm>();
                 foreach (var contact in contacts)
                 {
-                    var item = new AddMemberPageViewModel.Item
+                    var item = new ContactDisplayItemVm
                     {
                         Text = contact.Name,
                         Detail = contact.PhoneNumber
                     };
                     itemList.Add(item);
                 }
-                return new ObservableCollection<AddMemberPageViewModel.Item>(itemList);
+                return new ObservableCollection<ContactDisplayItemVm>(itemList);
             });
         }
 
@@ -102,13 +86,6 @@ namespace WheresChris.Views.GroupViews
         void OnPropertyChanged([CallerMemberName]string propertyName = "") =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        public class Item
-        {
-            public string Text { get; set; }
-            public string Detail { get; set; }
-            public bool Selected { get; set; }
 
-            public override string ToString() => Text;
-        }
     }
 }
