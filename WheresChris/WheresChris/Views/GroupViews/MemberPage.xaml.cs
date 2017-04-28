@@ -7,6 +7,9 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using StayTogether;
+using StayTogether.Classes;
+using WheresChris.Helpers;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -21,52 +24,39 @@ namespace WheresChris.Views.GroupViews
             BindingContext = new MemberPageViewModel();
         }
 
-        void Handle_ItemTapped(object sender, ItemTappedEventArgs e)
-            => ((ListView)sender).SelectedItem = null;
 
-        async void Handle_ItemSelected(object sender, SelectedItemChangedEventArgs e)
-        {
-            if (e.SelectedItem == null)
-                return;
-
-            await DisplayAlert("Selected", e.SelectedItem.ToString(), "OK");
-
-            //Deselect Item
-            ((ListView)sender).SelectedItem = null;
-        }
     }
 
 
 
     class MemberPageViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<Item> Items { get; }
+        public ObservableCollection<ContactDisplayItemVm> Items { get; }
 
         public MemberPageViewModel()
         {
-            Items = new ObservableCollection<Item>(new[]
-            {
-                new Item { Text = "Michael Smith" },
-                new Item { Text = "Bill Johnson" },
-                new Item { Text = "Craig Jones"},
-                new Item { Text = "Steven Howard"},
-                new Item { Text = "Rachel Jefferson"},
-            });
+            var groupMembers = GroupActionsHelper.GetGroupMembers().Result;
+            Items = new ObservableCollection<ContactDisplayItemVm>();
+            UpdateGroupMembers(groupMembers);
+        }
 
+        private void UpdateGroupMembers(List<GroupMemberVm> groupMembers)
+        {
+            Items.Clear();
+            foreach (var groupMemberVm in groupMembers)
+            {
+                var item = new ContactDisplayItemVm
+                {
+                    Text = ContactsHelper.NameOrPhone(groupMemberVm.PhoneNumber, groupMemberVm.Name)
+                };
+                Items.Add(item);
+            }
         }
 
 
         public event PropertyChangedEventHandler PropertyChanged;
         void OnPropertyChanged([CallerMemberName]string propertyName = "") =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-        public class Item
-        {
-            public string Text { get; set; }
-            public string Detail { get; set; }
-
-            public override string ToString() => Text;
-        }
 
     }
 }

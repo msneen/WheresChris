@@ -259,7 +259,14 @@ namespace StayTogether
 
 	    public async Task<List<GroupMemberVm>> GetMembers(GroupMemberVm groupMemberVm)
 	    {
-	        return await _chatHubProxy.Invoke<List<GroupMemberVm>>("GetGroupMembers", groupMemberVm);
+	        if (InAGroup)
+	        {
+	            return await _chatHubProxy.Invoke<List<GroupMemberVm>>("GetGroupMembers", groupMemberVm);
+	        }
+	        else
+	        {
+	            return new List<GroupMemberVm>();
+	        }
 	    }
 
 

@@ -4,8 +4,6 @@
              x:Class="WheresChris.Views.GroupViews.MemberPage"
              Title="ListView">
   <ListView ItemsSource="{Binding Items}"
-            ItemTapped="Handle_ItemTapped"
-            ItemSelected="Handle_ItemSelected"
             HasUnevenRows="true"
             IsPullToRefreshEnabled="true"
             CachingStrategy="RetainElement">

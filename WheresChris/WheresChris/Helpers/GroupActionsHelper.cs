@@ -23,7 +23,7 @@ namespace WheresChris.Helpers
         public static async Task StartOrAddToGroup(List<GroupMemberVm> selectedGroupMemberVms, string userPhoneNumber, int expirationHours = 0)
         {
             if (!selectedGroupMemberVms.Any()) return;
-            if (string.IsNullOrWhiteSpace(userPhoneNumber)) return;
+            if (String.IsNullOrWhiteSpace(userPhoneNumber)) return;
 
             var locationSender = LocationSenderFactory.GetLocationSender();
             var userPosition = await CrossGeolocator.Current.GetLastKnownLocationAsync();
@@ -46,6 +46,21 @@ namespace WheresChris.Helpers
                 }
             }
             return selectedGroupMemberVms;
+        }
+
+        public static async Task<List<GroupMemberVm>> GetGroupMembers()
+        {
+            var userPosition = await CrossGeolocator.Current.GetLastKnownLocationAsync();
+            var userPhoneNumber = SettingsHelper.GetPhoneNumber();
+            var groupMemberVm = new GroupMemberVm()
+            {
+                Latitude = userPosition.Latitude,
+                Longitude = userPosition.Longitude,
+                PhoneNumber = userPhoneNumber
+            };
+            var locationSender = LocationSenderFactory.GetLocationSender();
+            var groupMembers = await locationSender.GetMembers(groupMemberVm);
+            return groupMembers;
         }
     }
 }

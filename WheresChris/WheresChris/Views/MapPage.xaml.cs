@@ -62,18 +62,11 @@ namespace WheresChris.Views
 
 	    private async void UpdateMap()
 	    {
-            var userPosition = await CrossGeolocator.Current.GetLastKnownLocationAsync();
-            var userPhoneNumber = SettingsHelper.GetPhoneNumber();
-            var groupMemberVm = new GroupMemberVm()
-            {
-                Latitude = userPosition.Latitude,
-                Longitude = userPosition.Longitude,
-                PhoneNumber = userPhoneNumber
-            };
-            var locationSender = LocationSenderFactory.GetLocationSender();
-	        var groupMembers = await locationSender.GetMembers(groupMemberVm);
+	        var groupMembers = await GroupActionsHelper.GetGroupMembers();
 	        UpdateMap(groupMembers);
 	    }
+
+
 
 	    private void UpdateMap(List<GroupMemberVm> groupMembers)
 	    {
