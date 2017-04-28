@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using CoreLocation;
+using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
 using StayTogether;
 using StayTogether.Classes;

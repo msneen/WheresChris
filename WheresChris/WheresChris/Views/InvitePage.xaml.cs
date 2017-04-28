@@ -7,12 +7,14 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Plugin.Geolocator;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using StayTogether;
 using StayTogether.Classes;
 using WheresChris.Helpers;
 using Plugin.Settings;
+using StayTogether.Group;
 #if __ANDROID__
 using StayTogether.Droid.Services;
 #endif
@@ -46,12 +48,26 @@ namespace WheresChris.Views
             ExpirationPicker.SelectedIndex = 0;
         }
 
-        public void StartGroup(object sender, EventArgs e)
+        public async void StartGroup(object sender, EventArgs e)
         {
             CrossSettings.Current.AddOrUpdateValue("nickname", Nickname.Text);
+            CrossSettings.Current.AddOrUpdateValue("phonenumber", PhoneNumber.Text);
 
+            var userPhoneNumber = SettingsHelper.GetPhoneNumber();//Todo:Save phone number to settings
+
+            var selectedGroupMemberVms = GetSelectedGroupMembers();
+
+            var selectedExpirationHours = ExpirationPicker.SelectedItem as ExpirationPickerViewModel;
+
+            var expirationHours = selectedExpirationHours?.Hours ?? 4;
+
+            await StartGroup(selectedGroupMemberVms, userPhoneNumber, expirationHours);
+        }
+
+        private List<GroupMemberVm> GetSelectedGroupMembers()
+        {
             var invitePageViewModel = BindingContext as InvitePageViewModel;
-            if (invitePageViewModel == null) return;
+            if (invitePageViewModel == null) return null;
             List<GroupMemberVm> selectedGroupMemberVms = new List<GroupMemberVm>();
             foreach (var item in invitePageViewModel.Items)
             {
@@ -64,19 +80,17 @@ namespace WheresChris.Views
                     });
                 }
             }
-            var selectedExpirationHours = ExpirationPicker.SelectedItem as ExpirationPickerViewModel;
+            return selectedGroupMemberVms;
+        }
 
-            var expirationHours = selectedExpirationHours?.Hours ?? 4;
-            if (selectedGroupMemberVms.Any())
-            {
-#if __ANDROID__
-                LocationSenderService.Instance.StartGroup(selectedGroupMemberVms, expirationHours);
-#endif
-#if __IOS__
-                AppDelegate.LocationManager.StartGroup(selectedGroupMemberVms, expirationHours);
-#endif
+        private static async Task StartGroup(List<GroupMemberVm> selectedGroupMemberVms, string userPhoneNumber, int expirationHours)
+        {
+            if (!selectedGroupMemberVms.Any()) return;
 
-            }
+            var locationSender = LocationSenderFactory.GetLocationSender();
+            var userPosition = await CrossGeolocator.Current.GetLastKnownLocationAsync();
+            var groupVm = GroupHelper.InitializeGroupVm(selectedGroupMemberVms, userPosition, userPhoneNumber, expirationHours);
+            await locationSender.StartGroup(groupVm);
         }
 
         protected override async void OnAppearing()
@@ -202,3 +216,9 @@ namespace WheresChris.Views
 
     }
 }
+//#if __ANDROID__
+//                LocationSenderService.Instance.StartGroup(selectedGroupMemberVms, expirationHours);
+//#endif
+//#if __IOS__
+//                AppDelegate.LocationManager.StartGroup(selectedGroupMemberVms, expirationHours);
+//#endif

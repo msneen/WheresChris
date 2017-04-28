@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Plugin.Geolocator;
 using StayTogether;
 using StayTogether.Classes;
 using WheresChris.Helpers;
@@ -33,12 +34,12 @@ namespace WheresChris.Views
         }
 
 
-	    private void InitializeMap()
+	    private async void InitializeMap()
 	    {
             try
             {
 #if __ANDROID__
-                var mapPosition = GetMapPosition();
+                var mapPosition = await GetMapPosition();
 
                 GroupMap.MoveToRegion(
                     MapSpan.FromCenterAndRadius(
@@ -49,21 +50,13 @@ namespace WheresChris.Views
 
 	    }
 
-	    private static Position GetMapPosition()
+	    private static async Task<Position> GetMapPosition()
 	    {
-	        Plugin.Geolocator.Abstractions.Position userPosition = new Plugin.Geolocator.Abstractions.Position();
-#if __ANDROID__
-	        userPosition = LocationSenderService.Instance.GetPosition();
-#endif
-#if __IOS__
-	        if (AppDelegate.LocationManager != null && AppDelegate.LocationManager.ClLocationManager != null)
-	        {
-	            userPosition = AppDelegate.LocationManager.GetPosition();
-	        }
-#endif
+	        var userPosition = await CrossGeolocator.Current.GetLastKnownLocationAsync();
+            
 	        if (userPosition == null) return new Position(32.7157, -117.1611);
 
-	        Xamarin.Forms.Maps.Position mapPosition = PositionConverter.Convert(userPosition);
+	        var mapPosition = PositionConverter.Convert(userPosition);
 	        return mapPosition;
 	    }
 
@@ -117,3 +110,12 @@ namespace WheresChris.Views
 	    }
 	}
 }
+//#if __ANDROID__
+//	        userPosition = LocationSenderService.Instance.GetPosition();
+//#endif
+//#if __IOS__
+//	        if (AppDelegate.LocationManager != null && AppDelegate.LocationManager.ClLocationManager != null)
+//	        {
+//	            userPosition = AppDelegate.LocationManager.GetPosition();
+//	        }
+//#endif
