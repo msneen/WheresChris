@@ -50,10 +50,16 @@ namespace WheresChris.Views
 
         public async void StartGroup(object sender, EventArgs e)
         {
-            CrossSettings.Current.AddOrUpdateValue("nickname", Nickname.Text);
-            CrossSettings.Current.AddOrUpdateValue("phonenumber", PhoneNumber.Text);
-
-            var userPhoneNumber = SettingsHelper.GetPhoneNumber();//Todo:Save phone number to settings
+            SettingsHelper.SaveNickname(Nickname.Text);
+            
+            var userPhoneNumber = SettingsHelper.GetPhoneNumber();
+            if (string.IsNullOrWhiteSpace(userPhoneNumber))
+            {
+                if (!string.IsNullOrWhiteSpace(PhoneNumber.Text))
+                {
+                    userPhoneNumber = SettingsHelper.SavePhoneNumber(PhoneNumber.Text);
+                }
+            }
 
             var selectedGroupMemberVms = GetSelectedGroupMembers();
 
@@ -86,6 +92,8 @@ namespace WheresChris.Views
         private static async Task StartGroup(List<GroupMemberVm> selectedGroupMemberVms, string userPhoneNumber, int expirationHours)
         {
             if (!selectedGroupMemberVms.Any()) return;
+            if (string.IsNullOrWhiteSpace(userPhoneNumber)) return;
+            if (expirationHours < 2) return;
 
             var locationSender = LocationSenderFactory.GetLocationSender();
             var userPosition = await CrossGeolocator.Current.GetLastKnownLocationAsync();

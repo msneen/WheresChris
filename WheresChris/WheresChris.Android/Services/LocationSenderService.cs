@@ -83,6 +83,7 @@ namespace StayTogether.Droid.Services
             return notification;
         }
 
+        //Todo: Delete me.  Replaced by WheresChris.InvitePage.xaml.cs.StartGroup, or whereever it's been refactored to
         public async void StartGroup(List<GroupMemberVm> contactList, int expireInHours)
         {
             var position = GetPosition();

@@ -117,6 +117,7 @@ namespace WheresChris.iOS.Classes
             return position;
         }
 
+        //Todo: Delete me.  Replaced by WheresChris.InvitePage.xaml.cs.StartGroup, or whereever it's been refactored to
         public async void StartGroup(List<GroupMemberVm> selectedContacts, int expireInHours)
         {
 

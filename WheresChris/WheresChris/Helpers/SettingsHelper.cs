@@ -29,5 +29,23 @@ namespace WheresChris.Helpers
             return string.Empty;
 #endif
         }
+
+        public static string SavePhoneNumber(string phoneNumber)
+        {
+            var cleanPhone = ContactsHelper.CleanPhoneNumber(phoneNumber);
+            if (string.IsNullOrWhiteSpace(cleanPhone)) return string.Empty;
+
+            CrossSettings.Current.AddOrUpdateValue("phonenumber", cleanPhone);
+            return cleanPhone;
+        }
+
+        public static string SaveNickname(string nickname)
+        {
+            
+            if (string.IsNullOrWhiteSpace(nickname.Trim())) return "";
+
+            CrossSettings.Current.AddOrUpdateValue("nickname", nickname.Trim());
+            return nickname.Trim();
+        }
     }
 }
