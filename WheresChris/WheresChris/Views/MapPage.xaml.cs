@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Plugin.Geolocator;
 using StayTogether;
@@ -11,12 +10,12 @@ using WheresChris.Views.GroupViews;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.Xaml;
-#if __ANDROID__
-using StayTogether.Droid.Services;
-#endif
-#if __IOS__
-using WheresChris.iOS;
-#endif
+//#if __ANDROID__
+//using StayTogether.Droid.Services;
+//#endif
+//#if __IOS__
+//using WheresChris.iOS;
+//#endif
 
 namespace WheresChris.Views
 {
@@ -44,6 +43,7 @@ namespace WheresChris.Views
                 GroupMap.MoveToRegion(
                     MapSpan.FromCenterAndRadius(
                         mapPosition, Distance.FromMiles(1)));
+                UpdateMap();
 #endif
             }
             catch (Exception ex) { }
@@ -60,9 +60,18 @@ namespace WheresChris.Views
 	        return mapPosition;
 	    }
 
-	    private void UpdateMap(GroupVm groupVm)
+	    private async void UpdateMap()
 	    {
-	        var groupMembers = groupVm.GroupMembers;
+            var userPosition = await CrossGeolocator.Current.GetLastKnownLocationAsync();
+            var userPhoneNumber = SettingsHelper.GetPhoneNumber();
+            var groupMemberVm = new GroupMemberVm()
+            {
+                Latitude = userPosition.Latitude,
+                Longitude = userPosition.Longitude,
+                PhoneNumber = userPhoneNumber
+            };
+            var locationSender = LocationSenderFactory.GetLocationSender();
+	        var groupMembers = await locationSender.GetMembers(groupMemberVm);
 	        UpdateMap(groupMembers);
 	    }
 

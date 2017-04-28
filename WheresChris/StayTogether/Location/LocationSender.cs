@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR.Client;
 using Plugin.Geolocator;
@@ -255,6 +256,11 @@ namespace StayTogether
             }
             _chatHubProxy.Invoke("updatePosition", groupMemberVm);
         }
+
+	    public async Task<List<GroupMemberVm>> GetMembers(GroupMemberVm groupMemberVm)
+	    {
+	        return await _chatHubProxy.Invoke<List<GroupMemberVm>>("GetGroupMembers", groupMemberVm);
+	    }
 
 
         private void GetNickname()
