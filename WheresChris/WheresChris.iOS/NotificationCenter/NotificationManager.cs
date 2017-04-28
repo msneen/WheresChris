@@ -20,25 +20,23 @@ namespace StayTogether.iOS.NotificationCenter
         public static void InitializeNotifications(NSDictionary launchOptions, UIWindow window)
         {
             // check for a notification
-            if (launchOptions != null)
-            {
-                // check for a local notification
-                if (launchOptions.ContainsKey(UIApplication.LaunchOptionsLocalNotificationKey))
-                {
-                    var localNotification =
-                        launchOptions[UIApplication.LaunchOptionsLocalNotificationKey] as UILocalNotification;
-                    if (localNotification == null) return;
+            if (launchOptions == null) return;
+            // check for a local notification
+            if (!launchOptions.ContainsKey(UIApplication.LaunchOptionsLocalNotificationKey)) return;
 
-                    var okayAlertController = UIAlertController.Create(localNotification.AlertAction,
-                        localNotification.AlertBody, UIAlertControllerStyle.Alert);
-                    okayAlertController.AddAction(UIAlertAction.Create("OK", UIAlertActionStyle.Default, null));
 
-                    window.RootViewController.PresentViewController(okayAlertController, true, null);
+            var localNotification =
+                launchOptions[UIApplication.LaunchOptionsLocalNotificationKey] as UILocalNotification;
+            if (localNotification == null) return;
 
-                    // reset our badge
-                    UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
-                }
-            }
+            var okayAlertController = UIAlertController.Create(localNotification.AlertAction,
+                localNotification.AlertBody, UIAlertControllerStyle.Alert);
+            okayAlertController.AddAction(UIAlertAction.Create("OK", UIAlertActionStyle.Default, null));
+
+            window.RootViewController.PresentViewController(okayAlertController, true, null);
+
+            // reset our badge
+            UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
         }
     }
 }

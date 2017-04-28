@@ -15,6 +15,12 @@ namespace WheresChris.iOS
 	    public static LocationManager LocationManager = null;
         private bool _eventsInitialized;
 
+        public override UIWindow Window
+        {
+            get;
+            set;
+        }
+
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
 			global::Xamarin.Forms.Forms.Init();
