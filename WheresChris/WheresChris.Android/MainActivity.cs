@@ -46,11 +46,10 @@ namespace WheresChris.Droid
             Manifest.Permission.WriteExternalStorage
         };
 
+        private Bundle _storedBundle;
         protected override void OnCreate(Bundle bundle)
         {
-            TabLayoutResource = Resource.Layout.Tabbar;
-            ToolbarResource = Resource.Layout.Toolbar;
-
+            _storedBundle = bundle;
             base.OnCreate(bundle);
 
             
@@ -59,14 +58,20 @@ namespace WheresChris.Droid
             MobileCenter.Start("14162ca6-0c56-4822-9d95-f265b524bd98",    //f9f28a5e-6d54-4a4a-a1b4-e51f8da8e8c7
                 typeof(Analytics), typeof(Crashes));
 
-            global::Xamarin.Forms.Forms.Init(this, bundle);
-            Xamarin.FormsMaps.Init(this, bundle);
 
-            RequestPermissions();
-                     
+
+            TryToStartUi();
+        }
+
+        private void TryToStartUi()
+        {
             if (AppHasRequiredPermissions())
             {
                 StartUI();
+            }
+            else
+            {
+                RequestPermissions();
             }
         }
 
@@ -75,7 +80,10 @@ namespace WheresChris.Droid
         {
             if (_uiStarted) return;
 
-
+            TabLayoutResource = Resource.Layout.Tabbar;
+            ToolbarResource = Resource.Layout.Toolbar;
+            global::Xamarin.Forms.Forms.Init(this, _storedBundle);
+            Xamarin.FormsMaps.Init(this, _storedBundle);
             StartService(new Intent(this, typeof(LocationSenderService)));
             LoadApplication(new App());
             _uiStarted = true;
@@ -160,14 +168,7 @@ namespace WheresChris.Droid
         {
             PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
-            if (AppHasRequiredPermissions())
-            {
-                StartUI();
-            }
-            else
-            {
-                RequestPermissions();
-            }
+            TryToStartUi();
         }
 
         public bool AppHasRequiredPermissions()
