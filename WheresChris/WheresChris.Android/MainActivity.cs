@@ -53,20 +53,19 @@ namespace WheresChris.Droid
 
             base.OnCreate(bundle);
 
-            global::Xamarin.Forms.Forms.Init(this, bundle);
+            
 
             MobileCenter.LogLevel = Microsoft.Azure.Mobile.LogLevel.Verbose;
             MobileCenter.Start("14162ca6-0c56-4822-9d95-f265b524bd98",    //f9f28a5e-6d54-4a4a-a1b4-e51f8da8e8c7
                 typeof(Analytics), typeof(Crashes));
 
             RequestPermissions();
-
-            Xamarin.FormsMaps.Init(this, bundle);
-
-            StartService(new Intent(this, typeof(LocationSenderService)));
-
+                     
             if (AppHasRequiredPermissions())
             {
+                global::Xamarin.Forms.Forms.Init(this, bundle);
+                Xamarin.FormsMaps.Init(this, bundle);
+                StartService(new Intent(this, typeof(LocationSenderService)));
                 StartUI();
             }
         }
@@ -133,26 +132,26 @@ namespace WheresChris.Droid
         private void RequestPermissions()
         {
             //Refactor me
-            if (HasContactsPermission())
+            if (!HasContactsPermission())
             {
                 ActivityCompat.RequestPermissions(this, PERMISSIONS_CONTACT, REQUEST_CONTACTS);
             }
-            if (HasLocationPermission())
+            if (!HasLocationPermission())
             {
                 ActivityCompat.RequestPermissions(this, PERMISSIONS_LOCATION, REQUEST_LOCATION);
             }
-            if (HasPhonePermission())
+            if (!HasPhonePermission())
             {
                 ActivityCompat.RequestPermissions(this, PERMISSIONS_PHONE, REQUEST_PHONE);
             }
-            if (HasSMSPermission())
-            {
-                ActivityCompat.RequestPermissions(this, PERMISSIONS_SMS, REQUEST_SMS);
-            }
-            if (HasStoragePermission())
-            {
-                ActivityCompat.RequestPermissions(this, PERMISSIONS_STORAGE, REQUEST_STORAGE);
-            }
+            //if (HasSMSPermission())
+            //{
+            //    ActivityCompat.RequestPermissions(this, PERMISSIONS_SMS, REQUEST_SMS);
+            //}
+            //if (HasStoragePermission())
+            //{
+            //    ActivityCompat.RequestPermissions(this, PERMISSIONS_STORAGE, REQUEST_STORAGE);
+            //}
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
@@ -162,6 +161,10 @@ namespace WheresChris.Droid
             if (AppHasRequiredPermissions())
             {
                 StartUI();
+            }
+            else
+            {
+                RequestPermissions();
             }
         }
 
