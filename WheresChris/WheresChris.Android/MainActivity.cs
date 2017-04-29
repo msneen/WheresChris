@@ -1,7 +1,9 @@
-﻿using Android.App;
+﻿using Android;
+using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Android.Support.V4.App;
 using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
@@ -17,6 +19,12 @@ namespace WheresChris.Droid
         public bool IsBound;
         private LocationSenderServiceConnection _locationSenderServiceConnection;
 
+        private static readonly int REQUEST_CONTACTS = 1;
+        private static string[] PERMISSIONS_CONTACT = {
+            Manifest.Permission.ReadContacts,
+            Manifest.Permission.WriteContacts
+        };
+
         protected override void OnCreate(Bundle bundle)
         {
             TabLayoutResource = Resource.Layout.Tabbar;
@@ -27,14 +35,24 @@ namespace WheresChris.Droid
             global::Xamarin.Forms.Forms.Init(this, bundle);
 
             MobileCenter.LogLevel = Microsoft.Azure.Mobile.LogLevel.Verbose;
-            MobileCenter.Start("f9f28a5e-6d54-4a4a-a1b4-e51f8da8e8c7",
+            MobileCenter.Start("14162ca6-0c56-4822-9d95-f265b524bd98",    //f9f28a5e-6d54-4a4a-a1b4-e51f8da8e8c7
                 typeof(Analytics), typeof(Crashes));
+
+            RequestPermissions();
 
             Xamarin.FormsMaps.Init(this, bundle);
 
             StartService(new Intent(this, typeof(LocationSenderService)));
 
             LoadApplication(new App());
+        }
+
+        private void RequestPermissions()
+        {
+            if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.ReadContacts) != (int) Permission.Granted)
+            {
+                ActivityCompat.RequestPermissions(this, PERMISSIONS_CONTACT, REQUEST_CONTACTS);
+            }
         }
 
         public void GroupJoined()
