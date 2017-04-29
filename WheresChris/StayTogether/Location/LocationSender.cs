@@ -42,8 +42,8 @@ namespace StayTogether
 	    public void InitializeSignalRAsync()
         {
             // Connect to the server
-            //_hubConnection = new HubConnection("https://staytogetherserver.azurewebsites.net/");//mike
-            _hubConnection = new HubConnection("http://162.231.59.41/StayTogetherServer/");//mike
+            _hubConnection = new HubConnection("https://staytogetherserver.azurewebsites.net/");//mike
+            //_hubConnection = new HubConnection("http://162.231.59.41/StayTogetherServer/");//mike
             _hubConnection.Headers.Add("AuthToken", "x0y2!tJyHR%$Sip@*%amaGxvs");
 
             // Create a proxy to the 'ChatHub' SignalR Hub
