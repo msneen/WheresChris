@@ -65,7 +65,19 @@ namespace WheresChris.Droid
 
             StartService(new Intent(this, typeof(LocationSenderService)));
 
+            if (AppHasRequiredPermissions())
+            {
+                StartUI();
+            }
+        }
+
+        private bool _uiStarted = false;
+        private void StartUI()
+        {
+            if (_uiStarted != false) return;
+
             LoadApplication(new App());
+            _uiStarted = true;
         }
 
 
@@ -121,23 +133,23 @@ namespace WheresChris.Droid
         private void RequestPermissions()
         {
             //Refactor me
-            if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.ReadContacts) != (int)Permission.Granted)
+            if (HasContactsPermission())
             {
                 ActivityCompat.RequestPermissions(this, PERMISSIONS_CONTACT, REQUEST_CONTACTS);
             }
-            if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.AccessFineLocation) != (int)Permission.Granted)
+            if (HasLocationPermission())
             {
                 ActivityCompat.RequestPermissions(this, PERMISSIONS_LOCATION, REQUEST_LOCATION);
             }
-            if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.ReadPhoneState) != (int)Permission.Granted)
+            if (HasPhonePermission())
             {
                 ActivityCompat.RequestPermissions(this, PERMISSIONS_PHONE, REQUEST_PHONE);
             }
-            if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.SendSms) != (int)Permission.Granted)
+            if (HasSMSPermission())
             {
                 ActivityCompat.RequestPermissions(this, PERMISSIONS_SMS, REQUEST_SMS);
             }
-            if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.WriteExternalStorage) != (int)Permission.Granted)
+            if (HasStoragePermission())
             {
                 ActivityCompat.RequestPermissions(this, PERMISSIONS_STORAGE, REQUEST_STORAGE);
             }
@@ -146,6 +158,46 @@ namespace WheresChris.Droid
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
         {
             PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+
+            if (AppHasRequiredPermissions())
+            {
+                StartUI();
+            }
+        }
+
+        public bool AppHasRequiredPermissions()
+        {
+            if (!HasContactsPermission()) return false;
+            if (!HasLocationPermission()) return false;
+            //if (!HasPhonePermission()) return false;
+            return HasPhonePermission();
+        }
+
+        public bool HasContactsPermission()
+        {
+            return HasPermission(Manifest.Permission.ReadContacts);
+        }
+
+        public bool HasLocationPermission()
+        {
+            return HasPermission(Manifest.Permission.AccessFineLocation);
+        }
+        public bool HasPhonePermission()
+        {
+            return HasPermission(Manifest.Permission.ReadPhoneState);
+        }
+        public bool HasSMSPermission()
+        {
+            return HasPermission(Manifest.Permission.SendSms);
+        }
+        public bool HasStoragePermission()
+        {
+            return HasPermission(Manifest.Permission.WriteExternalStorage);
+        }
+        private bool HasPermission(string permission)
+        {
+            return ActivityCompat.CheckSelfPermission(this, permission) ==
+                   (int)Permission.Granted;
         }
     }
 }
