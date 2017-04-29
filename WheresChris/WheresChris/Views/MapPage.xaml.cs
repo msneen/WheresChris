@@ -97,13 +97,13 @@ namespace WheresChris.Views
 	    private async void AddMembersButton_OnClicked(object sender, EventArgs e)
 	    {
 	        var addMemberPage = new AddMemberPage();
-	        await Navigation.PushModalAsync(addMemberPage);
+	        await Navigation.PushAsync(addMemberPage);
 	    }
 
 	    private async void ViewMembersButton_OnClicked(object sender, EventArgs e)
 	    {
 	        var memberPage = new MemberPage();
-	        await Navigation.PushModalAsync(memberPage);
+	        await Navigation.PushAsync(memberPage);
 	    }
 
 	    private async void LeaveGroupButton_OnClicked(object sender, EventArgs e)
