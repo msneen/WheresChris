@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Plugin.Geolocator;
+using Plugin.Permissions;
+using Plugin.Permissions.Abstractions;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using StayTogether;
@@ -78,9 +80,17 @@ namespace WheresChris.Views
 
         protected override async void OnAppearing()
         {
-            await ((InvitePageViewModel)BindingContext).InitializeContacts();
-            ContactsListView.ItemsSource = ((InvitePageViewModel)BindingContext).Items;
-
+            var status = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Contacts);
+            if (status != PermissionStatus.Granted)
+            {
+                var results = await CrossPermissions.Current.RequestPermissionsAsync(new[] {Permission.Contacts});
+                status = results[Permission.Contacts];
+            }
+            if (status == PermissionStatus.Granted)
+            {
+                await ((InvitePageViewModel) BindingContext).InitializeContacts();
+                ContactsListView.ItemsSource = ((InvitePageViewModel) BindingContext).Items;
+            }
             PhoneNumber.Text = SettingsHelper.GetPhoneNumber();
             Nickname.Text = CrossSettings.Current.GetValueOrDefault<string>("nickname");
             

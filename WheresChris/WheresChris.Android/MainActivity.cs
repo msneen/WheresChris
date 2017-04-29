@@ -19,11 +19,7 @@ namespace WheresChris.Droid
         public bool IsBound;
         private LocationSenderServiceConnection _locationSenderServiceConnection;
 
-        private static readonly int REQUEST_CONTACTS = 1;
-        private static readonly int REQUEST_LOCATION = 2;
-        private static readonly int REQUEST_PHONE= 3;
-        private static readonly int REQUEST_SMS = 4;
-        private static readonly int REQUEST_STORAGE = 4;
+        private static readonly int REQUEST_LOCATION = 1;
 
         private static string[] PERMISSIONS_CONTACT = {
             Manifest.Permission.ReadContacts,
@@ -33,41 +29,29 @@ namespace WheresChris.Droid
             Manifest.Permission.AccessCoarseLocation,
             Manifest.Permission.AccessFineLocation
         };
-        private static string[] PERMISSIONS_PHONE = {
-            Manifest.Permission.CallPhone,
-            Manifest.Permission.ReadPhoneState
-        };
-        private static string[] PERMISSIONS_SMS= {
-            Manifest.Permission.WriteSms,
-            Manifest.Permission.SendSms
-        };
-        private static string[] PERMISSIONS_STORAGE = {
-            Manifest.Permission.ReadExternalStorage,
-            Manifest.Permission.WriteExternalStorage
-        };
 
-        private Bundle _storedBundle;
         protected override void OnCreate(Bundle bundle)
         {
-            _storedBundle = bundle;
             base.OnCreate(bundle);
-
-            
-
+           
             MobileCenter.LogLevel = Microsoft.Azure.Mobile.LogLevel.Verbose;
             MobileCenter.Start("14162ca6-0c56-4822-9d95-f265b524bd98",    //f9f28a5e-6d54-4a4a-a1b4-e51f8da8e8c7
                 typeof(Analytics), typeof(Crashes));
 
+            TabLayoutResource = Resource.Layout.Tabbar;
+            ToolbarResource = Resource.Layout.Toolbar;
+            global::Xamarin.Forms.Forms.Init(this, bundle);
+            Xamarin.FormsMaps.Init(this, bundle);
+            LoadApplication(new App());
 
-
-            TryToStartUi();
+            TryToStartLocationService();
         }
 
-        private void TryToStartUi()
+        private void TryToStartLocationService()
         {
-            if (AppHasRequiredPermissions())
+            if (HasLocationPermission())
             {
-                StartUI();
+                StartLocationService();
             }
             else
             {
@@ -75,18 +59,14 @@ namespace WheresChris.Droid
             }
         }
 
-        private bool _uiStarted = false;
-        private void StartUI()
+        private bool _locationServiceStarted = false;
+        private void StartLocationService()
         {
-            if (_uiStarted) return;
+            if (_locationServiceStarted) return;
 
-            TabLayoutResource = Resource.Layout.Tabbar;
-            ToolbarResource = Resource.Layout.Toolbar;
-            global::Xamarin.Forms.Forms.Init(this, _storedBundle);
-            Xamarin.FormsMaps.Init(this, _storedBundle);
             StartService(new Intent(this, typeof(LocationSenderService)));
-            LoadApplication(new App());
-            _uiStarted = true;
+            
+            _locationServiceStarted = true;
         }
 
 
@@ -141,64 +121,22 @@ namespace WheresChris.Droid
 
         private void RequestPermissions()
         {
-            //Refactor me
-            if (!HasContactsPermission())
-            {
-                ActivityCompat.RequestPermissions(this, PERMISSIONS_CONTACT, REQUEST_CONTACTS);
-            }
             if (!HasLocationPermission())
             {
                 ActivityCompat.RequestPermissions(this, PERMISSIONS_LOCATION, REQUEST_LOCATION);
             }
-            if (!HasPhonePermission())
-            {
-                ActivityCompat.RequestPermissions(this, PERMISSIONS_PHONE, REQUEST_PHONE);
-            }
-            //if (HasSMSPermission())
-            //{
-            //    ActivityCompat.RequestPermissions(this, PERMISSIONS_SMS, REQUEST_SMS);
-            //}
-            //if (HasStoragePermission())
-            //{
-            //    ActivityCompat.RequestPermissions(this, PERMISSIONS_STORAGE, REQUEST_STORAGE);
-            //}
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
         {
             PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
-            TryToStartUi();
-        }
-
-        public bool AppHasRequiredPermissions()
-        {
-            if (!HasContactsPermission()) return false;
-            if (!HasLocationPermission()) return false;
-            //if (!HasPhonePermission()) return false;
-            return HasPhonePermission();
-        }
-
-        public bool HasContactsPermission()
-        {
-            return HasPermission(Manifest.Permission.ReadContacts);
+            TryToStartLocationService();
         }
 
         public bool HasLocationPermission()
         {
             return HasPermission(Manifest.Permission.AccessFineLocation);
-        }
-        public bool HasPhonePermission()
-        {
-            return HasPermission(Manifest.Permission.ReadPhoneState);
-        }
-        public bool HasSMSPermission()
-        {
-            return HasPermission(Manifest.Permission.SendSms);
-        }
-        public bool HasStoragePermission()
-        {
-            return HasPermission(Manifest.Permission.WriteExternalStorage);
         }
         private bool HasPermission(string permission)
         {
