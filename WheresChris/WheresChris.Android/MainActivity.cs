@@ -13,16 +13,37 @@ using StayTogether.Droid.Services;
 namespace WheresChris.Droid
 {
     [Activity(Label = "WheresChris.Android", Theme = "@style/MyTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity, GroupJoinedCallback
+    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         public LocationSenderBinder Binder;
         public bool IsBound;
         private LocationSenderServiceConnection _locationSenderServiceConnection;
 
         private static readonly int REQUEST_CONTACTS = 1;
+        private static readonly int REQUEST_LOCATION = 2;
+        private static readonly int REQUEST_PHONE= 3;
+        private static readonly int REQUEST_SMS = 4;
+        private static readonly int REQUEST_STORAGE = 4;
+
         private static string[] PERMISSIONS_CONTACT = {
             Manifest.Permission.ReadContacts,
             Manifest.Permission.WriteContacts
+        };
+        private static string[] PERMISSIONS_LOCATION= {
+            Manifest.Permission.AccessCoarseLocation,
+            Manifest.Permission.AccessFineLocation
+        };
+        private static string[] PERMISSIONS_PHONE = {
+            Manifest.Permission.CallPhone,
+            Manifest.Permission.ReadPhoneState
+        };
+        private static string[] PERMISSIONS_SMS= {
+            Manifest.Permission.WriteSms,
+            Manifest.Permission.SendSms
+        };
+        private static string[] PERMISSIONS_STORAGE = {
+            Manifest.Permission.ReadExternalStorage,
+            Manifest.Permission.WriteExternalStorage
         };
 
         protected override void OnCreate(Bundle bundle)
@@ -47,24 +68,6 @@ namespace WheresChris.Droid
             LoadApplication(new App());
         }
 
-        private void RequestPermissions()
-        {
-            if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.ReadContacts) != (int) Permission.Granted)
-            {
-                ActivityCompat.RequestPermissions(this, PERMISSIONS_CONTACT, REQUEST_CONTACTS);
-            }
-        }
-
-        public void GroupJoined()
-        {
-            
-        }
-
-        public void GroupDisbanded()
-        {
-            //Finish();//Todo: figure out what to do here
-            //Notes from StayTogether:  Eventually keep running and reshow the Start Group Button and Contacts List
-        }
 
         protected void BindToService()
         {
@@ -103,15 +106,6 @@ namespace WheresChris.Droid
             BindToService();
             var locationSenderService = Binder?.GetLocationSenderService();
             var locationSender = locationSenderService?.LocationSender;
-            if (locationSender != null)
-            {
-                inAGroup = locationSender.InAGroup;
-            }
-
-            if (inAGroup)
-            {
-                GroupJoined();
-            }
         }
 
         protected override void OnDestroy()
@@ -122,6 +116,31 @@ namespace WheresChris.Droid
             Binder?.GetLocationSenderService()?.StopSelf();
             Process.KillProcess(Process.MyPid());
             System.Environment.Exit(0);
+        }
+
+        private void RequestPermissions()
+        {
+            //Refactor me
+            if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.ReadContacts) != (int)Permission.Granted)
+            {
+                ActivityCompat.RequestPermissions(this, PERMISSIONS_CONTACT, REQUEST_CONTACTS);
+            }
+            if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.AccessFineLocation) != (int)Permission.Granted)
+            {
+                ActivityCompat.RequestPermissions(this, PERMISSIONS_LOCATION, REQUEST_LOCATION);
+            }
+            if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.ReadPhoneState) != (int)Permission.Granted)
+            {
+                ActivityCompat.RequestPermissions(this, PERMISSIONS_PHONE, REQUEST_PHONE);
+            }
+            if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.SendSms) != (int)Permission.Granted)
+            {
+                ActivityCompat.RequestPermissions(this, PERMISSIONS_SMS, REQUEST_SMS);
+            }
+            if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.WriteExternalStorage) != (int)Permission.Granted)
+            {
+                ActivityCompat.RequestPermissions(this, PERMISSIONS_STORAGE, REQUEST_STORAGE);
+            }
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)

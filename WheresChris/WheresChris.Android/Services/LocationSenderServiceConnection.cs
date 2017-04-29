@@ -23,7 +23,6 @@ namespace StayTogether.Droid.Services
                 _activity.Binder = locationSenderBinder;
                 _activity.IsBound = true;
                 _locationSenderService = locationSenderBinder.GetLocationSenderService();
-                _locationSenderService.SetGroupJoinedCallback(_activity);
             }
         }
 
