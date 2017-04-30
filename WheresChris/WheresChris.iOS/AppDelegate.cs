@@ -5,6 +5,7 @@ using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
 using StayTogether.iOS.NotificationCenter;
 using UIKit;
+using WheresChris.Helpers;
 using WheresChris.iOS.Classes;
 
 namespace WheresChris.iOS
@@ -30,8 +31,12 @@ namespace WheresChris.iOS
 
             Xamarin.FormsMaps.Init();
 
+            var phoneNumber = SettingsHelper.GetPhoneNumber();
+            if (string.IsNullOrWhiteSpace(phoneNumber)) return base.FinishedLaunching(app, options);
+
             LocationManager = new LocationManager();
             InitializeEvents(LocationManager);
+            LocationManager.UserPhoneNumber = phoneNumber;
             LocationManager.StartLocationUpdates();
             NotificationManager.RegisterNotifications(app);
             NotificationManager.InitializeNotifications(options, Window);

@@ -80,7 +80,7 @@ namespace WheresChris.iOS.Classes
 
                 _clLocationManager?.StartUpdatingLocation();
 
-                if (UserPhoneNumber != null && UserPhoneNumber.Length > 10)
+                if (UserPhoneNumber != null && UserPhoneNumber.Length >= 10)
                 {
                     InitializeLocationSender();
                 }

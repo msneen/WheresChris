@@ -59,6 +59,8 @@ namespace WheresChris.Helpers
                 PhoneNumber = userPhoneNumber
             };
             var locationSender = LocationSenderFactory.GetLocationSender();
+            if(locationSender == null) return new List<GroupMemberVm>();
+
             var groupMembers = await locationSender.GetMembers(groupMemberVm);
             return groupMembers;
         }
