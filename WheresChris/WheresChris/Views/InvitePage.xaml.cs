@@ -72,10 +72,17 @@ namespace WheresChris.Views
             var expirationHours = selectedExpirationHours?.Hours ?? 4;
 
             await GroupActionsHelper.StartGroup(selectedGroupMemberVms, userPhoneNumber, expirationHours);
+
+
+            SetFormEnabled(false);
         }
 
-
-
+        private void SetFormEnabled(bool isSelected)
+        {
+            InviteButton.IsEnabled = isSelected;
+            ExpirationPicker.IsEnabled = isSelected;
+            ContactsListView.IsEnabled = isSelected;
+        }
 
 
         protected override async void OnAppearing()
