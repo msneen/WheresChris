@@ -8,9 +8,7 @@
             ItemSelected="Handle_ItemSelected"
             HasUnevenRows="true"
             IsPullToRefreshEnabled="true"
-            CachingStrategy="RecycleElement"
-            IsRefreshing="{Binding IsBusy, Mode=OneWay}"
-            RefreshCommand="{Binding RefreshDataCommand}">
+            CachingStrategy="RecycleElement">
     <ListView.Header>
       <StackLayout Padding="10" 
                    Orientation="Horizontal"

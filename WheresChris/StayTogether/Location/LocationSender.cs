@@ -7,6 +7,7 @@ using Plugin.Geolocator.Abstractions;
 using Plugin.LocalNotifications;
 using Plugin.Settings;
 using StayTogether.Classes;
+using StayTogether.Models;
 
 namespace StayTogether
 {
@@ -131,16 +132,31 @@ namespace StayTogether
             OnGroupDisbanded?.Invoke(this, new EventArgs());
         }
 
+        private readonly InvitationList _invitationList = new InvitationList();
         private void OnGroupInvitation(string phoneNumber, string name)
         {
+            // TODO: consider cleaning phoneNumber
             if (phoneNumber == _phoneNumber) return;//don't invite myself to a group
 
             OnGroupInvitationReceived?.Invoke(this, new InvitedEventArgs
             {
                 Name = name,
-                GroupId = phoneNumber
+                GroupId =   phoneNumber
+            });
+
+            _invitationList.AddInvitation(new InvitationVm
+            {
+                Name = name,
+                PhoneNumber = phoneNumber,
+                ReceivedTime = DateTime.Now
             });
         }
+
+	    public InvitationList GetInvitations(int hours = 3)
+	    {
+	        _invitationList.Clean();
+	        return _invitationList;
+	    }
 
         public void UpdateGroupId(string id)
 	    {
@@ -312,14 +328,5 @@ namespace StayTogether
         public string Name { get; set; }
         public string PhoneNumber { get; set; }
     }
-
-    //public class LeftEventArgs : MemberMinimalEventArgs
-    //{
-    //}
-
-    //public class MemberAlreadyInGroupEventArgs : MemberMinimalEventArgs
-    //{
-    //}
-
 }
 

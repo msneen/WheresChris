@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using StayTogether;
 using StayTogether.Classes;
 using WheresChris.Helpers;
@@ -24,16 +19,13 @@ namespace WheresChris.Views.GroupViews
             BindingContext = new MemberPageViewModel();
         }
 
-
         private async void RefreshButton_OnClicked(object sender, EventArgs e)
         {
             await ((MemberPageViewModel) BindingContext).RefreshMembers();
         }
     }
 
-
-
-    class MemberPageViewModel : INotifyPropertyChanged
+    internal class MemberPageViewModel
     {
         public ObservableCollection<ContactDisplayItemVm> Items { get; }
 
@@ -48,7 +40,7 @@ namespace WheresChris.Views.GroupViews
             UpdateGroupMembers(groupMembers);
         }
 
-        private void UpdateGroupMembers(List<GroupMemberVm> groupMembers)
+        private void UpdateGroupMembers(IEnumerable<GroupMemberVm> groupMembers)
         {
             Items.Clear();
             foreach (var groupMemberVm in groupMembers)
@@ -60,11 +52,5 @@ namespace WheresChris.Views.GroupViews
                 Items.Add(item);
             }
         }
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        void OnPropertyChanged([CallerMemberName]string propertyName = "") =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
     }
 }

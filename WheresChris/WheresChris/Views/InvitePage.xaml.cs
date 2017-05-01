@@ -114,6 +114,7 @@ namespace WheresChris.Views
 
     class InvitePageViewModel : INotifyPropertyChanged
     {
+        public string Title { get; set; }
         public ObservableCollection<ContactDisplayItemVm> Items { get; set; }
         //public ObservableCollection<Grouping<string, Item>> ItemsGrouped { get; }
 

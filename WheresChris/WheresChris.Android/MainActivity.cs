@@ -50,14 +50,14 @@ namespace WheresChris.Droid
             ToolbarResource = Resource.Layout.Toolbar;
             global::Xamarin.Forms.Forms.Init(this, bundle);
             Xamarin.FormsMaps.Init(this, bundle);
-            LoadApplication(new App());
 
             TryToStartLocationService();
+            LoadApplication(new App());
         }
 
         private void TryToStartLocationService()
         {
-            if ((int)Build.VERSION.SdkInt < 23 || HasLocationPermission())
+            if (/*(int)Build.VERSION.SdkInt < 23 || */HasLocationPermission())
             {
                 StartLocationService();
             }
@@ -112,9 +112,8 @@ namespace WheresChris.Droid
         {
             base.OnResume();
             var inAGroup = false;
+            Binder?.GetLocationSenderService()?.StopForeground();
             BindToService();
-            var locationSenderService = Binder?.GetLocationSenderService();
-            var locationSender = locationSenderService?.LocationSender;
         }
 
         protected override void OnDestroy()

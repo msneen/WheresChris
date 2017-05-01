@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using XLabs;
 
 namespace WheresChris.Views
 {
@@ -17,7 +18,7 @@ namespace WheresChris.Views
     {
         public JoinPage()
         {
-			InitializeComponent ();
+            InitializeComponent();
             BindingContext = new JoinPageViewModel();
         }
 
@@ -29,88 +30,34 @@ namespace WheresChris.Views
             if (e.SelectedItem == null)
                 return;
 
-            await DisplayAlert("Selected", e.SelectedItem.ToString(), "OK");
+            //await DisplayAlert("Selected", e.SelectedItem.ToString(), "OK");
 
             //Deselect Item
             ((ListView)sender).SelectedItem = null;
         }
     }
 
-
-
-    class JoinPageViewModel : INotifyPropertyChanged
+    class JoinPageViewModel
     {
-        public ObservableCollection<Item> Items { get; }
-        public ObservableCollection<Grouping<string, Item>> ItemsGrouped { get; }
+        public ObservableCollection<ContactDisplayItemVm> Items { get; }
 
         public JoinPageViewModel()
         {
-            Items = new ObservableCollection<Item>(new[]
-            {
-                new Item { Text = "Michael Smith" },
-                new Item { Text = "Bill Johnson" },
-                new Item { Text = "Craig Jones"},
-                new Item { Text = "Steven Howard"},
-                new Item { Text = "Rachel Jefferson"},
-            });
-
-            var sorted = from item in Items
-                         orderby item.Text
-                         group item by item.Text[0].ToString() into itemGroup
-                         select new Grouping<string, Item>(itemGroup.Key, itemGroup);
-
-            ItemsGrouped = new ObservableCollection<Grouping<string, Item>>(sorted);
-
-            RefreshDataCommand = new Command(
-                async () => await RefreshData());
+            Items = new ObservableCollection<ContactDisplayItemVm>();
+            //LoadInvitations();
         }
 
-        public ICommand RefreshDataCommand { get; }
-
-        async Task RefreshData()
+        private void LoadInvitations()
         {
-            IsBusy = true;
-            //Load Data Here
-            await Task.Delay(2000);
-
-            IsBusy = false;
-        }
-
-        bool busy;
-        public bool IsBusy
-        {
-            get { return busy; }
-            set
-            {
-                busy = value;
-                OnPropertyChanged();
-                ((Command)RefreshDataCommand).ChangeCanExecute();
-            }
-        }
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        void OnPropertyChanged([CallerMemberName]string propertyName = "") =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-        public class Item
-        {
-            public string Text { get; set; }
-            public string Detail { get; set; }
-
-            public override string ToString() => Text;
-        }
-
-        public class Grouping<K, T> : ObservableCollection<T>
-        {
-            public K Key { get; private set; }
-
-            public Grouping(K key, IEnumerable<T> items)
-            {
-                Key = key;
-                foreach (var item in items)
-                    this.Items.Add(item);
-            }
+            var locationSender = LocationSenderFactory.GetLocationSender();
+            var invitationList = locationSender.GetInvitations();
+            invitationList
+                .OrderBy(i => i.ReceivedTime)
+                .ToList()
+                .ForEach(invitation => Items.Add(new ContactDisplayItemVm
+                {
+                    Text = invitation.DisplayName()
+                }));
         }
     }
 }
