@@ -9,17 +9,18 @@
             HasUnevenRows="true"
             IsPullToRefreshEnabled="true"
             CachingStrategy="RecycleElement">
-    <ListView.Header>
-      <StackLayout Padding="10" 
-                   Orientation="Horizontal"
+        <ListView.Header>
+          <StackLayout Padding="10" 
+                       Orientation="Horizontal"
+                       HorizontalOptions="FillAndExpand"
+                       BackgroundColor="#dadada">
+            <Label Text="Invites"
+                   HorizontalTextAlignment="Center"
                    HorizontalOptions="FillAndExpand"
-                   BackgroundColor="#dadada">
-        <Label Text="Invites"
-               HorizontalTextAlignment="Center"
-               HorizontalOptions="FillAndExpand"
-               TextColor="Black"
-               FontAttributes="Bold"/>
-      </StackLayout>
+                   TextColor="Black"
+                   FontAttributes="Bold"/>
+        <Button x:Name="RefreshButton" Text="Refresh" Clicked="RefreshButton_OnClicked" />
+        </StackLayout>
     </ListView.Header>
     <!--Built in Cells-->
     <ListView.ItemTemplate>

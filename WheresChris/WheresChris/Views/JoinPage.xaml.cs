@@ -35,6 +35,11 @@ namespace WheresChris.Views
             //Deselect Item
             ((ListView)sender).SelectedItem = null;
         }
+
+        private void RefreshButton_OnClicked(object sender, EventArgs e)
+        {
+            ((JoinPageViewModel)BindingContext).LoadInvitations();
+        }
     }
 
     class JoinPageViewModel
@@ -44,11 +49,11 @@ namespace WheresChris.Views
         public JoinPageViewModel()
         {
             Items = new ObservableCollection<ContactDisplayItemVm>();
-            //LoadInvitations();
         }
 
-        private void LoadInvitations()
+        public void LoadInvitations()
         {
+            Items.Clear();
             var locationSender = LocationSenderFactory.GetLocationSender();
             var invitationList = locationSender.GetInvitations();
             invitationList
