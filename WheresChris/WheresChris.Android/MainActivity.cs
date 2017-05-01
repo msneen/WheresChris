@@ -8,6 +8,7 @@ using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
 using Plugin.Permissions;
+using StayTogether.Droid.NotificationCenter;
 using StayTogether.Droid.Services;
 
 namespace WheresChris.Droid
@@ -30,13 +31,20 @@ namespace WheresChris.Droid
             Manifest.Permission.AccessFineLocation
         };
 
+        protected override void OnNewIntent(Intent intent)
+        {
+            base.OnNewIntent(intent);
+            NotificationStrategyController.GetNotificationHandler(intent)?.OnNotify(intent);
+        }
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
            
-            MobileCenter.LogLevel = Microsoft.Azure.Mobile.LogLevel.Verbose;
-            MobileCenter.Start("14162ca6-0c56-4822-9d95-f265b524bd98",    //f9f28a5e-6d54-4a4a-a1b4-e51f8da8e8c7
-                typeof(Analytics), typeof(Crashes));
+            MobileCenter.LogLevel = LogLevel.Verbose;
+            MobileCenter.Start("14162ca6-0c56-4822-9d95-f265b524bd98", typeof(Analytics), typeof(Crashes));
+
+            NotificationStrategyController.GetNotificationHandler(Intent)?.OnNotify(Intent);
 
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
