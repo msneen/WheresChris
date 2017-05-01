@@ -57,7 +57,7 @@ namespace WheresChris.Droid
 
         private void TryToStartLocationService()
         {
-            if (HasLocationPermission())
+            if ((int)Build.VERSION.SdkInt < 23 || HasLocationPermission())
             {
                 StartLocationService();
             }

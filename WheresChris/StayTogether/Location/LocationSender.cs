@@ -93,7 +93,7 @@ namespace StayTogether
 
 	        _geoLocator = CrossGeolocator.Current;
 
-	        _geoLocator.DesiredAccuracy = 100; //100 is new default
+	        _geoLocator.DesiredAccuracy = 50; //100 is new default
 
 	        if (_geoLocator.IsGeolocationEnabled && _geoLocator.IsGeolocationAvailable)
 	        {
