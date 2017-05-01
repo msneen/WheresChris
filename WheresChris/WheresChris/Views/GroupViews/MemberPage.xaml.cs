@@ -25,6 +25,10 @@ namespace WheresChris.Views.GroupViews
         }
 
 
+        private async void RefreshButton_OnClicked(object sender, EventArgs e)
+        {
+            await ((MemberPageViewModel) BindingContext).RefreshMembers();
+        }
     }
 
 
@@ -34,9 +38,13 @@ namespace WheresChris.Views.GroupViews
         public ObservableCollection<ContactDisplayItemVm> Items { get; }
 
         public MemberPageViewModel()
+        {            
+            Items = new ObservableCollection<ContactDisplayItemVm>();           
+        }
+
+        public async Task RefreshMembers()
         {
-            var groupMembers = GroupActionsHelper.GetGroupMembers().Result;
-            Items = new ObservableCollection<ContactDisplayItemVm>();
+            var groupMembers = await GroupActionsHelper.GetGroupMembers();
             UpdateGroupMembers(groupMembers);
         }
 

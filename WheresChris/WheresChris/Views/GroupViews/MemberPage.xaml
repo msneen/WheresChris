@@ -17,7 +17,8 @@
                HorizontalOptions="FillAndExpand"
                TextColor="Black"
                FontAttributes="Bold"/>
-      </StackLayout>
+                <Button x:Name="RefreshButton" Text="Refresh" Clicked="RefreshButton_OnClicked" />
+            </StackLayout>
     </ListView.Header>
     <!--Built in Cells-->
     <ListView.ItemTemplate>
