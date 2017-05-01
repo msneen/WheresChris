@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Telephony;
 using Plugin.Geolocator.Abstractions;
-using Plugin.Settings;
 using StayTogether.Classes;
 using StayTogether.Droid.Classes;
-//using StayTogether.Droid.Activities;
-//using StayTogether.Droid.Classes;
-//using StayTogether.Droid.Helpers;
-//using StayTogether.Droid.NotificationCenter;
 using StayTogether.Group;
 using StayTogether.Location;
 using WheresChris.Droid;
@@ -83,27 +76,12 @@ namespace StayTogether.Droid.Services
             return notification;
         }
 
-        //Todo: Delete me.  Replaced by WheresChris.InvitePage.xaml.cs.StartGroup, or whereever it's been refactored to
-        public async void StartGroup(List<GroupMemberVm> contactList, int expireInHours)
-        {
-            var position = GetPosition();
-            if (LocationSender == null || position == null) return;
-
-            await CreateGroup(contactList, position, expireInHours);
-        }
-
         public Position GetPosition()
         {
             var position = GpsService.GetLocation();
             return position;
         }
 
-        private async Task CreateGroup(List<GroupMemberVm> contactList, Position position, int expireInHours)
-        {
-            var groupVm = GroupHelper.InitializeGroupVm(contactList, position, SettingsHelper.GetPhoneNumber(), expireInHours);
-
-            await LocationSender.StartGroup(groupVm);
-        }
 
         public async Task SendError(string message)
         {

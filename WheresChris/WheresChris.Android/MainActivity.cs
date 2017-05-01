@@ -13,7 +13,7 @@ using StayTogether.Droid.Services;
 
 namespace WheresChris.Droid
 {
-    [Activity(Label = "WheresChris.Android", Theme = "@style/MyTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "WheresChris.Android", Theme = "@style/MyTheme", MainLauncher = true, LaunchMode = LaunchMode.SingleTop, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         public LocationSenderBinder Binder;

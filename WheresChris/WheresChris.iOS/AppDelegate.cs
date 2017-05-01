@@ -39,6 +39,7 @@ namespace WheresChris.iOS
             InitializeEvents(LocationManager);
             LocationManager.UserPhoneNumber = phoneNumber;
             LocationManager.StartLocationUpdates();
+
             NotificationManager.RegisterNotifications(app);
             NotificationManager.InitializeNotifications(options, Window);
 

@@ -274,10 +274,10 @@ namespace StayTogether
         private void GetNickname()
         {
             var nickName = CrossSettings.Current.GetValueOrDefault<string>("nickname");
-            if (string.IsNullOrWhiteSpace(nickName))
-            {
-                AddNotification("Where's Chris nickname", "Please Add your nickname in settings");
-            }
+            //if (string.IsNullOrWhiteSpace(nickName))
+            //{
+            //    AddNotification("Where's Chris nickname", "Please Add your nickname in settings");
+            //}
         }
 
         private void GetPhoneNumber()
