@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR.Client;
 using Plugin.Geolocator;
@@ -152,11 +154,11 @@ namespace StayTogether
             });
         }
 
-	    public InvitationList GetInvitations(int hours = 3)
+	    public List<InvitationVm> GetInvitations(int hours = 3)
 	    {
 	        _invitationList.Clean();
-	        return _invitationList;
-	    }
+           return _invitationList;
+        }
 
         public void UpdateGroupId(string id)
 	    {
@@ -246,8 +248,10 @@ namespace StayTogether
         /// <param name="phoneNumber">The Group Leader Phone Number</param>
         /// <param name="name">The Group Leader's Name. Could be empty</param>
         /// <returns></returns>
-	    public async Task ConfirmGroupInvitation(string phoneNumber, string name)
+	    public async Task<bool> ConfirmGroupInvitation(string phoneNumber, string name)
         {
+            if (InAGroup) return false;//Don't allow them to join a group
+
             UpdateGroupId(phoneNumber);
 
             var location = await _geoLocator.GetPositionAsync();
@@ -261,6 +265,7 @@ namespace StayTogether
                 InvitationConfirmed = true
             };
             await _chatHubProxy.Invoke("confirmGroupInvitation", groupMemberVm);
+            return true;
         }
 
 	    public void SendUpdatePosition(GroupMemberVm groupMemberVm)

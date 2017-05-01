@@ -31,7 +31,12 @@ namespace WheresChris.Views
                 return;
 
             //await DisplayAlert("Selected", e.SelectedItem.ToString(), "OK");
-
+            var selectedItem = e.SelectedItem as ContactDisplayItemVm;
+            if (selectedItem != null)
+            {
+                var locationSender = LocationSenderFactory.GetLocationSender();
+                await locationSender.ConfirmGroupInvitation(selectedItem.Invitation.PhoneNumber, selectedItem.Invitation.Name);
+            }
             //Deselect Item
             ((ListView)sender).SelectedItem = null;
         }
@@ -61,7 +66,8 @@ namespace WheresChris.Views
                 .ToList()
                 .ForEach(invitation => Items.Add(new ContactDisplayItemVm
                 {
-                    Text = invitation.DisplayName()
+                    Text = invitation.DisplayName(),
+                    Invitation = invitation
                 }));
         }
     }
