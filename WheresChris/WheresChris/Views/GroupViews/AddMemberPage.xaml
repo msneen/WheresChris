@@ -26,14 +26,15 @@
             <DataTemplate>
                 <ViewCell>
                     <RelativeLayout>
-                        <Label Text="{Binding Text}" Style="{DynamicResource ListItemTextStyle}" 
-                                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
-                                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.45,Constant=0}"/>
-                        <Label Text="{Binding Detail}" Style="{DynamicResource ListItemDetailTextStyle}"
-                                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.45, Constant=0}"
-                                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}" />
-                        <controls:CheckBox Checked="{Binding Selected}"
-                                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.9, Constant=0}"/>
+                            <Label Text="{Binding Text}" Style="{DynamicResource ListItemTextStyle}" 
+                                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=5}"
+                                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.6,Constant=0}"/>
+                            <Label Text="{Binding Detail}" Style="{DynamicResource ListItemDetailTextStyle}"
+                                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.6, Constant=0}"
+                                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.3,Constant=0}" />
+                            <controls:CheckBox Checked="{Binding Selected}"
+                                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.9, Constant=0}"
+                                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.1,Constant=0}" />
                     </RelativeLayout>
                 </ViewCell>
             </DataTemplate>

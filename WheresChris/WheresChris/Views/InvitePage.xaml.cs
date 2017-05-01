@@ -175,9 +175,3 @@ namespace WheresChris.Views
 
     }
 }
-//#if __ANDROID__
-//                LocationSenderService.Instance.StartGroup(selectedGroupMemberVms, expirationHours);
-//#endif
-//#if __IOS__
-//                AppDelegate.LocationManager.StartGroup(selectedGroupMemberVms, expirationHours);
-//#endif

@@ -7,12 +7,13 @@ using StayTogether.iOS.NotificationCenter;
 using UIKit;
 using WheresChris.Helpers;
 using WheresChris.iOS.Classes;
+using XLabs.Forms;
 
 namespace WheresChris.iOS
 {
 	[Register("AppDelegate")]
-	public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
-	{
+	public partial class AppDelegate : XFormsApplicationDelegate //global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
+    {
 	    public static LocationManager LocationManager = null;
         private bool _eventsInitialized;
 

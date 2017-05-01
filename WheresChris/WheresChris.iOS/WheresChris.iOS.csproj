@@ -276,7 +276,9 @@
       <InProject>false</InProject>
     </ImageAsset>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <BundleResource Include="Images\Calendar\datecell.png" />
+  </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="LaunchScreen.storyboard" />
   </ItemGroup>
@@ -311,6 +313,54 @@
     <BundleResource Include="Resources\tab_feed.png" />
     <BundleResource Include="Resources\tab_feed%402x.png" />
     <BundleResource Include="Resources\tab_feed%403x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Images\Calendar\datecellmarked.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Images\Calendar\datecellselected.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Images\Calendar\leftarrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Images\Calendar\rightarrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Images\Calendar\shadow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Images\Calendar\today.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Images\Calendar\todayselected.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Images\Calendar\topbar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Images\Checkbox\checked_checkbox.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Images\Checkbox\checked_checkbox%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Images\Checkbox\unchecked_checkbox.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Images\Checkbox\unchecked_checkbox%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Images\RadioButton\checked.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Images\RadioButton\checked%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Images\RadioButton\unchecked.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Images\RadioButton\unchecked%402x.png" />
   </ItemGroup>
   <Import Project="..\WheresChris\WheresChris.projitems" Label="Shared" Condition="Exists('..\WheresChris\WheresChris.projitems')" />
   <Import Project="..\StayTogether\StayTogether.projitems" Label="Shared" />
