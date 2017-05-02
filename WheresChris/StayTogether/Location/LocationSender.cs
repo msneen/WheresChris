@@ -57,7 +57,7 @@ namespace StayTogether
             // to be called on our client
             _chatHubProxy.On<string, string>("BroadcastMessage", ReceiveGroupMessage);
             _chatHubProxy.On<string>("UpdateGroupId", UpdateGroupId);
-            _chatHubProxy.On<string, string, string>("SomeoneIsLost", SomeoneIsLost);
+            _chatHubProxy.On<string, string, string, string>("SomeoneIsLost", SomeoneIsLost);
             _chatHubProxy.On<string>("GroupDisbanded", GroupDisbanded);
             _chatHubProxy.On<string, string>("MemberLeft", OnMemberLeftGroup);
             _chatHubProxy.On<string, string>("GroupInvitation", OnGroupInvitation);
@@ -167,7 +167,7 @@ namespace StayTogether
 	        InAGroup = true;
 	    }
 
-	    public void SomeoneIsLost(string phoneNumber, string latitude, string longitude)
+	    public void SomeoneIsLost(string phoneNumber, string latitude, string longitude, string name)
 	    {
 	        if (!string.IsNullOrWhiteSpace(_groupId))
 	        {
@@ -176,6 +176,7 @@ namespace StayTogether
                     GroupMember = new GroupMemberVm
                     {
                         PhoneNumber = phoneNumber,
+                        Name = name,
                         Latitude = Convert.ToDouble(latitude),
                         Longitude = Convert.ToDouble(longitude)
                     }
