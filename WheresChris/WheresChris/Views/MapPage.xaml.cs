@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Plugin.Geolocator;
 using StayTogether.Classes;
+using StayTogether.Location;
 using StayTogether.Models;
 using WheresChris.Helpers;
 using WheresChris.Messaging;
@@ -11,6 +12,7 @@ using WheresChris.Views.GroupViews;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.Xaml;
+using Distance = Xamarin.Forms.Maps.Distance;
 
 namespace WheresChris.Views
 {
@@ -45,7 +47,7 @@ namespace WheresChris.Views
 	        GroupMap.MoveToRegion(
 	            MapSpan.FromCenterAndRadius(
 	                mapPosition, Distance.FromMiles(.1)));
-	        //UpdateMap();
+	        UpdateMap();
 	    }
 
 	    private static async Task<Position> GetMapPosition()
@@ -59,30 +61,58 @@ namespace WheresChris.Views
 	        return mapPosition;
 	    }
 
-	    //private async void UpdateMap()
-	    //{
-	    //    var groupMembers = await GroupActionsHelper.GetGroupMembers();
-	    //    UpdateMap(groupMembers);
-	    //}
+        private async void UpdateMap()
+        {
+            var groupMembers = await GroupActionsHelper.GetGroupMembers();
+            var groupMembersSimple = groupMembers.Select(groupMember => new GroupMemberSimpleVm
+            {
+                PhoneNumber = groupMember.PhoneNumber,
+                Name = groupMember.Name,
+                Latitude = groupMember.Latitude,
+                Longitude = groupMember.Longitude
+            }).ToList();
+            UpdateMap(groupMembersSimple);
+        }
 
-	    private void UpdateMap(List<GroupMemberSimpleVm> groupMembers)
+        private void UpdateMap(List<GroupMemberSimpleVm> groupMembers)
 	    {
 	        if (groupMembers.Count <= 0) return;
 
-	        GroupMap.Pins.Clear();
-	        foreach (var groupMember in groupMembers)
-	        {
-	            var position = new Position(groupMember.Latitude, groupMember.Longitude);
-	            var pin = new Pin
-	            {
-	                Type = PinType.Place,
-	                Position = position,
-	                Label = groupMember.Name,
-	                Address = groupMember.PhoneNumber
-	            };
-	            GroupMap.Pins.Add(pin);
-	        }
-	    }
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                foreach (var groupMember in groupMembers)
+                {
+                    var pin = GroupMap.Pins.FirstOrDefault(x => x.Address == groupMember.PhoneNumber);
+                    if (pin == null)
+                    {
+                        var position = new Position(groupMember.Latitude, groupMember.Longitude);
+                        pin = new Pin
+                        {
+                            Type = PinType.Place,
+                            Position = position,
+                            Label = groupMember.Name,
+                            Address = groupMember.PhoneNumber
+                        };
+                        GroupMap.Pins.Add(pin);
+                    }
+                    pin.Position = new Position(groupMember.Latitude, groupMember.Longitude);
+                }
+                //GroupMap.Pins.Clear();
+                //foreach (var groupMember in groupMembers)
+                //{
+                //    var position = new Position(groupMember.Latitude, groupMember.Longitude);
+                //    var pin = new Pin
+                //    {
+                //        Type = PinType.Place,
+                //        Position = position,
+                //        Label = groupMember.Name,
+                //        Address = groupMember.PhoneNumber
+                //    };
+                //    GroupMap.Pins.Add(pin);
+
+                //}
+            });
+        }
 
 	    private void UpdateMemberPosition(GroupMemberVm groupMemberVm)
 	    {

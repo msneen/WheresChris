@@ -6,6 +6,7 @@ using StayTogether;
 using StayTogether.Classes;
 using StayTogether.Models;
 using Xamarin.Forms;
+using Xamarin.Forms.PlatformConfiguration;
 
 namespace WheresChris.Messaging
 {
@@ -39,13 +40,15 @@ namespace WheresChris.Messaging
                 (sender) =>
                 {
                     var locationSender = LocationSenderFactory.GetLocationSender();
-                    if (locationSender.GroupMembers != null && locationSender.GroupMembers.Any())
+                    // if (locationSender.GroupMembers != null && locationSender.GroupMembers.Any())
+                    if (locationSender?.GroupMembers?.Any() ?? false)
                     {
                         OnGroupPositionChangedMsg?.Invoke(this, new GroupEventArgs
                         {
                             GroupMembers = locationSender.GroupMembers
                         });
                     }
+                    
                 });
             _isSubscribed = true;
         }
