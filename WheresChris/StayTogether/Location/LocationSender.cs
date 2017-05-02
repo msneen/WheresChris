@@ -78,7 +78,7 @@ namespace StayTogether
             _chatHubProxy.On<string, string>("MemberLeft", OnMemberLeftGroup);
             _chatHubProxy.On<string, string>("GroupInvitation", OnGroupInvitation);
             _chatHubProxy.On<string, string>("MemberAlreadyInGroup", OnMemberAlreadyInGroup);
-            _chatHubProxy.On<List<GroupMemberVm>>("GroupPositionUpdate", OnGroupPositionUpdate);
+            _chatHubProxy.On<List<GroupMemberSimpleVm>>("GroupPositionUpdate", OnGroupPositionUpdate);
 
             // Start the connection
             _hubConnection.Start().Wait();
@@ -88,9 +88,14 @@ namespace StayTogether
 	        IsInitialized = true;
         }
 
-        private void OnGroupPositionUpdate(List<GroupMemberVm> groupMembers)
+        private void OnGroupPositionUpdate(List<GroupMemberSimpleVm> groupMembers)
         {
-            MessagingCenter.Send<LocationSender, List<GroupMemberVm>>(this, GroupPositionUpdateMsg, groupMembers);
+            try
+            {
+                MessagingCenter.Send<LocationSender, List<GroupMemberSimpleVm>>(this, GroupPositionUpdateMsg, groupMembers);
+            }
+            catch(Exception ex) { }
+
         }
 
         private void OnMemberAlreadyInGroup(string memberPhoneNumber, string memberName)

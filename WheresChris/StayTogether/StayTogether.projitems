@@ -15,6 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Location\GroupMemberPositionAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Location\LocationSender.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Location\SendMeter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\GroupMemberSimpleVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GroupMemberVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GroupVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\InvitationList.cs" />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using StayTogether;
 using StayTogether.Classes;
+using StayTogether.Models;
 using Xamarin.Forms;
 
 namespace WheresChris.Messaging
@@ -11,7 +12,7 @@ namespace WheresChris.Messaging
 
     public class GroupEventArgs : EventArgs
     {
-        public List<GroupMemberVm> GroupMembers { get; set; }
+        public List<GroupMemberSimpleVm> GroupMembers { get; set; }
     }
 
     public class MessagingCenterSubscription
@@ -33,7 +34,7 @@ namespace WheresChris.Messaging
                 OnLocationSentMsg?.Invoke(this, EventArgs.Empty);
                 _lastLocationMessageSentTime = DateTime.Now;
             });
-            MessagingCenter.Subscribe<LocationSender, List<GroupMemberVm>>(this, LocationSender.GroupPositionUpdateMsg,
+            MessagingCenter.Subscribe<LocationSender, List<GroupMemberSimpleVm>>(this, LocationSender.GroupPositionUpdateMsg,
                 (sender, groupMembers) =>
                 {
                     OnGroupPositionChangedMsg?.Invoke(this, new GroupEventArgs

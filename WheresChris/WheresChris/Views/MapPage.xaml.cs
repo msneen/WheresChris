@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Plugin.Geolocator;
 using StayTogether.Classes;
+using StayTogether.Models;
 using WheresChris.Helpers;
 using WheresChris.Messaging;
 using WheresChris.Views.GroupViews;
@@ -44,7 +45,7 @@ namespace WheresChris.Views
 	        GroupMap.MoveToRegion(
 	            MapSpan.FromCenterAndRadius(
 	                mapPosition, Distance.FromMiles(.1)));
-	        UpdateMap();
+	        //UpdateMap();
 	    }
 
 	    private static async Task<Position> GetMapPosition()
@@ -58,13 +59,13 @@ namespace WheresChris.Views
 	        return mapPosition;
 	    }
 
-	    private async void UpdateMap()
-	    {
-	        var groupMembers = await GroupActionsHelper.GetGroupMembers();
-	        UpdateMap(groupMembers);
-	    }
+	    //private async void UpdateMap()
+	    //{
+	    //    var groupMembers = await GroupActionsHelper.GetGroupMembers();
+	    //    UpdateMap(groupMembers);
+	    //}
 
-	    private void UpdateMap(List<GroupMemberVm> groupMembers)
+	    private void UpdateMap(List<GroupMemberSimpleVm> groupMembers)
 	    {
 	        if (groupMembers.Count <= 0) return;
 
