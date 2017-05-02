@@ -30,7 +30,7 @@ namespace StayTogether.iOS.NotificationCenter
             LastLocation[groupMemberVm.PhoneNumber] = groupMemberVm;
 
             var nameOrPhone = ContactsHelper.NameOrPhone(groupMemberVm.PhoneNumber, groupMemberVm.Name);
-            var notification = CreateNotification($"{nameOrPhone} Is lost", "Someone Is lost", 10101);
+            var notification = CreateNotification($"{nameOrPhone} Is lost by {groupMemberVm.LostDistance} feet", "Someone Is lost", 10101);
 
             var dictionary = GetDictionary(notification);
 

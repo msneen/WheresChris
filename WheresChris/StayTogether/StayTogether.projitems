@@ -20,5 +20,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\GroupVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\InvitationList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\InvitationVm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\LostMemberVm.cs" />
   </ItemGroup>
 </Project>
