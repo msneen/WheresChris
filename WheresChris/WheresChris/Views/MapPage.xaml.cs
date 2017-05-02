@@ -30,13 +30,13 @@ namespace WheresChris.Views
 
 	    protected override async void OnAppearing()
 	    {
-	        await InitializeMap();	        
+	        //await InitializeMap();	        
 	    }
 
 	    private void InitializeMessagingCenterSubscriptions()
 	    {
 	        _messagingCenterSubscription = new MessagingCenterSubscription();
-	        _messagingCenterSubscription.OnGroupPositionChangedMsg += (sender, args) => UpdateMap(args.GroupMembers);
+	        //_messagingCenterSubscription.OnGroupPositionChangedMsg += (sender, args) => UpdateMap(args.GroupMembers);
 	    }
 
 
