@@ -37,6 +37,7 @@ namespace StayTogether
 	    public const string SomeoneAlreadyInAnotherGroupMsg = "SOMEONEALREADYINANOTHERGROUP";
 	    public const string GroupInvitationReceivedMsg = "GROUPINVITATIONRECEIVED";
 	    public const string LocationSentMsg = "LOCATIONSENT";
+	    public const string GroupPositionUpdateMsg = "GROUPPOSITIONUPDATE";
         
 
 
@@ -77,6 +78,7 @@ namespace StayTogether
             _chatHubProxy.On<string, string>("MemberLeft", OnMemberLeftGroup);
             _chatHubProxy.On<string, string>("GroupInvitation", OnGroupInvitation);
             _chatHubProxy.On<string, string>("MemberAlreadyInGroup", OnMemberAlreadyInGroup);
+            _chatHubProxy.On<List<GroupMemberVm>>("GroupPositionUpdate", OnGroupPositionUpdate);
 
             // Start the connection
             _hubConnection.Start().Wait();
@@ -86,7 +88,12 @@ namespace StayTogether
 	        IsInitialized = true;
         }
 
-	    private void OnMemberAlreadyInGroup(string memberPhoneNumber, string memberName)
+        private void OnGroupPositionUpdate(List<GroupMemberVm> groupMembers)
+        {
+            MessagingCenter.Send<LocationSender, List<GroupMemberVm>>(this, GroupPositionUpdateMsg, groupMembers);
+        }
+
+        private void OnMemberAlreadyInGroup(string memberPhoneNumber, string memberName)
 	    {
             OnSomeoneAlreadyInAnotherGroup?.Invoke(this, new MemberMinimalEventArgs
             {

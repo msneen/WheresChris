@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Plugin.Geolocator;
 using StayTogether.Classes;
 using WheresChris.Helpers;
+using WheresChris.Messaging;
 using WheresChris.Views.GroupViews;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
@@ -15,16 +16,25 @@ namespace WheresChris.Views
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class MapPage : ContentPage
 	{
-		public MapPage ()
+        private MessagingCenterSubscription _messagingCenterSubscription;
+
+        public MapPage ()
 		{
             InitializeComponent ();
-		    Title = "Map";
+            InitializeMessagingCenterSubscriptions();
+            Title = "Map";
 		}
 
 	    protected override async void OnAppearing()
 	    {
-            await InitializeMap();
-        }
+	        await InitializeMap();	        
+	    }
+
+	    private void InitializeMessagingCenterSubscriptions()
+	    {
+	        _messagingCenterSubscription = new MessagingCenterSubscription();
+	        _messagingCenterSubscription.OnGroupPositionChangedMsg += (sender, args) => UpdateMap(args.GroupMembers);
+	    }
 
 
 	    private async Task InitializeMap()
@@ -33,13 +43,13 @@ namespace WheresChris.Views
 
 	        GroupMap.MoveToRegion(
 	            MapSpan.FromCenterAndRadius(
-	                mapPosition, Distance.FromMiles(1)));
+	                mapPosition, Distance.FromMiles(.1)));
 	        UpdateMap();
 	    }
 
 	    private static async Task<Position> GetMapPosition()
 	    {
-	        CrossGeolocator.Current.DesiredAccuracy = 50;
+	        CrossGeolocator.Current.DesiredAccuracy = 5;
             var userPosition = await CrossGeolocator.Current.GetPositionAsync(new TimeSpan(0,0,10));
             
 	        if (userPosition == null) return new Position(32.7157, -117.1611);

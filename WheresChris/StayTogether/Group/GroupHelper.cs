@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Settings;
 using StayTogether.Classes;
@@ -14,7 +13,7 @@ namespace StayTogether.Group
         {
             var groupVm = new GroupVm
             {
-                MaximumDistance = 100,
+                MaximumDistance = 150,
                 PhoneNumber = adminMember.PhoneNumber,
                 GroupMembers = contactList,
                 GroupCreatedDateTime = DateTime.Now,
@@ -34,12 +33,12 @@ namespace StayTogether.Group
 
         public static GroupVm InitializeGroupVm(List<GroupMemberVm> contactList, Position position, string phoneNumber, int expireInHours)
         {
-            var adminMember = GroupHelper.CreateAdminMember(position, phoneNumber,
+            var adminMember = CreateAdminMember(position, phoneNumber,
                 CrossSettings.Current.GetValueOrDefault<string>("nickname"));//Todo: handle phoneNumber and nickname the same way
 
             contactList.Insert(0, adminMember);
 
-            var groupVm = GroupHelper.CreateGroupVm(adminMember, contactList, expireInHours);
+            var groupVm = CreateGroupVm(adminMember, contactList, expireInHours);
             return groupVm;
         }
     }

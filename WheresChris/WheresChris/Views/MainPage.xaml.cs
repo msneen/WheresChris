@@ -21,10 +21,10 @@ namespace WheresChris.Views
         public MainPage()
         {
             InitializeComponent();
-            ShowLocationSentMessaging();
+            InitializeMessagingCenterSubscriptions();
         }
 
-        private void ShowLocationSentMessaging()
+        private void InitializeMessagingCenterSubscriptions()
         {
             _messagingCenterSubscription = new MessagingCenterSubscription();
             _messagingCenterSubscription.OnLocationSentMsg +=
