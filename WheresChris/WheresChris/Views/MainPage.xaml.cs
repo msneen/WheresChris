@@ -33,7 +33,7 @@ namespace WheresChris.Views
                 //MWS:  Change the text color for 2 seconds each time a message is sent
                 //This is for debugging
                 TitleLabel.TextColor = Color.Blue;
-                _timer = new Timer();
+                _timer = new Timer(2000);
                 _timer.Elapsed += (o, eventArgs) =>
                 {
                     _timer.Stop();
