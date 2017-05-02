@@ -70,7 +70,6 @@ namespace WheresChris.Views
 
             await GroupActionsHelper.StartGroup(selectedGroupMemberVms, userPhoneNumber, expirationHours);
 
-
             SetFormEnabled(false);
         }
 
@@ -80,7 +79,6 @@ namespace WheresChris.Views
             ExpirationPicker.IsEnabled = isSelected;
             ContactsListView.IsEnabled = isSelected;
         }
-
 
         protected override async void OnAppearing()
         {
@@ -99,8 +97,6 @@ namespace WheresChris.Views
             Nickname.Text = CrossSettings.Current.GetValueOrDefault<string>("nickname");
             
         }
-
-
     }
 
     class ExpirationPickerViewModel
@@ -113,7 +109,6 @@ namespace WheresChris.Views
     {
         public string Title { get; set; }
         public ObservableCollection<ContactDisplayItemVm> Items { get; set; }
-        //public ObservableCollection<Grouping<string, Item>> ItemsGrouped { get; }
 
         public object ExpirationInHoursIndex { get; set; }
 

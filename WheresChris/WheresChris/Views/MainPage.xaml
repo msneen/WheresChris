@@ -19,7 +19,6 @@
                      Orientation="Vertical"
                      Spacing="15">
             <Label x:Name="TitleLabel" Text="Where's Chris?" HorizontalTextAlignment="Center" FontSize="Large" />
-            <Button x:Name="DebugSent" Text="Debug" Clicked="DebugSent_OnClicked"></Button>
             <Button x:Name="InviteButton" Text="Invite Chris" Clicked="StartGroup" />
             <Button x:Name="JoinButton" Text="Join Chris" Clicked="JoinGroup" />
         </StackLayout>

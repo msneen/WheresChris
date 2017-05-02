@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Timers;
 using StayTogether;
 using Xamarin.Forms;
 #if __ANDROID__
@@ -25,16 +23,12 @@ namespace WheresChris.Views
             InitializeComponent();
         }
 
-        private void TrackLocationSent()
+        protected override void OnAppearing()
         {
-            _locationSender = LocationSenderFactory.GetLocationSender();
-            _locationSender.OnLocationSent += (sender, args) =>
+            MessagingCenter.Subscribe<LocationSender, string>(this, LocationSender.LocationSentMsg, (sender, arg) =>
             {
-                //MWS:  Change the text color for 2 seconds each time a message is sent
-                //This is for debugging
-                TitleLabel.TextColor = Color.Blue;
                 TitleLabel.TextColor = TitleLabel.TextColor == Color.Blue ? Color.Black : Color.Blue;
-            };
+            });
         }
 
         public void StartGroup(object sender, EventArgs e)
@@ -58,11 +52,6 @@ namespace WheresChris.Views
             {
                 masterPage.CurrentPage = masterPage.Children[index];
             }
-        }
-
-        private void DebugSent_OnClicked(object sender, EventArgs e)
-        {
-            TrackLocationSent();
         }
     }
 }
