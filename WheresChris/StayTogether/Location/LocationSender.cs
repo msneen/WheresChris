@@ -94,7 +94,7 @@ namespace StayTogether
                 PhoneNumber = memberPhoneNumber
             });
 	        
-            MessagingCenter.Send(this, MemberAlreadyInGroupMsg);
+            MessagingCenter.Send<LocationSender>(this, MemberAlreadyInGroupMsg);
         }
 
 	    private void OnMemberLeftGroup(string memberPhoneNumber, string memberName)
@@ -104,7 +104,7 @@ namespace StayTogether
                 Name = memberName,
                 PhoneNumber = memberPhoneNumber
             });
-            MessagingCenter.Send(this, SomeoneLeftMsg);
+            MessagingCenter.Send<LocationSender>(this, SomeoneLeftMsg);
         }
 
 
@@ -113,15 +113,15 @@ namespace StayTogether
 
 	        _geoLocator = CrossGeolocator.Current;
 
-	        _geoLocator.DesiredAccuracy = 50; //100 is new default
+	        _geoLocator.DesiredAccuracy = 5; //100 is new default
 
 	        if (_geoLocator.IsGeolocationEnabled && _geoLocator.IsGeolocationAvailable)
 	        {
                 //ListenerSettings listenerSettings = new ListenerSettings();
                 //listenerSettings.
 	            _geoLocator.PositionChanged += LocatorOnPositionChanged;
-                var minimumTime = new TimeSpan(0,0,10);
-                _geoLocator.StartListeningAsync(minimumTime: minimumTime, minimumDistance: 25);
+                var minimumTime = new TimeSpan(0,0,1);
+                _geoLocator.StartListeningAsync(minimumTime: minimumTime, minimumDistance: 5);
 	        }
 
 	    }
@@ -149,7 +149,7 @@ namespace StayTogether
             
             //AddNotification("Group Disbanded", "Your Group has been disbanded");
             OnGroupDisbanded?.Invoke(this, new EventArgs());
-            MessagingCenter.Send(this, GroupDisbandedMsg);
+            MessagingCenter.Send<LocationSender>(this, GroupDisbandedMsg);
         }
 
         private readonly InvitationList _invitationList = new InvitationList();
@@ -170,7 +170,7 @@ namespace StayTogether
                 PhoneNumber = phoneNumber,
                 ReceivedTime = DateTime.Now
             });
-            MessagingCenter.Send(this, GroupInvitationReceivedMsg);
+            MessagingCenter.Send<LocationSender>(this, GroupInvitationReceivedMsg);
         }
 
 	    public List<InvitationVm> GetInvitations(int hours = 3)
@@ -200,7 +200,7 @@ namespace StayTogether
                         Longitude = Convert.ToDouble(longitude)
                     }
                 });
-                MessagingCenter.Send(this, SomeoneIsLostMsg);
+                MessagingCenter.Send<LocationSender>(this, SomeoneIsLostMsg);
             }
 	    }
 
@@ -233,13 +233,13 @@ namespace StayTogether
 	        GroupLeader = true;
 	        InAGroup = true;
             _groupId = _phoneNumber;
-            MessagingCenter.Send(this, GroupCreatedMsg);
+            MessagingCenter.Send<LocationSender>(this, GroupCreatedMsg);
         }
 
 	    public async Task AddToGroup(GroupVm groupVm)
 	    {
             await _chatHubProxy.Invoke("AddToGroup", groupVm);
-            MessagingCenter.Send(this, SomeoneAddedToGroupMsg);
+            MessagingCenter.Send<LocationSender>(this, SomeoneAddedToGroupMsg);
         }
 
 	    public async Task EndGroup()
@@ -250,7 +250,7 @@ namespace StayTogether
 	            InAGroup = false;
 	            GroupLeader = false;
 	            _groupId = "";
-                MessagingCenter.Send(this, GroupDisbandedMsg);
+                MessagingCenter.Send<LocationSender>(this, GroupDisbandedMsg);
             }
 	    }
 
@@ -262,7 +262,7 @@ namespace StayTogether
                 InAGroup = false;
                 GroupLeader = false;
                 _groupId = "";
-                MessagingCenter.Send(this, ThisUserLeftGroupMsg);
+                MessagingCenter.Send<LocationSender>(this, ThisUserLeftGroupMsg);
             }
         }
 
@@ -289,7 +289,7 @@ namespace StayTogether
                 InvitationConfirmed = true
             };
             await _chatHubProxy.Invoke("confirmGroupInvitation", groupMemberVm);
-            MessagingCenter.Send(this, GroupJoinedMsg);
+            MessagingCenter.Send<LocationSender>(this, GroupJoinedMsg);
             return true;
         }
 
@@ -302,7 +302,7 @@ namespace StayTogether
                 groupMemberVm.InvitationConfirmed = true;
             }
             _chatHubProxy.Invoke("updatePosition", groupMemberVm);
-            MessagingCenter.Send(this, LocationSentMsg);
+            MessagingCenter.Send<LocationSender>(this, LocationSentMsg);
         }
 
 	    public async Task<List<GroupMemberVm>> GetMembers(GroupMemberVm groupMemberVm)

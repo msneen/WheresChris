@@ -71,7 +71,7 @@ namespace StayTogether.Droid.Services
             var notification = new Notification.Builder(this)
                 .SetSmallIcon(Resource.Drawable.ic_speaker_dark)
                 .SetContentTitle("Where's Chris")
-                .SetContentText("Tracking...")
+                .SetContentText("Watching Chris...")
                 .SetContentIntent(pendingIntent).Build();
             return notification;
         }

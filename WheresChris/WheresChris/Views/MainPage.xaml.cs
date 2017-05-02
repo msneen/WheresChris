@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using StayTogether;
+using WheresChris.Messaging;
 using Xamarin.Forms;
 #if __ANDROID__
 using StayTogether.Droid.Services;
@@ -16,19 +16,26 @@ namespace WheresChris.Views
     /// </summary>
     public partial class MainPage : ContentPage
     {
-        private LocationSender _locationSender;
-
         public MainPage()
         {
             InitializeComponent();
+            ShowLocationSentMessaging();
         }
+
+        private void ShowLocationSentMessaging()
+        {
+            var messagingCenterSubscription = new MessagingCenterSubscription();
+            messagingCenterSubscription.OnLocationSentMsg +=
+                (sender, args) =>
+                {
+                    TitleLabel.TextColor = TitleLabel.TextColor == Color.Blue ? Color.Black : Color.Blue;
+                };
+        }
+
 
         protected override void OnAppearing()
         {
-            MessagingCenter.Subscribe<LocationSender, string>(this, LocationSender.LocationSentMsg, (sender, arg) =>
-            {
-                TitleLabel.TextColor = TitleLabel.TextColor == Color.Blue ? Color.Black : Color.Blue;
-            });
+            
         }
 
         public void StartGroup(object sender, EventArgs e)
