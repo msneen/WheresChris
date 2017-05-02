@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using StayTogether;
 using StayTogether.Classes;
@@ -34,13 +35,17 @@ namespace WheresChris.Messaging
                 OnLocationSentMsg?.Invoke(this, EventArgs.Empty);
                 _lastLocationMessageSentTime = DateTime.Now;
             });
-            MessagingCenter.Subscribe<LocationSender, List<GroupMemberSimpleVm>>(this, LocationSender.GroupPositionUpdateMsg,
-                (sender, groupMembers) =>
+            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupPositionUpdateMsg,
+                (sender) =>
                 {
-                    OnGroupPositionChangedMsg?.Invoke(this, new GroupEventArgs
+                    var locationSender = LocationSenderFactory.GetLocationSender();
+                    if (locationSender.GroupMembers != null && locationSender.GroupMembers.Any())
                     {
-                        GroupMembers = groupMembers
-                    });
+                        OnGroupPositionChangedMsg?.Invoke(this, new GroupEventArgs
+                        {
+                            GroupMembers = locationSender.GroupMembers
+                        });
+                    }
                 });
             _isSubscribed = true;
         }

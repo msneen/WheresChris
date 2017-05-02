@@ -44,6 +44,7 @@ namespace StayTogether
         public bool InAGroup { get; set; }
         public bool GroupLeader { get; set; }
         public bool IsInitialized { get; set; }
+        public List<GroupMemberSimpleVm> GroupMembers { get; set; }
 
         private HubConnection _hubConnection;
 	    private IHubProxy _chatHubProxy;
@@ -92,7 +93,12 @@ namespace StayTogether
         {
             try
             {
-                MessagingCenter.Send<LocationSender, List<GroupMemberSimpleVm>>(this, GroupPositionUpdateMsg, groupMembers);
+                if (GroupMembers != null)
+                {
+                    GroupMembers.Clear();
+                    GroupMembers.AddRange(groupMembers);
+                }
+                MessagingCenter.Send<LocationSender>(this, GroupPositionUpdateMsg);
             }
             catch(Exception ex) { }
 
@@ -158,6 +164,7 @@ namespace StayTogether
 	        InAGroup = false;
 	        _groupId = "";
             GroupLeader = false;
+	        GroupMembers = null;
             
             //AddNotification("Group Disbanded", "Your Group has been disbanded");
             OnGroupDisbanded?.Invoke(this, new EventArgs());
@@ -238,6 +245,7 @@ namespace StayTogether
 	        {
 	            await StartGroup(groupVm);
 	        }
+            GroupMembers = new List<GroupMemberSimpleVm>();
 	    }
 
 	    public async Task StartGroup(GroupVm groupVm)
@@ -263,6 +271,7 @@ namespace StayTogether
 	            InAGroup = false;
 	            GroupLeader = false;
 	            _groupId = "";
+	            GroupMembers = null;
                 MessagingCenter.Send<LocationSender>(this, GroupDisbandedMsg);
             }
 	    }
@@ -275,6 +284,7 @@ namespace StayTogether
                 InAGroup = false;
                 GroupLeader = false;
                 _groupId = "";
+                GroupMembers = null;
                 MessagingCenter.Send<LocationSender>(this, ThisUserLeftGroupMsg);
             }
         }
@@ -302,6 +312,7 @@ namespace StayTogether
                 InvitationConfirmed = true
             };
             await _chatHubProxy.Invoke("confirmGroupInvitation", groupMemberVm);
+            GroupMembers = new List<GroupMemberSimpleVm>();
             MessagingCenter.Send<LocationSender>(this, GroupJoinedMsg);
             return true;
         }
