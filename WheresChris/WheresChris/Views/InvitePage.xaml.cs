@@ -2,27 +2,23 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Plugin.Geolocator;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using StayTogether;
-using StayTogether.Classes;
 using WheresChris.Helpers;
 using Plugin.Settings;
-using StayTogether.Group;
 #if __ANDROID__
 using StayTogether.Droid.Services;
 #endif
 #if __IOS__
 using WheresChris.iOS;
 #endif
+
 namespace WheresChris.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]

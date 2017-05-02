@@ -1,6 +1,14 @@
 ﻿using System;
 using System.Linq;
+using System.Timers;
+using StayTogether;
 using Xamarin.Forms;
+#if __ANDROID__
+using StayTogether.Droid.Services;
+#endif
+#if __IOS__
+using WheresChris.iOS;
+#endif
 
 namespace WheresChris.Views
 {
@@ -9,9 +17,25 @@ namespace WheresChris.Views
     /// </summary>
     public partial class MainPage : ContentPage
     {
+        private LocationSender _locationSender;
+
         public MainPage()
         {
             InitializeComponent();
+            _locationSender = LocationSenderFactory.GetLocationSender();
+            _locationSender.OnLocationSent += (sender, args) =>
+            {
+                //MWS:  Change the text color for 2 seconds each time a message is sent
+                //This is for debugging
+                TitleLabel.TextColor = Color.Blue;
+                System.Timers.Timer timer = new Timer();
+                timer.Elapsed += (o, eventArgs) =>
+                {
+                    timer.Stop();
+                    TitleLabel.TextColor = Color.Black;
+                };
+                timer.Start();
+            };
         }
 
         public void StartGroup(object sender, EventArgs e)

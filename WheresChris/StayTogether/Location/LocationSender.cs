@@ -24,6 +24,7 @@ namespace StayTogether
         public event EventHandler OnGroupDisbanded;
         public event EventHandler<MemberMinimalEventArgs> OnSomeoneLeft;
         public event EventHandler<MemberMinimalEventArgs> OnSomeoneAlreadyInAnotherGroup;
+	    public event EventHandler OnLocationSent;
 
         public bool InAGroup { get; set; }
         public bool GroupLeader { get; set; }
@@ -278,6 +279,7 @@ namespace StayTogether
                 groupMemberVm.InvitationConfirmed = true;
             }
             _chatHubProxy.Invoke("updatePosition", groupMemberVm);
+            OnOnLocationSent();
         }
 
 	    public async Task<List<GroupMemberVm>> GetMembers(GroupMemberVm groupMemberVm)
@@ -316,6 +318,11 @@ namespace StayTogether
 	    {
 	        _chatHubProxy.Invoke("SendErrorMessage", message, _phoneNumber);
             return Task.CompletedTask;
+	    }
+
+	    protected virtual void OnOnLocationSent()
+	    {
+	        OnLocationSent?.Invoke(this, EventArgs.Empty);
 	    }
 	}
 
