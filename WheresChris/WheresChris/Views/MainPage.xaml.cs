@@ -22,6 +22,10 @@ namespace WheresChris.Views
         public MainPage()
         {
             InitializeComponent();
+        }
+
+        private void TrackLocationSent()
+        {
             _locationSender = LocationSenderFactory.GetLocationSender();
             _locationSender.OnLocationSent += (sender, args) =>
             {
@@ -59,6 +63,11 @@ namespace WheresChris.Views
             {
                 masterPage.CurrentPage = masterPage.Children[index];
             }
+        }
+
+        private void DebugSent_OnClicked(object sender, EventArgs e)
+        {
+            TrackLocationSent();
         }
     }
 }
