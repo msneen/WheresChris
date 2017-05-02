@@ -33,7 +33,7 @@ namespace WheresChris.Views
                 //MWS:  Change the text color for 2 seconds each time a message is sent
                 //This is for debugging
                 TitleLabel.TextColor = Color.Blue;
-                Task.Delay(2000).ContinueWith(s => TitleLabel.TextColor = Color.Black);
+                TitleLabel.TextColor = TitleLabel.TextColor == Color.Blue ? Color.Black : Color.Blue;
             };
         }
 
