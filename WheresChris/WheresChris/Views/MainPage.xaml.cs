@@ -18,6 +18,7 @@ namespace WheresChris.Views
     public partial class MainPage : ContentPage
     {
         private LocationSender _locationSender;
+        private Timer _timer;
 
         public MainPage()
         {
@@ -32,13 +33,13 @@ namespace WheresChris.Views
                 //MWS:  Change the text color for 2 seconds each time a message is sent
                 //This is for debugging
                 TitleLabel.TextColor = Color.Blue;
-                System.Timers.Timer timer = new Timer();
-                timer.Elapsed += (o, eventArgs) =>
+                _timer = new Timer();
+                _timer.Elapsed += (o, eventArgs) =>
                 {
-                    timer.Stop();
+                    _timer.Stop();
                     TitleLabel.TextColor = Color.Black;
                 };
-                timer.Start();
+                _timer.Start();
             };
         }
 
