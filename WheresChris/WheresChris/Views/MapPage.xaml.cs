@@ -18,6 +18,7 @@ namespace WheresChris.Views
 		public MapPage ()
 		{
             InitializeComponent ();
+		    Title = "Map";
 		}
 
 	    protected override async void OnAppearing()

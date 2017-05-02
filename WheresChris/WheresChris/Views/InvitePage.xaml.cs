@@ -33,6 +33,7 @@ namespace WheresChris.Views
 			InitializeComponent ();
             BindingContext = new InvitePageViewModel();
             InitializeExpirationPicker();
+            Title = "Invite Chris";
         }
 
         private void InitializeExpirationPicker()

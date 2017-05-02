@@ -8,6 +8,7 @@ namespace WheresChris.Views
 		public AboutPage()
 		{
 			InitializeComponent();
+		    Title = "About Where's Chris";
 		}
 	}
 }

@@ -20,6 +20,7 @@ namespace WheresChris.Views
         {
             InitializeComponent();
             BindingContext = new JoinPageViewModel();
+            Title = "Join Group";
         }
 
         void Handle_ItemTapped(object sender, ItemTappedEventArgs e)
