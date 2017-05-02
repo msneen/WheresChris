@@ -16,6 +16,8 @@ namespace WheresChris.Views
     /// </summary>
     public partial class MainPage : ContentPage
     {
+        private MessagingCenterSubscription _messagingCenterSubscription;
+
         public MainPage()
         {
             InitializeComponent();
@@ -24,8 +26,8 @@ namespace WheresChris.Views
 
         private void ShowLocationSentMessaging()
         {
-            var messagingCenterSubscription = new MessagingCenterSubscription();
-            messagingCenterSubscription.OnLocationSentMsg +=
+            _messagingCenterSubscription = new MessagingCenterSubscription();
+            _messagingCenterSubscription.OnLocationSentMsg +=
                 (sender, args) =>
                 {
                     TitleLabel.TextColor = TitleLabel.TextColor == Color.Blue ? Color.Black : Color.Blue;
