@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Timers;
 using StayTogether;
 using Xamarin.Forms;
@@ -18,7 +19,6 @@ namespace WheresChris.Views
     public partial class MainPage : ContentPage
     {
         private LocationSender _locationSender;
-        private Timer _timer;
 
         public MainPage()
         {
@@ -33,13 +33,7 @@ namespace WheresChris.Views
                 //MWS:  Change the text color for 2 seconds each time a message is sent
                 //This is for debugging
                 TitleLabel.TextColor = Color.Blue;
-                _timer = new Timer(2000);
-                _timer.Elapsed += (o, eventArgs) =>
-                {
-                    _timer.Stop();
-                    TitleLabel.TextColor = Color.Black;
-                };
-                _timer.Start();
+                Task.Delay(2000).ContinueWith(s => TitleLabel.TextColor = Color.Black);
             };
         }
 
