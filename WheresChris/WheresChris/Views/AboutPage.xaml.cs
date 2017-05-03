@@ -1,4 +1,5 @@
 ﻿
+using System.Reflection;
 using Xamarin.Forms;
 
 namespace WheresChris.Views
@@ -9,6 +10,7 @@ namespace WheresChris.Views
 		{
 			InitializeComponent();
 		    Title = "About Where's Chris";
+		    VersionSpan.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 		}
 	}
 }
