@@ -9,6 +9,15 @@ namespace WheresChris.Helpers
 {
     public class PermissionHelper
     {
+        public static bool HasNecessaryPermissions()
+        {
+            var phonePermissionGranted = PermissionHelper.HasPhonePermission();
+            var locationPermissionGranted = PermissionHelper.HasLocationPermission();
+            var contactPermissionGranted = PermissionHelper.HasContactPermission();
+            return phonePermissionGranted && locationPermissionGranted && contactPermissionGranted;
+        }
+
+
         public static bool HasPhonePermission()
         {
             return HasPermission(Permission.Phone);
@@ -48,6 +57,11 @@ namespace WheresChris.Helpers
 
         private static async Task RequestPermission(Permission permission)
         {
+            if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(Permission.Location))
+            {
+                Plugin.LocalNotifications.CrossLocalNotifications.Current.Show("Need location", "Gunna need that location");
+                    //DisplayAlert("Need location", "Gunna need that location", "OK");
+            }
             await CrossPermissions.Current.RequestPermissionsAsync(new[] {permission});
         }
     }

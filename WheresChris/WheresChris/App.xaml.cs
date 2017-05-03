@@ -1,4 +1,6 @@
-﻿using WheresChris.Views;
+﻿using System.Collections.Generic;
+using WheresChris.Helpers;
+using WheresChris.Views;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -6,50 +8,39 @@ using Xamarin.Forms.Xaml;
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace WheresChris
 {
-	public partial class App : Application
-	{
+    public partial class App : Application
+    {
+        private static TabbedPage _mainTabbedPage;
+
         public App()
-		{
-			InitializeComponent();
+        {
+            InitializeComponent();
 
-			SetMainPage();
-		}
+            SetMainPage();
+        }
 
-		public static void SetMainPage()
-		{
-            Current.MainPage = new TabbedPage
+        public static void SetMainPage()
+        {
+            _mainTabbedPage = new TabbedPage();
+            AddPage(new MainPage(), "Main");
+
+            if (PermissionHelper.HasNecessaryPermissions())
             {
-                Children =
-                {
-                    new NavigationPage(new MainPage())
-                    {
-                        Title="Main",
-                        Icon = Device.OnPlatform<string>("tab_feed.png",null,null)
-                    },
-                    //needs phone and contacts permission
-                    //new NavigationPage(new InvitePage())
-                    //{
-                    //    Title = "Invite",
-                    //    Icon = Device.OnPlatform<string>("tab_feed.png",null,null)
-                    //},
-                    //new NavigationPage(new JoinPage())
-                    //{
-                    //    Title = "Join",
-                    //    Icon = Device.OnPlatform<string>("tab_feed.png",null,null)
-                    //},
-                    //needs location permission
-                    //new NavigationPage(new MapPage())
-                    //{
-                    //    Title = "Map",
-                    //    Icon = Device.OnPlatform<string>("tab_feed.png",null,null)
-                    //},
-                    new NavigationPage(new AboutPage())
-                    {
-                        Title = "About",
-                        Icon = Device.OnPlatform<string>("tab_about.png",null,null)
-                    },
-                }
-            };
+                AddPage(new InvitePage(), "Invite");
+                AddPage(new JoinPage(), "Join");
+                AddPage(new MapPage(), "Map");
+            }
+            AddPage(new AboutPage(), "About");           
+            Current.MainPage = _mainTabbedPage;
+        }
+
+        private static void AddPage(Page page, string title)
+        {
+            _mainTabbedPage.Children.Add(new NavigationPage(page)
+            {
+                Title = title,
+                Icon = Device.OnPlatform<string>("tab_feed.png", null, null)
+            });
         }
 
         //protected override void OnStart()

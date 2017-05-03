@@ -48,26 +48,32 @@ namespace WheresChris.Droid
             Xamarin.FormsMaps.Init(this, bundle);
 
             TryToStartLocationService();
-            LoadApplication(new App());
+
         }
 
         private async void TryToStartLocationService()
         {
             var phonePermissionGranted = PermissionHelper.HasPhonePermission();
             var locationPermissionGranted = PermissionHelper.HasLocationPermission();
+            var contactPermissionGranted = PermissionHelper.HasContactPermission();
 
-            if (locationPermissionGranted && phonePermissionGranted)
+            if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
             {
                 StartLocationService();
+                LoadApplication(new App());
             }
             else if (!locationPermissionGranted)
             {
                 await PermissionHelper.RequestLocationPermission();
             }
-            else 
+            else if (!phonePermissionGranted)
             {
                 await PermissionHelper.RequestPhonePermission();
-            }        
+            }
+            else
+            {
+                await PermissionHelper.RequestContactPermission();
+            }
         }
 
         private bool _locationServiceStarted = false;
