@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
+using Plugin.Geolocator;
 using WheresChris.Messaging;
 using Xamarin.Forms;
+using XLabs.Platform.Services.Geolocation;
 #if __ANDROID__
 using StayTogether.Droid.Services;
 #endif
@@ -37,7 +39,15 @@ namespace WheresChris.Views
 
         protected override void OnAppearing()
         {
-            
+            CheckLocationServicesEnabled();
+        }
+
+        private void CheckLocationServicesEnabled()
+        {
+            if (!(CrossGeolocator.Current.IsGeolocationAvailable && CrossGeolocator.Current.IsGeolocationEnabled))
+            {
+                MessageLabel.Text = "Please enable your Location in phone settings!";
+            }
         }
 
         public void StartGroup(object sender, EventArgs e)

@@ -19,6 +19,7 @@
                      Orientation="Vertical"
                      Spacing="15">
             <Label x:Name="TitleLabel" Text="Where's Chris?" HorizontalTextAlignment="Center" FontSize="Large" />
+            <Label x:Name="MessageLabel"  FontSize="Large" ></Label>
             <Button x:Name="InviteButton" Text="Invite Chris" Clicked="StartGroup" />
             <Button x:Name="JoinButton" Text="Join Chris" Clicked="JoinGroup" />
         </StackLayout>
