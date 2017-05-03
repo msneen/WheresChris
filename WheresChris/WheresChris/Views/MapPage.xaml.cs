@@ -38,6 +38,12 @@ namespace WheresChris.Views
 	        _messagingCenterSubscription = new MessagingCenterSubscription();
 	        //_messagingCenterSubscription.OnGroupPositionChangedMsg += (sender, args) => UpdateMap(args.GroupMembers);
 	    }
+        //Problem:  We can get the map to show up in OnAppearing, but we can't get the pins to update.
+        //If we make pins in on appearing, they show up
+        //if we try to rewrite the pins every time we get a signalR group update, they aren't visible
+        //if we try to move the pins, they don't move
+        //1. simple Option.  Try creating a new map every time we call InitializeMap, to try to get the map to redraw
+        //2. Option, make a PinsViewModel and bind it to the map, so we can update the view model and have it update the map
 
 
 	    private async Task InitializeMap()
@@ -94,9 +100,11 @@ namespace WheresChris.Views
                             Address = groupMember.PhoneNumber
                         };
                         GroupMap.Pins.Add(pin);
+                        
                     }
                     pin.Position = new Position(groupMember.Latitude, groupMember.Longitude);
                 }
+                //This was my original code
                 //GroupMap.Pins.Clear();
                 //foreach (var groupMember in groupMembers)
                 //{
