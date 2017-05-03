@@ -26,21 +26,21 @@ namespace WheresChris
                         Title="Main",
                         Icon = Device.OnPlatform<string>("tab_feed.png",null,null)
                     },
-                    new NavigationPage(new InvitePage())
-                    {
-                        Title = "Invite",
-                        Icon = Device.OnPlatform<string>("tab_feed.png",null,null)
-                    },
-                    new NavigationPage(new JoinPage())
-                    {
-                        Title = "Join",
-                        Icon = Device.OnPlatform<string>("tab_feed.png",null,null)
-                    },
-                    new NavigationPage(new MapPage())
-                    {
-                        Title = "Map",
-                        Icon = Device.OnPlatform<string>("tab_feed.png",null,null)
-                    },
+                    //new NavigationPage(new InvitePage())
+                    //{
+                    //    Title = "Invite",
+                    //    Icon = Device.OnPlatform<string>("tab_feed.png",null,null)
+                    //},
+                    //new NavigationPage(new JoinPage())
+                    //{
+                    //    Title = "Join",
+                    //    Icon = Device.OnPlatform<string>("tab_feed.png",null,null)
+                    //},
+                    //new NavigationPage(new MapPage())
+                    //{
+                    //    Title = "Map",
+                    //    Icon = Device.OnPlatform<string>("tab_feed.png",null,null)
+                    //},
                     new NavigationPage(new AboutPage())
                     {
                         Title = "About",

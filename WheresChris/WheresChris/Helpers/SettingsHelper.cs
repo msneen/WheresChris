@@ -1,4 +1,6 @@
-﻿using Plugin.Settings;
+﻿using Plugin.Permissions;
+using Plugin.Permissions.Abstractions;
+using Plugin.Settings;
 using StayTogether;
 #if __ANDROID__
 using Android.App;
@@ -19,12 +21,18 @@ namespace WheresChris.Helpers
             {
                 return cleanExistingPhone;
             }
+
 #if __ANDROID__
-            var info = (TelephonyManager)Application.Context.GetSystemService(Context.TelephonyService);
-            var phoneNumber = info.Line1Number;
-            var cleanPhone = ContactsHelper.CleanPhoneNumber(phoneNumber);
-            CrossSettings.Current.AddOrUpdateValue("phonenumber", cleanPhone);
-            return phoneNumber;
+            var status = CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Phone).Result;
+            if(status == PermissionStatus.Granted) 
+            {
+                var info = (TelephonyManager)Application.Context.GetSystemService(Context.TelephonyService);
+                var phoneNumber = info.Line1Number;
+                var cleanPhone = ContactsHelper.CleanPhoneNumber(phoneNumber);
+                CrossSettings.Current.AddOrUpdateValue("phonenumber", cleanPhone);
+                return phoneNumber;
+            }
+            return string.Empty;
 #else
             return string.Empty;
 #endif
