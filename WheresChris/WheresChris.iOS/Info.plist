@@ -52,5 +52,7 @@
 		<string>Can we use your location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 		<string>We are using your location</string>
+	<key>NSCalendarsUsageDescription</key>
+		<string>We are using the Calendar</string>
 </dict>
 </plist>

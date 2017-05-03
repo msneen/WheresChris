@@ -1,4 +1,5 @@
-﻿using Android;
+﻿using System.Threading.Tasks;
+using Android;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -11,6 +12,7 @@ using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using StayTogether.Droid.NotificationCenter;
 using StayTogether.Droid.Services;
+using WheresChris.Helpers;
 using Permission = Android.Content.PM.Permission;
 
 namespace WheresChris.Droid
@@ -22,13 +24,8 @@ namespace WheresChris.Droid
         public bool IsBound;
         private LocationSenderServiceConnection _locationSenderServiceConnection;
 
-        private static readonly int REQUEST_LOCATION = 1;
         public const int SdkVersionMarshmallow = 23;
 
-        private static string[] PERMISSIONS_LOCATION= {
-            Manifest.Permission.AccessCoarseLocation,
-            Manifest.Permission.AccessFineLocation
-        };
 
         protected override void OnNewIntent(Intent intent)
         {
@@ -56,8 +53,8 @@ namespace WheresChris.Droid
 
         private async void TryToStartLocationService()
         {
-            var phonePermissionGranted = HasPhonePermission();
-            var locationPermissionGranted = HasLocationPermission();
+            var phonePermissionGranted = PermissionHelper.HasPhonePermission();
+            var locationPermissionGranted = PermissionHelper.HasLocationPermission();
 
             if (locationPermissionGranted && phonePermissionGranted)
             {
@@ -65,15 +62,13 @@ namespace WheresChris.Droid
             }
             else if (!locationPermissionGranted)
             {
-                ActivityCompat.RequestPermissions(this, PERMISSIONS_LOCATION, REQUEST_LOCATION);
+                await PermissionHelper.RequestLocationPermission();
             }
             else 
             {
-                await CrossPermissions.Current.RequestPermissionsAsync(new[] { Plugin.Permissions.Abstractions.Permission.Phone });
+                await PermissionHelper.RequestPhonePermission();
             }        
         }
-
-
 
         private bool _locationServiceStarted = false;
         private void StartLocationService()
@@ -141,23 +136,5 @@ namespace WheresChris.Droid
             TryToStartLocationService();
         }
 
-        private static bool HasPhonePermission()
-        {
-            var phonePermission =
-                CrossPermissions.Current.CheckPermissionStatusAsync(Plugin.Permissions.Abstractions.Permission.Phone).Result;
-            var phonePermissionGranted = phonePermission == PermissionStatus.Granted;
-            return phonePermissionGranted;
-        }
-
-        public bool HasLocationPermission()
-        {
-            //replace this with plugin?
-            return HasPermission(Manifest.Permission.AccessFineLocation);
-        }
-        private bool HasPermission(string permission)
-        {
-            return ActivityCompat.CheckSelfPermission(this, permission) ==
-                   (int)Permission.Granted;
-        }
     }
 }

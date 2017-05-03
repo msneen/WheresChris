@@ -26,6 +26,7 @@ namespace WheresChris
                         Title="Main",
                         Icon = Device.OnPlatform<string>("tab_feed.png",null,null)
                     },
+                    //needs phone and contacts permission
                     //new NavigationPage(new InvitePage())
                     //{
                     //    Title = "Invite",
@@ -36,6 +37,7 @@ namespace WheresChris
                     //    Title = "Join",
                     //    Icon = Device.OnPlatform<string>("tab_feed.png",null,null)
                     //},
+                    //needs location permission
                     //new NavigationPage(new MapPage())
                     //{
                     //    Title = "Map",
