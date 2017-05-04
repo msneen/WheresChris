@@ -29,7 +29,7 @@ namespace WheresChris.Views
         private void InitializeMessagingCenterSubscriptions()
         {
             _messagingCenterSubscription = new MessagingCenterSubscription();
-            _messagingCenterSubscription.OnLocationSentMsg +=
+            _messagingCenterSubscription.LocationSentEvent.OnLocationSentMsg +=
                 (sender, args) =>
                 {
                     TitleLabel.TextColor = TitleLabel.TextColor == Color.Blue ? Color.Black : Color.Blue;
