@@ -4,6 +4,7 @@ using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
 using StayTogether.iOS.NotificationCenter;
+using TK.CustomMap.iOSUnified;
 using UIKit;
 using WheresChris.Helpers;
 using WheresChris.iOS.Classes;
@@ -31,6 +32,7 @@ namespace WheresChris.iOS
             MobileCenter.Start("2cd11ff1-c5b1-47d8-ac96-9fa5b74a47bd", typeof(Analytics), typeof(Crashes));
 
             Xamarin.FormsMaps.Init();
+            TKCustomMapRenderer.InitMapRenderer();
 
             var phoneNumber = SettingsHelper.GetPhoneNumber();
             if (string.IsNullOrWhiteSpace(phoneNumber)) return base.FinishedLaunching(app, options);
