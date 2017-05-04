@@ -19,7 +19,7 @@ namespace WheresChris.Views
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class MapPage : ContentPage
 	{
-        private MessagingCenterSubscription _messagingCenterSubscription;
+        public GroupPositionChangedEvent GroupPositionChangedEvent;
 
         public MapPage ()
 		{
@@ -30,14 +30,14 @@ namespace WheresChris.Views
 
 	    protected override async void OnAppearing()
 	    {
-	        //await InitializeMap();	        
+	        await InitializeMap();	        
 	    }
 
 	    private void InitializeMessagingCenterSubscriptions()
 	    {
-	        _messagingCenterSubscription = new MessagingCenterSubscription();
-	        //_messagingCenterSubscription.OnGroupPositionChangedMsg += (sender, args) => UpdateMap(args.GroupMembers);
-	    }
+            GroupPositionChangedEvent = new GroupPositionChangedEvent(new TimeSpan(0, 0, 30));
+            //GroupPositionChangedEvent.OnGroupPositionChangedMsg += (sender, args) => UpdateMap(args.GroupMembers);
+        }
         //Problem:  We can get the map to show up in OnAppearing, but we can't get the pins to update.
         //If we make pins in on appearing, they show up
         //if we try to rewrite the pins every time we get a signalR group update, they aren't visible
@@ -53,7 +53,7 @@ namespace WheresChris.Views
 	        GroupMap.MoveToRegion(
 	            MapSpan.FromCenterAndRadius(
 	                mapPosition, Distance.FromMiles(.1)));
-	        UpdateMap();
+	        //UpdateMap();//Todo:  Add me back
 	    }
 
 	    private static async Task<Position> GetMapPosition()

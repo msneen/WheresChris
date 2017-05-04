@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using StayTogether;
 using StayTogether.Helpers;
 using StayTogether.Models;
@@ -28,7 +27,7 @@ namespace WheresChris.Messaging
             (sender) =>
             {
                 var locationSender = LocationSenderFactory.GetLocationSender();
-                if (_groupPositionUpdateTimeGate.CanProcess(true) && (locationSender?.GroupMembers?.Any() ?? false))
+                if ((locationSender?.GroupMembers?.Any() ?? false) && _groupPositionUpdateTimeGate.CanProcess(true))
                 {
                     OnGroupPositionChangedMsg?.Invoke(this, new GroupEventArgs
                     {
