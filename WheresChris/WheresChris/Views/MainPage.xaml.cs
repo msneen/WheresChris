@@ -18,7 +18,7 @@ namespace WheresChris.Views
     /// </summary>
     public partial class MainPage : ContentPage
     {
-        private MessagingCenterSubscription _messagingCenterSubscription;
+        public LocationSentEvent LocationSentEvent;
 
         public MainPage()
         {
@@ -28,12 +28,12 @@ namespace WheresChris.Views
 
         private void InitializeMessagingCenterSubscriptions()
         {
-            _messagingCenterSubscription = new MessagingCenterSubscription();
-            _messagingCenterSubscription.LocationSentEvent.OnLocationSentMsg +=
-                (sender, args) =>
-                {
-                    TitleLabel.TextColor = TitleLabel.TextColor == Color.Blue ? Color.Black : Color.Blue;
-                };
+            LocationSentEvent = new LocationSentEvent();
+            LocationSentEvent.OnLocationSentMsg +=
+            (sender, args) =>
+            {
+                TitleLabel.TextColor = TitleLabel.TextColor == Color.Blue ? Color.Black : Color.Blue;
+            };
         }
 
 

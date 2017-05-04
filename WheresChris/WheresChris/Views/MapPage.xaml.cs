@@ -36,7 +36,7 @@ namespace WheresChris.Views
 	    private void InitializeMessagingCenterSubscriptions()
 	    {
             GroupPositionChangedEvent = new GroupPositionChangedEvent(new TimeSpan(0, 0, 30));
-            //GroupPositionChangedEvent.OnGroupPositionChangedMsg += (sender, args) => UpdateMap(args.GroupMembers);
+            GroupPositionChangedEvent.OnGroupPositionChangedMsg += async (sender, args) => await UpdateMap(args.GroupMembers);
         }
         //Problem:  We can get the map to show up in OnAppearing, but we can't get the pins to update.
         //If we make pins in on appearing, they show up
@@ -46,15 +46,23 @@ namespace WheresChris.Views
         //2. Option, make a PinsViewModel and bind it to the map, so we can update the view model and have it update the map
 
 
+	    //private async Task InitializeMap()
+	    //{
+	    //    var mapPosition = await GetMapPosition();
+
+     //       GroupMap = new Map();
+
+	    //    GroupMap.MoveToRegion(
+	    //        MapSpan.FromCenterAndRadius(
+	    //            mapPosition, Distance.FromMiles(.1)));
+	    //    UpdateMap();//Todo:  Add me back
+	    //}
+
 	    private async Task InitializeMap()
 	    {
-	        var mapPosition = await GetMapPosition();
-
-	        GroupMap.MoveToRegion(
-	            MapSpan.FromCenterAndRadius(
-	                mapPosition, Distance.FromMiles(.1)));
-	        //UpdateMap();//Todo:  Add me back
-	    }
+	        var groupMembersSimple = await GetGroupMembers();
+            await UpdateMap(groupMembersSimple);
+        }
 
 	    private static async Task<Position> GetMapPosition()
 	    {
@@ -67,7 +75,7 @@ namespace WheresChris.Views
 	        return mapPosition;
 	    }
 
-        private async void UpdateMap()
+        private async Task<List<GroupMemberSimpleVm>> GetGroupMembers() //UpdateMap()
         {
             var groupMembers = await GroupActionsHelper.GetGroupMembers();
             var groupMembersSimple = groupMembers.Select(groupMember => new GroupMemberSimpleVm
@@ -77,59 +85,57 @@ namespace WheresChris.Views
                 Latitude = groupMember.Latitude,
                 Longitude = groupMember.Longitude
             }).ToList();
-            UpdateMap(groupMembersSimple);
+            return groupMembersSimple;
         }
 
-        private void UpdateMap(List<GroupMemberSimpleVm> groupMembers)
+        private async Task UpdateMap(List<GroupMemberSimpleVm> groupMembers)
 	    {
-	        if (groupMembers.Count <= 0) return;
+            var mapPosition = await GetMapPosition();
 
-            Device.BeginInvokeOnMainThread(() =>
+            GroupMap = new Map();
+
+            GroupMap.MoveToRegion(
+                MapSpan.FromCenterAndRadius(
+                    mapPosition, Distance.FromMiles(.1)));
+
+            if (groupMembers.Count <= 0) return;
+
+            GroupMap.Pins.Clear();
+            foreach (var groupMember in groupMembers)
             {
-                foreach (var groupMember in groupMembers)
+                var position = new Position(groupMember.Latitude, groupMember.Longitude);
+                var pin = new Pin
                 {
-                    var pin = GroupMap.Pins.FirstOrDefault(x => x.Address == groupMember.PhoneNumber);
-                    if (pin == null)
-                    {
-                        var position = new Position(groupMember.Latitude, groupMember.Longitude);
-                        pin = new Pin
-                        {
-                            Type = PinType.Place,
-                            Position = position,
-                            Label = groupMember.Name,
-                            Address = groupMember.PhoneNumber
-                        };
-                        GroupMap.Pins.Add(pin);
-                        
-                    }
-                    pin.Position = new Position(groupMember.Latitude, groupMember.Longitude);
-                }
-                //This was my original code
-                //GroupMap.Pins.Clear();
-                //foreach (var groupMember in groupMembers)
-                //{
-                //    var position = new Position(groupMember.Latitude, groupMember.Longitude);
-                //    var pin = new Pin
-                //    {
-                //        Type = PinType.Place,
-                //        Position = position,
-                //        Label = groupMember.Name,
-                //        Address = groupMember.PhoneNumber
-                //    };
-                //    GroupMap.Pins.Add(pin);
+                    Type = PinType.Place,
+                    Position = position,
+                    Label = groupMember.Name,
+                    Address = groupMember.PhoneNumber
+                };
+                GroupMap.Pins.Add(pin);
 
-                //}
-            });
+            }
+            //foreach (var groupMember in groupMembers)
+            //{
+            //    var pin = GroupMap.Pins.FirstOrDefault(x => x.Address == groupMember.PhoneNumber);
+            //    if (pin == null)
+            //    {
+            //        var position = new Position(groupMember.Latitude, groupMember.Longitude);
+            //        pin = new Pin
+            //        {
+            //            Type = PinType.Place,
+            //            Position = position,
+            //            Label = groupMember.Name,
+            //            Address = groupMember.PhoneNumber
+            //        };
+            //        GroupMap.Pins.Add(pin);
+
+            //    }
+            //    pin.Position = new Position(groupMember.Latitude, groupMember.Longitude);
+            //}
+            //This was my original code
+
+
         }
-
-	    private void UpdateMemberPosition(GroupMemberVm groupMemberVm)
-	    {
-	        var pin = GroupMap.Pins.FirstOrDefault(x => x.Address == groupMemberVm.PhoneNumber);
-	        if (pin == null) return;
-
-	        var position = new Position(groupMemberVm.Latitude, groupMemberVm.Longitude);
-	        pin.Position = position;
-	    }
 
 	    private async void AddMembersButton_OnClicked(object sender, EventArgs e)
 	    {
