@@ -60,8 +60,8 @@ namespace WheresChris.Views
 
 	    private async Task InitializeMap()
 	    {
-	        var groupMembersSimple = await GetGroupMembers();
-            await UpdateMap(groupMembersSimple);
+	        //var groupMembersSimple = await GetGroupMembers();
+            await UpdateMap(null);
         }
 
 	    private static async Task<Position> GetMapPosition()
@@ -98,6 +98,7 @@ namespace WheresChris.Views
                 MapSpan.FromCenterAndRadius(
                     mapPosition, Distance.FromMiles(.1)));
 
+            if (groupMembers == null) return;
             if (groupMembers.Count <= 0) return;
 
             GroupMap.Pins.Clear();
