@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using StayTogether;
-using StayTogether.Classes;
+using StayTogether.Helpers;
 using StayTogether.Models;
 using Xamarin.Forms;
-using Xamarin.Forms.PlatformConfiguration;
 
 namespace WheresChris.Messaging
 {
@@ -21,34 +19,34 @@ namespace WheresChris.Messaging
     {
         public event System.EventHandler OnLocationSentMsg;
         public event GroupEventHandler OnGroupPositionChangedMsg;
+        
+        private readonly TimeGate _locationSentTimeGate = new TimeGate(2000);
+        private readonly TimeGate _groupPositionUpdateTimeGate = new TimeGate(0, 0, 30);
 
-        private DateTime _lastLocationMessageSentTime = DateTime.Now;
-
-        private readonly bool _isSubscribed = false;
+        private readonly bool _isSubscribed;
 
         public MessagingCenterSubscription()
         {
             if (_isSubscribed) return;
             MessagingCenter.Subscribe<LocationSender>(this, LocationSender.LocationSentMsg, (sender) =>
             {
-                if (DateTime.Now.Subtract(_lastLocationMessageSentTime).Seconds <= 2) return;
+                if (_locationSentTimeGate.CanProcess(true))
+                {
+                    OnLocationSentMsg?.Invoke(this, EventArgs.Empty);
+                }
 
-                OnLocationSentMsg?.Invoke(this, EventArgs.Empty);
-                _lastLocationMessageSentTime = DateTime.Now;
             });
             MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupPositionUpdateMsg,
                 (sender) =>
                 {
-                    var locationSender = LocationSenderFactory.GetLocationSender();
-                    // if (locationSender.GroupMembers != null && locationSender.GroupMembers.Any())
-                    if (locationSender?.GroupMembers?.Any() ?? false)
+                    var locationSender = LocationSenderFactory.GetLocationSender();                    
+                    if (_groupPositionUpdateTimeGate.CanProcess(true) && (locationSender?.GroupMembers?.Any() ?? false))
                     {
                         OnGroupPositionChangedMsg?.Invoke(this, new GroupEventArgs
                         {
                             GroupMembers = locationSender.GroupMembers
                         });
-                    }
-                    
+                    }                    
                 });
             _isSubscribed = true;
         }
