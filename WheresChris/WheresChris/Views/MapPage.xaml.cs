@@ -46,23 +46,24 @@ namespace WheresChris.Views
         //If we make pins in on appearing, they show up
         //if we try to rewrite the pins every time we get a signalR group update, they aren't visible
         //if we try to move the pins, they don't move
-        //1. simple Option.  Try creating a new map every time we call InitializeMap, to try to get the map to redraw
-        //2. Option, make a PinsViewModel and bind it to the map, so we can update the view model and have it update the map
+        //1. Find a different map control
+        //2. Use the guy's custom Renderer solution, so we can update the view model and have it update the map
 
 
-	    //private async Task InitializeMap()
-	    //{
-	    //    var mapPosition = await GetMapPosition();
 
-     //       GroupMap = new Map();
+        //private async Task InitializeMap()
+        //{
+        //    var mapPosition = await GetMapPosition();
 
-	    //    GroupMap.MoveToRegion(
-	    //        MapSpan.FromCenterAndRadius(
-	    //            mapPosition, Distance.FromMiles(.1)));
-	    //    UpdateMap();//Todo:  Add me back
-	    //}
+        //       GroupMap = new Map();
 
-	    private async Task InitializeMap()
+        //    GroupMap.MoveToRegion(
+        //        MapSpan.FromCenterAndRadius(
+        //            mapPosition, Distance.FromMiles(.1)));
+        //    UpdateMap();//Todo:  Add me back
+        //}
+
+        private async Task InitializeMap()
 	    {
 	        //var groupMembersSimple = await GetGroupMembers();
             await UpdateMap(null);
