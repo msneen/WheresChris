@@ -36,7 +36,11 @@ namespace WheresChris.Views
 	    private void InitializeMessagingCenterSubscriptions()
 	    {
             GroupPositionChangedEvent = new GroupPositionChangedEvent(new TimeSpan(0, 0, 30));
-            GroupPositionChangedEvent.OnGroupPositionChangedMsg += async (sender, args) => await UpdateMap(args.GroupMembers);
+            GroupPositionChangedEvent.OnGroupPositionChangedMsg += async (sender, args) =>
+            {
+                AddMembersButton.TextColor = AddMembersButton.TextColor == Color.Blue ? Color.Black : Color.Blue;
+                await UpdateMap(args.GroupMembers);
+            };
         }
         //Problem:  We can get the map to show up in OnAppearing, but we can't get the pins to update.
         //If we make pins in on appearing, they show up
@@ -92,7 +96,7 @@ namespace WheresChris.Views
 	    {
             var mapPosition = await GetMapPosition();
 
-            GroupMap = new Map();
+            //GroupMap = new Map();
 
             GroupMap.MoveToRegion(
                 MapSpan.FromCenterAndRadius(
