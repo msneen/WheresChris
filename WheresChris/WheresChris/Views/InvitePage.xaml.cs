@@ -14,12 +14,6 @@ using StayTogether;
 using WheresChris.Helpers;
 using Plugin.Settings;
 using WheresChris.Messaging;
-//#if __ANDROID__
-//using StayTogether.Droid.Services;
-//#endif
-//#if __IOS__
-//using WheresChris.iOS;
-//#endif
 
 namespace WheresChris.Views
 {
@@ -100,6 +94,7 @@ namespace WheresChris.Views
                 await GroupActionsHelper.StartGroup(selectedGroupMemberVms, userPhoneNumber, expirationHours);
 
                 SetFormEnabled(false);
+NavigateToPage("Map");            
             }
         }
 
@@ -126,6 +121,18 @@ namespace WheresChris.Views
             PhoneNumber.Text = SettingsHelper.GetPhoneNumber();
             Nickname.Text = CrossSettings.Current.GetValueOrDefault<string>("nickname");
             
+        }
+        private void NavigateToPage(string title)
+        {
+            var masterPage = Parent.Parent as TabbedPage;
+            var invitePage = masterPage?.Children.FirstOrDefault(x => x.Title == title);
+            if (invitePage == null) return;
+
+            var index = masterPage.Children.IndexOf(invitePage);
+            if (index > -1)
+            {
+                masterPage.CurrentPage = masterPage.Children[index];
+            }
         }
     }
 
