@@ -71,7 +71,7 @@ namespace StayTogether.Helpers
         }
 
         public static Xamarin.Forms.Maps.Position ConvertPluginPositionToMapPosition(
-            Plugin.Geolocator.Abstractions.Position plugInPosition)
+            Position plugInPosition)
         {
             return new Xamarin.Forms.Maps.Position(plugInPosition.Latitude, plugInPosition.Longitude);
         }

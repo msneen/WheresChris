@@ -106,7 +106,7 @@ namespace WheresChris.Views
             Device.BeginInvokeOnMainThread(() =>
             {
                 GroupMap.MapType= MapType.Hybrid; //This doesn't seem to work
-                GroupMap.MapCenter = userPosition;
+                GroupMap.MapCenter = mapCenterPosition;
                 GroupMap.MapRegion = MapSpan.FromCenterAndRadius(mapCenterPosition, Distance.FromMeters(80));
                 GroupMap.CustomPins = customPins;
             });

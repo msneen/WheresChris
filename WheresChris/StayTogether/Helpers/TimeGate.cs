@@ -21,7 +21,8 @@ namespace StayTogether.Helpers
         public TimeGate(int interval)
         {
             _intervalTimeSpan = TimeSpan.FromMilliseconds(interval);
-            UpdateLastProcessingTime();
+	        InitializeProcessingTime();
+
         }
 
         /// <summary>
@@ -33,7 +34,8 @@ namespace StayTogether.Helpers
         public TimeGate(int hours, int minutes, int seconds)
         {
             _intervalTimeSpan = new TimeSpan(hours, minutes, seconds);
-            UpdateLastProcessingTime();
+	        InitializeProcessingTime();
+
         }
 
         /// <summary>
@@ -43,7 +45,8 @@ namespace StayTogether.Helpers
         public TimeGate(TimeSpan timeSpan)
         {
             _intervalTimeSpan = timeSpan;
-            UpdateLastProcessingTime();
+	        InitializeProcessingTime();
+
         }
 
         /// <summary>
@@ -69,5 +72,10 @@ namespace StayTogether.Helpers
         {
             _lastProcessingTime = DateTime.Now;
         }
+
+	    public void InitializeProcessingTime()
+	    {
+		    _lastProcessingTime=DateTime.MinValue;
+	    }
     }
 }
