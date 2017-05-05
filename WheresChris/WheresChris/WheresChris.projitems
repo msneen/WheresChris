@@ -23,6 +23,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\PositionConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\SettingsHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LocationSenderFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messaging\GroupJoinedEvent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messaging\GroupLeftEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\GroupPositionChangedEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\InvitationReceivedEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\LocationSentEvent.cs" />
