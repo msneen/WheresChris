@@ -5,7 +5,7 @@ using Android.Locations;
 using Android.Util;
 using Plugin.Geolocator.Abstractions;
 
-namespace StayTogether.Droid.Classes
+namespace WheresChris.Droid.Classes
 {
     [Service]
     public class GpsService
@@ -16,8 +16,6 @@ namespace StayTogether.Droid.Classes
         {
             try
             {
-                //if (LastLocationUpdateWasMoreThanAnHourAgo())
-                //{
                     var criteriaForGpsService = new Criteria
                     {
                         //A constant indicating an approximate accuracy  
@@ -47,30 +45,12 @@ namespace StayTogether.Droid.Classes
                     {
                         Log.WriteLine(LogPriority.Info, "GetLocation", "GPS:  Unable to turn on.  " + ex.StackTrace);
                     }
-                //}
             }
             catch(Exception ex)
             {
-                Log.WriteLine(LogPriority.Info, "GetLocation", ex.StackTrace);
-            
+                Log.WriteLine(LogPriority.Info, "GetLocation", ex.StackTrace);            
             }
             return null;
-
-        }
-
-        private static bool LastLocationUpdateWasMoreThanAnHourAgo()
-        {
-            try
-            {
-                var interval = DateTime.Now - LastLocationCheck;
-                var isMoreThanAnHour = interval > TimeSpan.FromHours(1);
-                return isMoreThanAnHour;
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine(LogPriority.Info, "LastLocationUpdateWasMoreThanAnHourAgo", ex.StackTrace);
-            }
-            return true;
         }
 
         public static void TurnGpsOn()

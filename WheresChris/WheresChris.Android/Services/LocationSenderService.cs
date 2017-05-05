@@ -10,6 +10,7 @@ using StayTogether.Group;
 using StayTogether.Location;
 using WheresChris.Droid;
 using StayTogether.Droid.NotificationCenter;
+using WheresChris.Droid.Classes;
 using WheresChris.Helpers;
 
 namespace StayTogether.Droid.Services
