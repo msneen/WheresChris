@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Plugin.Geolocator.Abstractions;
 using StayTogether.Classes;
 using StayTogether.Models;
@@ -38,7 +37,7 @@ namespace StayTogether.Helpers
             z = z / total;
 
             var centralLongitude = Math.Atan2(y, x);
-            var centralSquareRoot = Math.Sqrt(x * x + y * y);
+            var centralSquareRoot = Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2));
             var centralLatitude = Math.Atan2(z, centralSquareRoot);
 
             var position = new Position
