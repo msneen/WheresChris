@@ -8,23 +8,17 @@ using EventHandler = System.EventHandler;
 
 namespace WheresChris.Messaging
 {
-    public class GroupLeftEvent
+    public class GroupLeftEvent : MessageEventBase
     {
         public event EventHandler OnGroupLeftMsg;
 
-        private readonly TimeGate _leftGroupTimeGate = new TimeGate(1000);
-
-        public GroupLeftEvent(TimeSpan? interval = null)
+        public GroupLeftEvent(TimeSpan? interval = null) : base(interval ?? new TimeSpan(0, 0, 1))
         {
-            if (interval.HasValue)
-            {
-                _leftGroupTimeGate = new TimeGate(interval.Value);
-            }
             //If the group is disbanded, it means this user also left the group with everyone else
             MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupDisbandedMsg,
             (sender) =>
             {
-                if (_leftGroupTimeGate.CanProcess(true))
+                if (MessageTimeGate.CanProcess(true))
                 {
                     OnGroupLeftMsg?.Invoke(this, EventArgs.Empty);
                 }
@@ -33,7 +27,7 @@ namespace WheresChris.Messaging
             MessagingCenter.Subscribe<LocationSender>(this, LocationSender.ThisUserLeftGroupMsg,
             (sender) =>
             {
-                if (_leftGroupTimeGate.CanProcess(true))
+                if (MessageTimeGate.CanProcess(true))
                 {
                     OnGroupLeftMsg?.Invoke(this, EventArgs.Empty);
                 }

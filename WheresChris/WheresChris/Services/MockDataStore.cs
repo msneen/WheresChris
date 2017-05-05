@@ -70,7 +70,9 @@ namespace WheresChris.Services
 			return Task.FromResult(true);
 		}
 
+#pragma warning disable 1998
 		public async Task InitializeAsync()
+#pragma warning restore 1998
 		{
 			if (isInitialized)
 				return;

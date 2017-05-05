@@ -5,17 +5,15 @@ using Xamarin.Forms;
 
 namespace WheresChris.Messaging
 {
-    public class LocationSentEvent
+    public class LocationSentEvent : MessageEventBase
     {
         public event System.EventHandler OnLocationSentMsg;
 
-        private readonly TimeGate _locationSentTimeGate = new TimeGate(2000);
-
-        public LocationSentEvent()
+        public LocationSentEvent(TimeSpan? interval = null) : base(interval ?? new TimeSpan(0, 0, 2))
         {
             MessagingCenter.Subscribe<LocationSender>(this, LocationSender.LocationSentMsg, (sender) =>
             {
-                if (_locationSentTimeGate.CanProcess(true))
+                if (MessageTimeGate.CanProcess(true))
                 {
                     OnLocationSentMsg?.Invoke(this, EventArgs.Empty);
                 }

@@ -8,22 +8,16 @@ using EventHandler = System.EventHandler;
 
 namespace WheresChris.Messaging
 {
-    public class GroupJoinedEvent
+    public class GroupJoinedEvent : MessageEventBase
     {
         public event EventHandler OnGroupJoinedMsg;
-
-        private readonly  TimeGate _groupJoinedTimeGate = new TimeGate(1000);
-
-        public GroupJoinedEvent(TimeSpan? interval = null)
+       
+        public GroupJoinedEvent(TimeSpan? interval = null):base(interval ?? new TimeSpan(0, 0, 1))
         {
-            if (interval.HasValue)
-            {
-                _groupJoinedTimeGate = new TimeGate(interval.Value);
-            }
             MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupJoinedMsg,
             (sender) =>
             {
-                if (_groupJoinedTimeGate.CanProcess(true))
+                if (MessageTimeGate.CanProcess(true))
                 {
                     OnGroupJoinedMsg?.Invoke(this, EventArgs.Empty);
                 }

@@ -120,7 +120,6 @@ namespace WheresChris.Droid
         protected override void OnResume()
         {
             base.OnResume();
-            var inAGroup = false;
             Binder?.GetLocationSenderService()?.StopForeground();
             BindToService();
         }

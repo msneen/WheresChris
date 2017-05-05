@@ -6,23 +6,16 @@ using EventHandler = System.EventHandler;
 
 namespace WheresChris.Messaging
 {
-    public class InvitationReceivedEvent
+    public class InvitationReceivedEvent : MessageEventBase
     {
         public event EventHandler OnInvitationReceivedMsg;
 
-        private readonly TimeGate _invitationTimeGate= new TimeGate(1000);
-
-        public InvitationReceivedEvent(TimeSpan? interval = null)
+        public InvitationReceivedEvent(TimeSpan? interval = null) : base(interval ?? new TimeSpan(0, 0, 1))
         {
-            if (interval.HasValue)
-            {
-                _invitationTimeGate = new TimeGate(interval.Value);
-            }
-
             MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupInvitationReceivedMsg,
             (sender) =>
             {
-                if (_invitationTimeGate.CanProcess(true))
+                if (MessageTimeGate.CanProcess(true))
                 {
                     OnInvitationReceivedMsg?.Invoke(this, EventArgs.Empty);
                 }

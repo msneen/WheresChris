@@ -28,6 +28,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\GroupPositionChangedEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\InvitationReceivedEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\LocationSentEvent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messaging\MessageEventBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\BaseDataObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MapViewModel.cs" />
