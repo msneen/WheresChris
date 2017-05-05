@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Contacts\ContactsHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Group\GroupHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\PositionHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\TimeGate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Location\Distance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Location\GroupMemberPositionAdapter.cs" />

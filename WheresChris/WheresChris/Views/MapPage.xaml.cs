@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Plugin.Geolocator;
-using StayTogether.Classes;
-using StayTogether.Location;
+using StayTogether;
+using StayTogether.Helpers;
 using StayTogether.Models;
+using TK.CustomMap;
 using WheresChris.Helpers;
 using WheresChris.Messaging;
 using WheresChris.Views.GroupViews;
@@ -21,7 +21,7 @@ namespace WheresChris.Views
 	{
         public GroupPositionChangedEvent GroupPositionChangedEvent;
 
-        public MapPage ()
+	    public MapPage ()
 		{
             InitializeComponent ();
             InitializeMessagingCenterSubscriptions();
@@ -33,41 +33,44 @@ namespace WheresChris.Views
 	        await InitializeMap();	        
 	    }
 
+        /// <summary>
+        /// This event is fired when a group position update is received from the server
+        /// </summary>
 	    private void InitializeMessagingCenterSubscriptions()
 	    {
             GroupPositionChangedEvent = new GroupPositionChangedEvent(new TimeSpan(0, 0, 30));
-            GroupPositionChangedEvent.OnGroupPositionChangedMsg += async (sender, args) =>
+            GroupPositionChangedEvent.OnGroupPositionChangedMsg += (sender, args) =>
             {
-                AddMembersButton.TextColor = AddMembersButton.TextColor == Color.Blue ? Color.Black : Color.Blue;
-                await UpdateMap(args.GroupMembers);
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    AddMembersButton.TextColor = AddMembersButton.TextColor == Color.Blue ? Color.Black : Color.Blue;
+                    await UpdateMap(args.GroupMembers);
+                });
             };
         }
-        //Problem:  We can get the map to show up in OnAppearing, but we can't get the pins to update.
-        //If we make pins in on appearing, they show up
-        //if we try to rewrite the pins every time we get a signalR group update, they aren't visible
-        //if we try to move the pins, they don't move
-        //1. Find a different map control
-        //2. Use the guy's custom Renderer solution, so we can update the view model and have it update the map
-
-
-
-        //private async Task InitializeMap()
-        //{
-        //    var mapPosition = await GetMapPosition();
-
-        //       GroupMap = new Map();
-
-        //    GroupMap.MoveToRegion(
-        //        MapSpan.FromCenterAndRadius(
-        //            mapPosition, Distance.FromMiles(.1)));
-        //    UpdateMap();//Todo:  Add me back
-        //}
 
         private async Task InitializeMap()
-	    {
-	        //var groupMembersSimple = await GetGroupMembers();
-            await UpdateMap(null);
+        {
+            var justMeList = await GetMyPositionList();
+            await UpdateMap(justMeList);
         }
+
+	    private static async Task<List<GroupMemberSimpleVm>> GetMyPositionList()
+	    {
+	        var userPosition = await GetMapPosition();
+	        var userPhoneNumber = SettingsHelper.GetPhoneNumber();
+	        var justMeList = new List<GroupMemberSimpleVm>
+	        {
+	            new GroupMemberSimpleVm
+	            {
+	                Latitude = userPosition.Latitude,
+	                Longitude = userPosition.Longitude,
+	                PhoneNumber = userPhoneNumber,
+	                Name = "Me"
+	            }
+	        };
+	        return justMeList;
+	    }
 
 	    private static async Task<Position> GetMapPosition()
 	    {
@@ -80,67 +83,43 @@ namespace WheresChris.Views
 	        return mapPosition;
 	    }
 
-        private async Task<List<GroupMemberSimpleVm>> GetGroupMembers() //UpdateMap()
-        {
-            var groupMembers = await GroupActionsHelper.GetGroupMembers();
-            var groupMembersSimple = groupMembers.Select(groupMember => new GroupMemberSimpleVm
-            {
-                PhoneNumber = groupMember.PhoneNumber,
-                Name = groupMember.Name,
-                Latitude = groupMember.Latitude,
-                Longitude = groupMember.Longitude
-            }).ToList();
-            return groupMembersSimple;
-        }
-
         private async Task UpdateMap(List<GroupMemberSimpleVm> groupMembers)
-	    {
-            var mapPosition = await GetMapPosition();
+	    {            
+            var userPosition = await GetMapPosition();
+            var userPhoneNumber = SettingsHelper.GetPhoneNumber();
+            var customPins = new List<TKCustomMapPin>();
 
-            //GroupMap = new Map();
-
-            GroupMap.MoveToRegion(
-                MapSpan.FromCenterAndRadius(
-                    mapPosition, Distance.FromMiles(.1)));
-
-            if (groupMembers == null) return;
-            if (groupMembers.Count <= 0) return;
-
-            GroupMap.Pins.Clear();
             foreach (var groupMember in groupMembers)
             {
                 var position = new Position(groupMember.Latitude, groupMember.Longitude);
-                var pin = new Pin
+                customPins.Add(new TKCustomMapPin
                 {
-                    Type = PinType.Place,
+                    Title = ContactsHelper.NameOrPhone(groupMember.PhoneNumber, groupMember.Name),
                     Position = position,
-                    Label = groupMember.Name,
-                    Address = groupMember.PhoneNumber
-                };
-                GroupMap.Pins.Add(pin);
-
+                    ShowCallout = true,
+                    DefaultPinColor = groupMember.PhoneNumber == userPhoneNumber ? Color.Blue : Color.Red
+                });
             }
-            //foreach (var groupMember in groupMembers)
-            //{
-            //    var pin = GroupMap.Pins.FirstOrDefault(x => x.Address == groupMember.PhoneNumber);
-            //    if (pin == null)
-            //    {
-            //        var position = new Position(groupMember.Latitude, groupMember.Longitude);
-            //        pin = new Pin
-            //        {
-            //            Type = PinType.Place,
-            //            Position = position,
-            //            Label = groupMember.Name,
-            //            Address = groupMember.PhoneNumber
-            //        };
-            //        GroupMap.Pins.Add(pin);
 
-            //    }
-            //    pin.Position = new Position(groupMember.Latitude, groupMember.Longitude);
-            //}
-            //This was my original code
+            var mapCenterPosition = GetMapCenter(userPosition, groupMembers);            
 
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                GroupMap.MapType= MapType.Hybrid; //This doesn't seem to work
+                GroupMap.MapCenter = userPosition;
+                GroupMap.MapRegion = MapSpan.FromCenterAndRadius(mapCenterPosition, Distance.FromMeters(80));
+                GroupMap.CustomPins = customPins;
+            });
+        }
 
+	    private static Position GetMapCenter(Position userPosition, List<GroupMemberSimpleVm> groupMembers)
+	    {
+            //if we have more than one groupMember, calculate the center, otherwise use the currrent user's position
+            if (groupMembers.Count > 1)
+            {                
+                return PositionHelper.ConvertPluginPositionToMapPosition(PositionHelper.GetCentralGeoCoordinate(groupMembers));
+            }
+            return userPosition;
         }
 
 	    private async void AddMembersButton_OnClicked(object sender, EventArgs e)
