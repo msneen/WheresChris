@@ -26,11 +26,12 @@ namespace WheresChris.Views
 
         public InvitePage()
         {
-			InitializeComponent ();
+            Title = "Invite Chris";
+            InitializeComponent ();
             InitializeMessagingCenterSubscriptions();
             BindingContext = new InvitePageViewModel();
             InitializeExpirationPicker();
-            Title = "Invite Chris";
+            Task.Run(() => InitializeContacts()).Wait();
         }
 
         private void InitializeMessagingCenterSubscriptions()
@@ -89,13 +90,11 @@ namespace WheresChris.Views
             var selectedExpirationHours = ExpirationPicker.SelectedItem as ExpirationPickerViewModel;
 
             var expirationHours = selectedExpirationHours?.Hours ?? 4;
-            if (selectedGroupMemberVms.Any())
-            {
-                await GroupActionsHelper.StartGroup(selectedGroupMemberVms, userPhoneNumber, expirationHours);
+            if (!selectedGroupMemberVms.Any()) return;
 
-                SetFormEnabled(false);
-NavigateToPage("Map");            
-            }
+            await GroupActionsHelper.StartGroup(selectedGroupMemberVms, userPhoneNumber, expirationHours);
+            SetFormEnabled(false);
+            NavigateToPage("Map");
         }
 
         private void SetFormEnabled(bool isSelected)
@@ -107,6 +106,9 @@ NavigateToPage("Map");
 
         protected override async void OnAppearing()
         {
+        }
+        protected async void InitializeContacts()
+        { 
             var status = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Contacts);
             if (status != PermissionStatus.Granted)
             {
@@ -119,8 +121,7 @@ NavigateToPage("Map");
                 ContactsListView.ItemsSource = ((InvitePageViewModel) BindingContext).Items;
             }
             PhoneNumber.Text = SettingsHelper.GetPhoneNumber();
-            Nickname.Text = CrossSettings.Current.GetValueOrDefault<string>("nickname");
-            
+            Nickname.Text = CrossSettings.Current.GetValueOrDefault<string>("nickname");           
         }
         private void NavigateToPage(string title)
         {

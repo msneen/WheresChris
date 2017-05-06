@@ -21,10 +21,10 @@ namespace WheresChris.Views
 
         public JoinPage()
         {
+            Title = "Join Group";
             InitializeComponent();
             BindingContext = new JoinPageViewModel();
             InitializeMessagingCenterSubscriptions();
-            Title = "Join Group";
         }
 
         private void InitializeMessagingCenterSubscriptions()
