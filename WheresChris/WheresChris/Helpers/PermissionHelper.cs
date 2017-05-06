@@ -36,7 +36,7 @@ namespace WheresChris.Helpers
         {
             var phonePermission =
                 CrossPermissions.Current.CheckPermissionStatusAsync(permission).Result;
-            return phonePermission == PermissionStatus.Granted;
+            return phonePermission == PermissionStatus.Granted || phonePermission == PermissionStatus.Unknown;
         }
 
 

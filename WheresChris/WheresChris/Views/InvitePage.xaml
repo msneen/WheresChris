@@ -7,7 +7,7 @@
 
     <StackLayout>
         <RelativeLayout Padding="5,0,0,0">
-            <Label Text="Phone#"
+            <Label Text="My Phone#"
                 RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.25,Constant=0}"/>
             <Entry x:Name="PhoneNumber" Text=""
@@ -15,7 +15,7 @@
                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.75,Constant=0}" />
         </RelativeLayout>
         <RelativeLayout Padding="5,0,0,0">
-            <Label Text="Name"
+            <Label Text="My Name"
                 RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.25,Constant=0}"/>
             <Entry x:Name="Nickname" Text="" 
