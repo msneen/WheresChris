@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -12,24 +13,46 @@ using Xamarin.Forms.Xaml;
 using StayTogether;
 using WheresChris.Helpers;
 using Plugin.Settings;
-#if __ANDROID__
-using StayTogether.Droid.Services;
-#endif
-#if __IOS__
-using WheresChris.iOS;
-#endif
+using WheresChris.Messaging;
 
 namespace WheresChris.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
+    // ReSharper disable once RedundantExtendsListEntry
     public partial class InvitePage : ContentPage
     {
+        public GroupLeftEvent GroupLeftEvent;
+        public GroupJoinedEvent GroupJoinedEvent;
+
         public InvitePage()
         {
-			InitializeComponent ();
+            Title = "Invite Chris";
+            InitializeComponent ();
+            InitializeMessagingCenterSubscriptions();
             BindingContext = new InvitePageViewModel();
             InitializeExpirationPicker();
-            Title = "Invite Chris";
+            Task.Run(() => InitializeContacts()).Wait();
+        }
+
+        private void InitializeMessagingCenterSubscriptions()
+        {
+            GroupJoinedEvent = new GroupJoinedEvent();
+            GroupJoinedEvent.OnGroupJoinedMsg += (sender, args) =>
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    SetFormEnabled(false);
+                });
+            };
+
+            GroupLeftEvent = new GroupLeftEvent();
+            GroupLeftEvent.OnGroupLeftMsg += (sender, args) =>
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    SetFormEnabled(true);
+                });
+            };
         }
 
         private void InitializeExpirationPicker()
@@ -67,10 +90,11 @@ namespace WheresChris.Views
             var selectedExpirationHours = ExpirationPicker.SelectedItem as ExpirationPickerViewModel;
 
             var expirationHours = selectedExpirationHours?.Hours ?? 4;
+            if (!selectedGroupMemberVms.Any()) return;
 
             await GroupActionsHelper.StartGroup(selectedGroupMemberVms, userPhoneNumber, expirationHours);
-
             SetFormEnabled(false);
+            NavigateToPage("Map");
         }
 
         private void SetFormEnabled(bool isSelected)
@@ -82,6 +106,9 @@ namespace WheresChris.Views
 
         protected override async void OnAppearing()
         {
+        }
+        protected async void InitializeContacts()
+        { 
             var status = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Contacts);
             if (status != PermissionStatus.Granted)
             {
@@ -94,8 +121,19 @@ namespace WheresChris.Views
                 ContactsListView.ItemsSource = ((InvitePageViewModel) BindingContext).Items;
             }
             PhoneNumber.Text = SettingsHelper.GetPhoneNumber();
-            Nickname.Text = CrossSettings.Current.GetValueOrDefault<string>("nickname");
-            
+            Nickname.Text = CrossSettings.Current.GetValueOrDefault<string>("nickname");           
+        }
+        private void NavigateToPage(string title)
+        {
+            var masterPage = Parent.Parent as TabbedPage;
+            var invitePage = masterPage?.Children.FirstOrDefault(x => x.Title == title);
+            if (invitePage == null) return;
+
+            var index = masterPage.Children.IndexOf(invitePage);
+            if (index > -1)
+            {
+                masterPage.CurrentPage = masterPage.Children[index];
+            }
         }
     }
 
@@ -126,7 +164,7 @@ namespace WheresChris.Views
 
         private Task<ObservableCollection<ContactDisplayItemVm>> LoadContacts()
         {
-            return Task.Run<ObservableCollection<ContactDisplayItemVm>>(async () =>
+            return Task.Run(async () =>
             {
                 var contactsHelper = new ContactsHelper();
                 var contacts = await contactsHelper.GetContacts();
@@ -156,13 +194,13 @@ namespace WheresChris.Views
             IsBusy = false;
         }
 
-        bool busy;
+        private bool _busy;
         public bool IsBusy
         {
-            get { return busy; }
+            get { return _busy; }
             set
             {
-                busy = value;
+                _busy = value;
                 OnPropertyChanged();
                 ((Command)RefreshDataCommand).ChangeCanExecute();
             }

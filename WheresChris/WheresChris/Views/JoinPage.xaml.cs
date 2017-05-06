@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using WheresChris.Messaging;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using XLabs;
@@ -16,11 +17,23 @@ namespace WheresChris.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class JoinPage : ContentPage
     {
+        public InvitationReceivedEvent InvitationReceivedEvent;
+
         public JoinPage()
         {
+            Title = "Join Group";
             InitializeComponent();
             BindingContext = new JoinPageViewModel();
-            Title = "Join Group";
+            InitializeMessagingCenterSubscriptions();
+        }
+
+        private void InitializeMessagingCenterSubscriptions()
+        {
+            InvitationReceivedEvent = new InvitationReceivedEvent();
+            InvitationReceivedEvent.OnInvitationReceivedMsg += (sender, args) =>
+            {
+                ((JoinPageViewModel)BindingContext).LoadInvitations();
+            };
         }
 
         void Handle_ItemTapped(object sender, ItemTappedEventArgs e)

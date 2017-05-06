@@ -10,24 +10,17 @@ namespace WheresChris.Messaging
 {
     public delegate void GroupEventHandler(object sender, GroupEventArgs e);
 
-    public class GroupPositionChangedEvent
+    public class GroupPositionChangedEvent : MessageEventBase
     {
         public event GroupEventHandler OnGroupPositionChangedMsg;
 
-        private readonly TimeGate _groupPositionUpdateTimeGate = new TimeGate(0, 0, 30);
-
-        public GroupPositionChangedEvent(TimeSpan? interval = null)
+        public GroupPositionChangedEvent(TimeSpan? interval = null) : base(interval ?? new TimeSpan(0, 0, 30))
         {
-            if (interval.HasValue)
-            {
-                _groupPositionUpdateTimeGate = new TimeGate(interval.Value);
-            }
-
             MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupPositionUpdateMsg,
             (sender) =>
             {
                 var locationSender = LocationSenderFactory.GetLocationSender();
-                if ((locationSender?.GroupMembers?.Any() ?? false) && _groupPositionUpdateTimeGate.CanProcess(true))
+                if ((locationSender?.GroupMembers?.Any() ?? false) && MessageTimeGate.CanProcess(true))
                 {
                     OnGroupPositionChangedMsg?.Invoke(this, new GroupEventArgs
                     {

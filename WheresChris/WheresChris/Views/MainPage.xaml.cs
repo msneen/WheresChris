@@ -24,6 +24,7 @@ namespace WheresChris.Views
         {
             InitializeComponent();
             InitializeMessagingCenterSubscriptions();
+            CheckLocationServicesEnabled();
         }
 
         private void InitializeMessagingCenterSubscriptions()
@@ -39,7 +40,6 @@ namespace WheresChris.Views
 
         protected override void OnAppearing()
         {
-            CheckLocationServicesEnabled();
         }
 
         private void CheckLocationServicesEnabled()

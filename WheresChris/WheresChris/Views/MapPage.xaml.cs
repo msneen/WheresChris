@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Plugin.Geolocator;
 using StayTogether;
@@ -19,18 +20,33 @@ namespace WheresChris.Views
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class MapPage : ContentPage
 	{
-        public GroupPositionChangedEvent GroupPositionChangedEvent;
+        private bool _mapInitialized = false;
 
-	    public MapPage ()
+        public GroupPositionChangedEvent GroupPositionChangedEvent;
+        public GroupLeftEvent GroupLeftEvent;
+        public GroupJoinedEvent GroupJoinedEvent;
+
+        public MapPage ()
 		{
+            Title = "Map";
             InitializeComponent ();
             InitializeMessagingCenterSubscriptions();
-            Title = "Map";
+            SetFormEnabled(false);
 		}
+
+	    private void SetFormEnabled(bool isSelected)
+	    {
+	        AddMembersButton.IsEnabled = isSelected;
+	        ViewMembersButton.IsEnabled = isSelected;
+	        LeaveGroupButton.IsEnabled = isSelected;
+	    }
+
 
 	    protected override async void OnAppearing()
 	    {
-	        await InitializeMap();	        
+	        if (_mapInitialized) return;
+	        await InitializeMap();
+	        _mapInitialized = true;
 	    }
 
         /// <summary>
@@ -44,7 +60,25 @@ namespace WheresChris.Views
                 Device.BeginInvokeOnMainThread(async () =>
                 {
                     AddMembersButton.TextColor = AddMembersButton.TextColor == Color.Blue ? Color.Black : Color.Blue;
+                    SetFormEnabled(true);
                     await UpdateMap(args.GroupMembers);
+                });
+            };
+            GroupJoinedEvent = new GroupJoinedEvent();
+            GroupJoinedEvent.OnGroupJoinedMsg += (sender, args) =>
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    SetFormEnabled(true);
+                });
+            };
+
+            GroupLeftEvent = new GroupLeftEvent();
+            GroupLeftEvent.OnGroupLeftMsg += (sender, args) =>
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    SetFormEnabled(false);
                 });
             };
         }
@@ -101,25 +135,25 @@ namespace WheresChris.Views
                 });
             }
 
-            var mapCenterPosition = GetMapCenter(userPosition, groupMembers);            
+            var mapCenterPosition = GetMapCenter(groupMembers);
+            var minLatitude = groupMembers.Min(x => x.Latitude);
+            var minLongitude = groupMembers.Min(x => x.Longitude);
+            var radius = StayTogether.Helpers.DistanceCalculator.Distance.CalculateMiles(mapCenterPosition.Latitude,
+                mapCenterPosition.Longitude, minLatitude, minLongitude);
+            radius = radius < .03 ? .03 : radius;
 
             Device.BeginInvokeOnMainThread(() =>
             {
                 GroupMap.MapType= MapType.Hybrid; //This doesn't seem to work
                 GroupMap.MapCenter = mapCenterPosition;
-                GroupMap.MapRegion = MapSpan.FromCenterAndRadius(mapCenterPosition, Distance.FromMeters(80));
+                GroupMap.MapRegion = MapSpan.FromCenterAndRadius(mapCenterPosition, Distance.FromMiles(radius));
                 GroupMap.CustomPins = customPins;
             });
         }
 
-	    private static Position GetMapCenter(Position userPosition, List<GroupMemberSimpleVm> groupMembers)
-	    {
-            //if we have more than one groupMember, calculate the center, otherwise use the currrent user's position
-            if (groupMembers.Count > 1)
-            {                
-                return PositionHelper.ConvertPluginPositionToMapPosition(PositionHelper.GetCentralGeoCoordinate(groupMembers));
-            }
-            return userPosition;
+	    private static Position GetMapCenter( List<GroupMemberSimpleVm> groupMembers)
+	    {              
+            return PositionHelper.ConvertPluginPositionToMapPosition(PositionHelper.GetCentralGeoCoordinate(groupMembers));
         }
 
 	    private async void AddMembersButton_OnClicked(object sender, EventArgs e)
@@ -137,7 +171,10 @@ namespace WheresChris.Views
 	    private async void LeaveGroupButton_OnClicked(object sender, EventArgs e)
 	    {
             var locationSender = LocationSenderFactory.GetLocationSender();
+            //Calling both because I can only leave if I'm not the group leader, otherwise I have to end the group
 	        await locationSender.LeaveGroup();
-	    }
+	        await locationSender.EndGroup();
+            MessagingCenter.Send<LocationSender>(locationSender, LocationSender.ThisUserLeftGroupMsg);
+        }
 	}
 }

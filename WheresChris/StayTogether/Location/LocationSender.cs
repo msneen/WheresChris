@@ -100,7 +100,7 @@ namespace StayTogether
                 }
                 MessagingCenter.Send<LocationSender>(this, GroupPositionUpdateMsg);
             }
-            catch(Exception ex) { }
+            catch(Exception) { }
 
         }
 
