@@ -1,5 +1,6 @@
 ﻿
 using System.Reflection;
+using WheresChris.Helpers;
 using Xamarin.Forms;
 
 namespace WheresChris.Views
@@ -10,7 +11,8 @@ namespace WheresChris.Views
 		{
 			InitializeComponent();
 		    Title = "About Where's Chris";
-		    VersionSpan.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+		    var permissions = PermissionHelper.GetNecessaryPermissionInformation().Result;
+		    VersionSpan.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString() + "    " + permissions;
 		}
 	}
 }

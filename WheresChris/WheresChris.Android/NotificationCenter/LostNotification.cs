@@ -1,5 +1,6 @@
 using Android.App;
 using Android.Content;
+using Java.Lang;
 using Plugin.ExternalMaps;
 using Plugin.ExternalMaps.Abstractions;
 using StayTogether.Classes;
@@ -27,9 +28,11 @@ namespace StayTogether.Droid.NotificationCenter
             notificationIntent.PutExtra("longitude", groupMemberVm.Longitude);
             notificationIntent.PutExtra("name", groupMemberVm.Name);
 
+            var lostDistance = Math.Round(groupMemberVm.LostDistance);
+
             var notification = new Notification.Builder(Application.Context)
                 .SetSmallIcon(Resource.Drawable.ic_speaker_dark)
-                .SetContentTitle($"{ContactsHelper.NameOrPhone(groupMemberVm.PhoneNumber, groupMemberVm.Name)} is lost by {groupMemberVm.LostDistance} feet")
+                .SetContentTitle($"{ContactsHelper.NameOrPhone(groupMemberVm.PhoneNumber, groupMemberVm.Name)} is lost by {lostDistance} feet")
                 .SetContentText("View On Map")
                 .SetContentIntent(PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.UpdateCurrent | PendingIntentFlags.OneShot))
                 .Build();

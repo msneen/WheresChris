@@ -64,5 +64,14 @@ namespace WheresChris.Helpers
             }
             await CrossPermissions.Current.RequestPermissionsAsync(new[] {permission});
         }
+
+        public static async Task<string> GetNecessaryPermissionInformation()
+        {
+            var contacts = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Contacts);
+            var phone = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Phone);
+            var location = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Location);
+            var information = $"\n\rContacts={contacts}\n\rPhone={phone}\n\rLocation={location}";
+            return information;
+        }
     }
 }
