@@ -45,7 +45,10 @@ namespace WheresChris.Views
 	    protected override async void OnAppearing()
 	    {
 	        if (_mapInitialized) return;
-	        await InitializeMap();
+	        await Task.Delay(3000).ContinueWith(async t =>
+	        {
+	            await InitializeMap();
+	        });
 	        _mapInitialized = true;
 	    }
 
@@ -57,11 +60,11 @@ namespace WheresChris.Views
             GroupPositionChangedEvent = new GroupPositionChangedEvent(new TimeSpan(0, 0, 30));
             GroupPositionChangedEvent.OnGroupPositionChangedMsg += (sender, args) =>
             {
-                Device.BeginInvokeOnMainThread(async () =>
+                Device.BeginInvokeOnMainThread(() =>
                 {
                     AddMembersButton.TextColor = AddMembersButton.TextColor == Color.Blue ? Color.Black : Color.Blue;
                     SetFormEnabled(true);
-                    await UpdateMap(args.GroupMembers);
+                    UpdateMap(args.GroupMembers);
                 });
             };
             GroupJoinedEvent = new GroupJoinedEvent();
@@ -86,12 +89,14 @@ namespace WheresChris.Views
         private async Task InitializeMap()
         {
             var justMeList = await GetMyPositionList();
-            await UpdateMap(justMeList);
+            UpdateMap(justMeList);
         }
 
 	    private static async Task<List<GroupMemberSimpleVm>> GetMyPositionList()
 	    {
-	        var userPosition = await GetMapPosition();
+	        var userPosition = await PositionHelper.GetMapPosition();
+	        if (userPosition.Latitude < .1 && userPosition.Longitude < .1) return null;
+
 	        var userPhoneNumber = SettingsHelper.GetPhoneNumber();
 	        var justMeList = new List<GroupMemberSimpleVm>
 	        {
@@ -106,26 +111,15 @@ namespace WheresChris.Views
 	        return justMeList;
 	    }
 
-	    private static async Task<Position> GetMapPosition()
-	    {
-	        CrossGeolocator.Current.DesiredAccuracy = 5;
-            var userPosition = await CrossGeolocator.Current.GetPositionAsync(new TimeSpan(0,0,10));
-            
-	        if (userPosition == null) return new Position(32.7157, -117.1611);
-
-	        var mapPosition = PositionConverter.Convert(userPosition);
-	        return mapPosition;
-	    }
-
-        private async Task UpdateMap(List<GroupMemberSimpleVm> groupMembers)
+	    private void UpdateMap(List<GroupMemberSimpleVm> groupMembers)
 	    {            
-            var userPosition = await GetMapPosition();
             var userPhoneNumber = SettingsHelper.GetPhoneNumber();
             var customPins = new List<TKCustomMapPin>();
 
             foreach (var groupMember in groupMembers)
             {
                 var position = new Position(groupMember.Latitude, groupMember.Longitude);
+                position = PositionConverter.GetValidMapPosition(position);
                 customPins.Add(new TKCustomMapPin
                 {
                     Title = ContactsHelper.NameOrPhone(groupMember.PhoneNumber, groupMember.Name),
@@ -135,14 +129,13 @@ namespace WheresChris.Views
                 });
             }
 
-            var mapCenterPosition = GetMapCenter(groupMembers);
-            var minLatitude = groupMembers.Min(x => x.Latitude);
-            var minLongitude = groupMembers.Min(x => x.Longitude);
-            var radius = StayTogether.Helpers.DistanceCalculator.Distance.CalculateMiles(mapCenterPosition.Latitude,
-                mapCenterPosition.Longitude, minLatitude, minLongitude);
-            radius = radius < .03 ? .03 : radius;
+            var mapCenterPosition = PositionHelper.GetMapCenter(groupMembers);
+	        mapCenterPosition = PositionConverter.GetValidMapPosition(mapCenterPosition);
 
-            Device.BeginInvokeOnMainThread(() =>
+	        var radius = PositionHelper.GetRadius(groupMembers, mapCenterPosition);
+
+
+	        Device.BeginInvokeOnMainThread(() =>
             {
                 GroupMap.MapType= MapType.Hybrid; //This doesn't seem to work
                 GroupMap.MapCenter = mapCenterPosition;
@@ -151,10 +144,9 @@ namespace WheresChris.Views
             });
         }
 
-	    private static Position GetMapCenter( List<GroupMemberSimpleVm> groupMembers)
-	    {              
-            return PositionHelper.ConvertPluginPositionToMapPosition(PositionHelper.GetCentralGeoCoordinate(groupMembers));
-        }
+
+
+
 
 	    private async void AddMembersButton_OnClicked(object sender, EventArgs e)
 	    {

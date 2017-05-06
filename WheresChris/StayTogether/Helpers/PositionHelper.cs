@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
 using StayTogether.Classes;
 using StayTogether.Models;
+using WheresChris.Helpers;
 
 namespace StayTogether.Helpers
 {
@@ -61,7 +64,7 @@ namespace StayTogether.Helpers
 
         public static Position GetCentralGeoCoordinate(List<GroupMemberSimpleVm> groupMembers)
         {
-            var positions = groupMembers.Select(x => new Position
+            var positions = groupMembers.Where(x=> !(x.Latitude.Equals(0d ) || x.Longitude.Equals(0d) )).Select(x => new Position
             {
                 Latitude = x.Latitude,
                 Longitude = x.Longitude
@@ -73,6 +76,37 @@ namespace StayTogether.Helpers
             Position plugInPosition)
         {
             return new Xamarin.Forms.Maps.Position(plugInPosition.Latitude, plugInPosition.Longitude);
+        }
+
+        public static double GetRadius(List<GroupMemberSimpleVm> groupMembers, Xamarin.Forms.Maps.Position mapCenterPosition)
+        {
+            var radius = .1;
+            if (groupMembers.Count > 1)
+            {
+                var minLatitude = groupMembers.Min(x => x.Latitude);
+                var minLongitude = groupMembers.Min(x => x.Longitude);
+                radius = StayTogether.Helpers.DistanceCalculator.Distance.CalculateMiles(mapCenterPosition.Latitude,
+                    mapCenterPosition.Longitude, minLatitude, minLongitude);
+            }
+            radius = radius < .03 ? .03 : radius;
+            radius = radius > 5 ? 5 : radius;
+            return radius;
+        }
+
+        public static Xamarin.Forms.Maps.Position GetMapCenter(List<GroupMemberSimpleVm> groupMembers)
+        {
+            return PositionHelper.ConvertPluginPositionToMapPosition(PositionHelper.GetCentralGeoCoordinate(groupMembers));
+        }
+
+        public static async Task<Xamarin.Forms.Maps.Position> GetMapPosition()
+        {
+            CrossGeolocator.Current.DesiredAccuracy = 5;
+            var userPosition = await CrossGeolocator.Current.GetPositionAsync(new TimeSpan(0, 0, 10));
+
+            userPosition = PositionConverter.GetValidGeoLocatorPosition(userPosition);
+
+            var mapPosition = PositionConverter.Convert(userPosition);
+            return mapPosition;
         }
     }
 }
