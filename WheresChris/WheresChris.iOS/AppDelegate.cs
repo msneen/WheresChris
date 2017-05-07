@@ -3,9 +3,11 @@ using Foundation;
 using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
+using Plugin.Toasts;
 using StayTogether.iOS.NotificationCenter;
 using TK.CustomMap.iOSUnified;
 using UIKit;
+using UserNotifications;
 using WheresChris.Helpers;
 using WheresChris.iOS.Classes;
 using XLabs.Forms;
@@ -36,11 +38,35 @@ namespace WheresChris.iOS
 
             NotificationManager.RegisterNotifications(app);
             NotificationManager.InitializeNotifications(options, Window);
+            ToastNotification.Init();
+
+            InitializeToastPlugin(app);
 
             TryToStartLocationService();
 
             return base.FinishedLaunching(app, options);
 		}
+
+	    private static void InitializeToastPlugin(UIApplication app)
+	    {
+	        if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
+	        {
+	            // Request Permissions
+	            UNUserNotificationCenter.Current.RequestAuthorization(
+	                UNAuthorizationOptions.Alert | UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound,
+	                (granted, error) =>
+	                {
+	                    // Do something if needed
+	                });
+	        }
+	        else if (UIDevice.CurrentDevice.CheckSystemVersion(8, 0))
+	        {
+	            var notificationSettings = UIUserNotificationSettings.GetSettingsForTypes(
+	                UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound, null);
+
+	            app.RegisterUserNotificationSettings(notificationSettings);
+	        }
+	    }
 
 	    private void InitializeBackgroundLocation()
 	    {

@@ -9,17 +9,42 @@
     </ContentPage.BindingContext>
     <ContentPage.Padding>
         <OnPlatform x:TypeArguments="Thickness"
-                    iOS="20, 250, 20, 20"
-                    Android="20, 200, 20, 20"
-                    WinPhone="20, 200, 20, 20" />
+                    iOS="20, 20, 20, 20"
+                    Android="20, 20, 20, 20"
+                    WinPhone="20, 20, 20, 20" />
     </ContentPage.Padding>
     <ContentPage.Content>
         <StackLayout VerticalOptions="FillAndExpand"
                      HorizontalOptions="FillAndExpand"
                      Orientation="Vertical"
                      Spacing="15">
+            <Label FontSize="Large"></Label>
             <Label x:Name="TitleLabel" Text="Where's Chris?" HorizontalTextAlignment="Center" FontSize="Large" />
             <Label x:Name="MessageLabel"  FontSize="Large" ></Label>
+
+            <StackLayout VerticalOptions="FillAndExpand"
+                         HorizontalOptions="FillAndExpand"
+                         Orientation="Vertical"
+                         Spacing="0">
+                <RelativeLayout Padding="5,0,0,0">
+                    <Label Text="My Phone#"
+                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.25,Constant=0}"/>
+                    <Entry x:Name="PhoneNumber" Text=""
+                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.3, Constant=0}"
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.75,Constant=0}" />
+                </RelativeLayout>
+                <RelativeLayout Padding="5,0,0,0">
+                    <Label Text="My Name"
+                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.25,Constant=0}"/>
+                    <Entry x:Name="Nickname" Text="" 
+                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.3, Constant=0}"
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.75,Constant=0}" />
+                </RelativeLayout>
+                <Button x:Name="SaveButton" Text="Save" Clicked="SaveButton_OnClicked" />
+            </StackLayout>
+            <Label FontSize="Large"></Label>
             <Button x:Name="InviteButton" Text="Invite Chris" Clicked="StartGroup" />
             <Button x:Name="JoinButton" Text="Join Chris" Clicked="JoinGroup" />
         </StackLayout>

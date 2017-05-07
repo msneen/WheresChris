@@ -47,6 +47,11 @@ namespace WheresChris.Helpers
             return cleanPhone;
         }
 
+        public static string GetNickname()
+        {
+            return CrossSettings.Current.GetValueOrDefault<string>("nickname");
+        }
+
         public static string SaveNickname(string nickname)
         {
             

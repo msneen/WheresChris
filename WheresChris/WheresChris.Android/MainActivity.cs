@@ -10,6 +10,7 @@ using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
+using Plugin.Toasts;
 using StayTogether.Droid.NotificationCenter;
 using StayTogether.Droid.Services;
 using WheresChris.Helpers;
@@ -46,6 +47,7 @@ namespace WheresChris.Droid
             ToolbarResource = Resource.Layout.Toolbar;
             global::Xamarin.Forms.Forms.Init(this, bundle);
             Xamarin.FormsMaps.Init(this, bundle);
+            ToastNotification.Init(this);
 
             TryToStartLocationService();
 

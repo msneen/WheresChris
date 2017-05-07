@@ -69,17 +69,8 @@ namespace WheresChris.Views
         }
 
         public async void StartGroup(object sender, EventArgs e)
-        {
-            SettingsHelper.SaveNickname(Nickname.Text);
-            
+        {                      
             var userPhoneNumber = SettingsHelper.GetPhoneNumber();
-            if (string.IsNullOrWhiteSpace(userPhoneNumber))
-            {
-                if (!string.IsNullOrWhiteSpace(PhoneNumber.Text))
-                {
-                    userPhoneNumber = SettingsHelper.SavePhoneNumber(PhoneNumber.Text);
-                }
-            }
 
             var invitePageViewModel = BindingContext as InvitePageViewModel;
             if (invitePageViewModel == null) return;
@@ -122,8 +113,7 @@ namespace WheresChris.Views
                 await ((InvitePageViewModel) BindingContext).InitializeContacts();
                 ContactsListView.ItemsSource = ((InvitePageViewModel) BindingContext).Items;
             }
-            PhoneNumber.Text = SettingsHelper.GetPhoneNumber();
-            Nickname.Text = CrossSettings.Current.GetValueOrDefault<string>("nickname");           
+         
         }
         private void NavigateToPage(string title)
         {
