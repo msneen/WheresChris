@@ -23,7 +23,10 @@ namespace WheresChris.Views
         {
             Title = "Join Group";
             InitializeComponent();
-            BindingContext = new JoinPageViewModel();
+            BindingContext = new JoinPageViewModel
+            {
+                Title = "Join Group"
+            };
             InitializeMessagingCenterSubscriptions();
         }
 
@@ -63,6 +66,7 @@ namespace WheresChris.Views
 
     class JoinPageViewModel
     {
+        public string Title { get; set; }
         public ObservableCollection<ContactDisplayItemVm> Items { get; }
 
         public JoinPageViewModel()

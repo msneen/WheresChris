@@ -30,6 +30,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\LocationSentEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\MessageEventBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\BaseDataObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ContactDisplayItemVm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ExpirationPickerViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\InvitePageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MapViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\AboutPage.xaml.cs">
@@ -43,7 +46,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ObservableRangeCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\MessengingCenterAlert.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ItemDetailViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Views\ContactDisplayItemVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\GroupViews\AddMemberPage.xaml.cs">
       <DependentUpon>AddMemberPage.xaml</DependentUpon>
       <SubType>Code</SubType>

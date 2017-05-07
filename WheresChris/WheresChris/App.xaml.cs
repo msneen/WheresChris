@@ -22,6 +22,7 @@ namespace WheresChris
         public static void SetMainPage()
         {
             _mainTabbedPage = new TabbedPage();
+
             AddPage(new MainPage(), "Main");
 
             if (PermissionHelper.HasNecessaryPermissions())
