@@ -2,6 +2,12 @@
 using System.Reflection;
 using WheresChris.Helpers;
 using Xamarin.Forms;
+#if __ANDROID__
+
+#endif
+#if __IOS__
+
+#endif
 
 namespace WheresChris.Views
 {
@@ -12,6 +18,7 @@ namespace WheresChris.Views
 			InitializeComponent();
 		    Title = "About Where's Chris";
 		    DisplayVersionNumber();
+
 		}
 
 	    private void DisplayVersionNumber()

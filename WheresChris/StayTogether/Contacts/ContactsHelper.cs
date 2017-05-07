@@ -15,21 +15,27 @@ namespace StayTogether
         {
             if (!await CrossContacts.Current.RequestPermission()) return null;
 
-            var contacts = new List<GroupMemberVm>();
+            //var contacts = new List<GroupMemberVm>();
             CrossContacts.Current.PreferContactAggregation = true;
 
             List<Contact> contactList = null;
-            var contacts1 = contacts;
-            await Task.Run(() =>
-            {
-                if (CrossContacts.Current == null || CrossContacts.Current.Contacts == null) return;
+           // var contacts1 = contacts;
+            //await Task.Run(() =>
+            //{
+                if (CrossContacts.Current == null || CrossContacts.Current.Contacts == null) return null;
 
                 contactList = CrossContacts.Current.Contacts.ToList();
-                if (contactList == null) return;
+                if (contactList == null) return null;
                 
                 contactList = contactList.OrderBy(c => c.LastName).ToList();
 
                 //Todo:  Turn me back on.  For debugging iPhone Crashes
+                var contacts = contactList.Select(x => new GroupMemberVm
+                {
+                    Name = CleanName(x),
+                    PhoneNumber = "0001112222"
+                });
+                return contacts.ToList();
                 ////////for some reason we can't use linq
                 //////foreach (var contact in CrossContacts.Current.Contacts)
                 //////{
@@ -45,10 +51,10 @@ namespace StayTogether
                 //////            cleanedPhone
                 //////        });
                 //////}
-            });
+            //});
 
-            var sortedcontacts = contacts1.OrderBy(c => c.Name).ToList();
-            return sortedcontacts;
+            //var sortedcontacts = contacts1.OrderBy(c => c.Name).ToList();
+            //return sortedcontacts;
 
 
             ////for some reason we can't use linq
