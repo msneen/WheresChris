@@ -51,8 +51,14 @@ namespace WheresChris.iOS
 	        await PermissionHelper.GetNecessaryPermissionInformation();
 	        base.WillTerminate(application);
 	    }
+        public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
+        {
+            Distribute.OpenUrl(url);
 
-	    private static void InitializeToastPlugin(UIApplication app)
+            return true;
+        }
+
+        private static void InitializeToastPlugin(UIApplication app)
 	    {
 	        if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
 	        {

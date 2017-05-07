@@ -24,27 +24,28 @@ namespace StayTogether
             {
                 if (CrossContacts.Current == null || CrossContacts.Current.Contacts == null) return;
 
-                contactList = CrossContacts.Current.Contacts.ToList();
+                //Todo:  Turn me back on.  For debugging iPhone Crashes
+                //////contactList = CrossContacts.Current.Contacts.ToList();
 
-                if (contactList == null) return;
+                //////if (contactList == null) return;
 
-                contactList = contactList.OrderBy(c => c.LastName).ToList();
+                //////contactList = contactList.OrderBy(c => c.LastName).ToList();
 
-                //for some reason we can't use linq
-                foreach (var contact in CrossContacts.Current.Contacts)
-                {
-                    var cleanedName = CleanName(contact);
-                    if (string.IsNullOrWhiteSpace(cleanedName) || contact.Phones == null) continue;
+                ////////for some reason we can't use linq
+                //////foreach (var contact in CrossContacts.Current.Contacts)
+                //////{
+                //////    var cleanedName = CleanName(contact);
+                //////    if (string.IsNullOrWhiteSpace(cleanedName) || contact.Phones == null) continue;
 
-                    contacts1.AddRange(from phone in contact.Phones
-                        let cleanedPhone = CleanPhoneNumber(phone.Number)
-                        where phone.Type == PhoneType.Mobile && !string.IsNullOrWhiteSpace(cleanedPhone)
-                        select new GroupMemberVm
-                        {
-                            Name = cleanedName, PhoneNumber = 
-                            cleanedPhone
-                        });
-                }
+                //////    contacts1.AddRange(from phone in contact.Phones
+                //////        let cleanedPhone = CleanPhoneNumber(phone.Number)
+                //////        where phone.Type == PhoneType.Mobile && !string.IsNullOrWhiteSpace(cleanedPhone)
+                //////        select new GroupMemberVm
+                //////        {
+                //////            Name = cleanedName, PhoneNumber = 
+                //////            cleanedPhone
+                //////        });
+                //////}
             });
 
             var sortedcontacts = contacts1.OrderBy(c => c.Name).ToList();

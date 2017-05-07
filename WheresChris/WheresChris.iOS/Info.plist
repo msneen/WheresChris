@@ -54,5 +54,14 @@
 		<string>We are using your location</string>
 	<key>NSCalendarsUsageDescription</key>
 		<string>We are using the Calendar</string>
+		<key>CFBundleURLTypes</key>
+    <array>
+	    <dict>
+			  <key>CFBundleURLSchemes</key>
+			  <array>
+				  <string>mobilecenter-2cd11ff1-c5b1-47d8-ac96-9fa5b74a47bd</string>
+			  </array>
+	    </dict>
+    </array>
 </dict>
 </plist>
