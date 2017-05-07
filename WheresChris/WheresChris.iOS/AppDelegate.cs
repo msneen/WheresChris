@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using Foundation;
 using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
@@ -47,6 +48,12 @@ namespace WheresChris.iOS
 
             return base.FinishedLaunching(app, options);
 		}
+
+	    public override async void WillTerminate(UIApplication application)
+	    {
+	        await PermissionHelper.GetNecessaryPermissionInformation();
+	        base.WillTerminate(application);
+	    }
 
 	    private static void InitializeToastPlugin(UIApplication app)
 	    {
