@@ -16,33 +16,63 @@ namespace StayTogether
             if (!await CrossContacts.Current.RequestPermission()) return null;
 
             var contacts = new List<GroupMemberVm>();
-            CrossContacts.Current.PreferContactAggregation = false;
-            
-            if (CrossContacts.Current == null ||CrossContacts.Current.Contacts == null)
-                return null;
+            CrossContacts.Current.PreferContactAggregation = true;
 
-            //for some reason we can't use linq
-            foreach (var contact in CrossContacts.Current.Contacts)
+            List<Contact> contactList = null;
+            var contacts1 = contacts;
+            await Task.Run(() =>
             {
-                var cleanedName = CleanName(contact);
-                if (string.IsNullOrWhiteSpace(cleanedName) || contact.Phones == null) continue;
-                foreach (var phone in contact.Phones)
+                if (CrossContacts.Current == null || CrossContacts.Current.Contacts == null) return;
+
+                contactList = CrossContacts.Current.Contacts.ToList();
+
+                if (contactList == null) return;
+
+                contactList = contactList.OrderBy(c => c.LastName).ToList();
+
+                //for some reason we can't use linq
+                foreach (var contact in CrossContacts.Current.Contacts)
                 {
-                    var cleanedPhone = CleanPhoneNumber(phone.Number);
-                    if (phone.Type != PhoneType.Mobile || string.IsNullOrWhiteSpace(cleanedPhone)) continue;
+                    var cleanedName = CleanName(contact);
+                    if (string.IsNullOrWhiteSpace(cleanedName) || contact.Phones == null) continue;
 
-                    var contactSynopsis = new GroupMemberVm
-                    {
-                        Name = cleanedName,
-                        PhoneNumber = cleanedPhone
-                    };
-                    contacts.Add(contactSynopsis);
+                    contacts1.AddRange(from phone in contact.Phones
+                        let cleanedPhone = CleanPhoneNumber(phone.Number)
+                        where phone.Type == PhoneType.Mobile && !string.IsNullOrWhiteSpace(cleanedPhone)
+                        select new GroupMemberVm
+                        {
+                            Name = cleanedName, PhoneNumber = 
+                            cleanedPhone
+                        });
                 }
-            }
+            });
 
-            var sortedcontacts = contacts.OrderBy(c => c.Name).ToList();
-            contacts = sortedcontacts;
-            return contacts;           
+            var sortedcontacts = contacts1.OrderBy(c => c.Name).ToList();
+            return sortedcontacts;
+
+
+            ////for some reason we can't use linq
+            //foreach (var contact in CrossContacts.Current.Contacts)
+            //{
+            //    var cleanedName = CleanName(contact);
+            //    if (string.IsNullOrWhiteSpace(cleanedName) || contact.Phones == null) continue;
+            //    foreach (var phone in contact.Phones)
+            //    {
+            //        var cleanedPhone = CleanPhoneNumber(phone.Number);
+            //        if (phone.Type != PhoneType.Mobile || string.IsNullOrWhiteSpace(cleanedPhone)) continue;
+
+            //        var contactSynopsis = new GroupMemberVm
+            //        {
+            //            Name = cleanedName,
+            //            PhoneNumber = cleanedPhone
+            //        };
+            //        contacts.Add(contactSynopsis);
+            //    }
+            //}
+
+            //var sortedcontacts = contacts.OrderBy(c => c.Name).ToList();
+            //contacts = sortedcontacts;
+            //return contacts;           
         }
 
         public static string CleanName(Contact contact)
