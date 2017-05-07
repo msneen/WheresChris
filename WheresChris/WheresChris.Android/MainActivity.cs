@@ -8,6 +8,7 @@ using Android.Support.V4.App;
 using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
+using Microsoft.Azure.Mobile.Distribute;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using Plugin.Toasts;
@@ -39,7 +40,7 @@ namespace WheresChris.Droid
             base.OnCreate(bundle);
            
             MobileCenter.LogLevel = LogLevel.Verbose;
-            MobileCenter.Start("14162ca6-0c56-4822-9d95-f265b524bd98", typeof(Analytics), typeof(Crashes));
+            MobileCenter.Start("14162ca6-0c56-4822-9d95-f265b524bd98", typeof(Analytics), typeof(Crashes), typeof(Distribute));
 
             NotificationStrategyController.GetNotificationHandler(Intent)?.OnNotify(Intent);
 
