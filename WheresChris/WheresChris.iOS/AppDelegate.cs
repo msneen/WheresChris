@@ -27,33 +27,70 @@ namespace WheresChris.iOS
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
 			global::Xamarin.Forms.Forms.Init();
-			LoadApplication(new App());
+			//LoadApplication(new App());
 
             MobileCenter.Start("2cd11ff1-c5b1-47d8-ac96-9fa5b74a47bd", typeof(Analytics), typeof(Crashes));
 
             Xamarin.FormsMaps.Init();
             TKCustomMapRenderer.InitMapRenderer();
 
-            var phoneNumber = SettingsHelper.GetPhoneNumber();
-            if (string.IsNullOrWhiteSpace(phoneNumber)) return base.FinishedLaunching(app, options);
-
-            LocationManager = new LocationManager();
-            InitializeEvents(LocationManager);
-            LocationManager.UserPhoneNumber = phoneNumber;
-            LocationManager.StartLocationUpdates();
-
             NotificationManager.RegisterNotifications(app);
             NotificationManager.InitializeNotifications(options, Window);
+
+            TryToStartLocationService();
 
             return base.FinishedLaunching(app, options);
 		}
 
-        public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
+	    private void InitializeBackgroundLocation()
+	    {
+	        var phoneNumber = SettingsHelper.GetPhoneNumber();
+	        if (!string.IsNullOrWhiteSpace(phoneNumber))
+	        {
+	            LocationManager = new LocationManager();
+	            InitializeEvents(LocationManager);
+	            LocationManager.UserPhoneNumber = phoneNumber;
+	            LocationManager.StartLocationUpdates();
+	        }
+	    }
+
+	    public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
         {
             NotificationStrategyHandler.ReceiveNotification(notification, Window);
         }
 
-        private void InitializeEvents(LocationManager manager)
+	    private async void TryToStartLocationService()
+	    {
+	        var count = 0;
+	        while (count < 3)
+	        {
+	            var phonePermissionGranted = PermissionHelper.HasPhonePermission();
+	            var locationPermissionGranted = PermissionHelper.HasLocationPermission();
+	            var contactPermissionGranted = PermissionHelper.HasContactPermission();
+
+	            if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
+	            {
+                    InitializeBackgroundLocation();
+                    LoadApplication(new App());
+	                return;
+	            }
+	            if (!locationPermissionGranted)
+	            {
+	                await PermissionHelper.RequestLocationPermission();
+	            }
+	            else if (!phonePermissionGranted)
+	            {
+	                await PermissionHelper.RequestPhonePermission();
+	            }
+	            else
+	            {
+	                await PermissionHelper.RequestContactPermission();
+	            }
+	            count++;
+	        }
+	    }
+
+	    private void InitializeEvents(LocationManager manager)
         {
 
             if (manager?.LocationSender == null || _eventsInitialized) return;

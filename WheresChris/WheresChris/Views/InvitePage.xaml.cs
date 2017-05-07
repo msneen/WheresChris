@@ -31,7 +31,7 @@ namespace WheresChris.Views
             InitializeMessagingCenterSubscriptions();
             BindingContext = new InvitePageViewModel();
             InitializeExpirationPicker();
-            Task.Run(() => InitializeContacts()).Wait();
+            Task.Run(() => InitializeContacts()).Wait();            
         }
 
         private void InitializeMessagingCenterSubscriptions()

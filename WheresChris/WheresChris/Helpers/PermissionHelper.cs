@@ -36,33 +36,31 @@ namespace WheresChris.Helpers
         {
             var phonePermission =
                 CrossPermissions.Current.CheckPermissionStatusAsync(permission).Result;
-            return phonePermission == PermissionStatus.Granted || phonePermission == PermissionStatus.Unknown;
+            return phonePermission == PermissionStatus.Granted;
         }
-
-
 
         public static async Task RequestPhonePermission()
         {
-            await RequestPermission(Permission.Phone);
+            await RequestPermission(Permission.Phone, "Phone Permission", "We need permission to access your phone");
         }
         public static async Task RequestLocationPermission()
         {
-            await RequestPermission(Permission.Location);
+            await RequestPermission(Permission.Location, "Location Permission", "We need permission to access your location");
         }
 
         public static async Task RequestContactPermission()
         {
-            await RequestPermission(Permission.Contacts);
+            await RequestPermission(Permission.Contacts, "Contacts Permission", "We need permission to access your contacts");
         }
 
-        private static async Task RequestPermission(Permission permission)
+        private static async Task<PermissionStatus> RequestPermission(Permission permission, string title, string body)
         {
-            if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(Permission.Location))
+            if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
             {
-                Plugin.LocalNotifications.CrossLocalNotifications.Current.Show("Need location", "Gunna need that location");
-                    //DisplayAlert("Need location", "Gunna need that location", "OK");
+                Plugin.LocalNotifications.CrossLocalNotifications.Current.Show(title, body);
             }
-            await CrossPermissions.Current.RequestPermissionsAsync(new[] {permission});
+            var permissionStatus = await CrossPermissions.Current.RequestPermissionsAsync(new[] {permission});
+            return permissionStatus[permission];
         }
 
         public static async Task<string> GetNecessaryPermissionInformation()
