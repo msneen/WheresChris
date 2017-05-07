@@ -40,8 +40,8 @@ namespace WheresChris.Helpers
                 {
                     selectedGroupMemberVms.Add(new GroupMemberVm
                     {
-                        Name = item.Text,
-                        PhoneNumber = item.Detail
+                        Name = item.Name,
+                        PhoneNumber = item.PhoneNumber
                     });
                 }
             }

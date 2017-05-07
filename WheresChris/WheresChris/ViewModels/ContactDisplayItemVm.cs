@@ -5,8 +5,8 @@ namespace WheresChris.Views
 {
     public class ContactDisplayItemVm : INotifyPropertyChanged
     {
-        public string Text { get; set; }
-        public string Detail { get; set; }
+        public string Name { get; set; }
+        public string PhoneNumber { get; set; }
 
         private bool _selected;
         public bool Selected
@@ -21,7 +21,7 @@ namespace WheresChris.Views
 
         public InvitationVm Invitation { get; set; }
 
-        public override string ToString() => Text;
+        public override string ToString() => Name;
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

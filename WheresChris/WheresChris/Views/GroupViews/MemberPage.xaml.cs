@@ -47,7 +47,7 @@ namespace WheresChris.Views.GroupViews
             {
                 var item = new ContactDisplayItemVm
                 {
-                    Text = ContactsHelper.NameOrPhone(groupMemberVm.PhoneNumber, groupMemberVm.Name)
+                    Name = ContactsHelper.NameOrPhone(groupMemberVm.PhoneNumber, groupMemberVm.Name)
                 };
                 Items.Add(item);
             }

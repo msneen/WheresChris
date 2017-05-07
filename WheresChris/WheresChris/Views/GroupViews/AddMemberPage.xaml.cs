@@ -69,8 +69,8 @@ namespace WheresChris.Views.GroupViews
                 {
                     var item = new ContactDisplayItemVm
                     {
-                        Text = contact.Name,
-                        Detail = contact.PhoneNumber
+                        Name = contact.Name,
+                        PhoneNumber = contact.PhoneNumber
                     };
                     itemList.Add(item);
                 }

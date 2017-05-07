@@ -95,7 +95,7 @@ namespace WheresChris.Views
             {
                 invitePageViewModel
                     .Items
-                    .FirstOrDefault(x => x.Detail == groupMember.PhoneNumber)
+                    .FirstOrDefault(x => x.PhoneNumber == groupMember.PhoneNumber)
                     .Selected = false;
             }
             SetFormEnabled(false);

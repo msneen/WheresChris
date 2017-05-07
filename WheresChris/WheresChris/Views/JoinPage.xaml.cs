@@ -84,7 +84,7 @@ namespace WheresChris.Views
                 .ToList()
                 .ForEach(invitation => Items.Add(new ContactDisplayItemVm
                 {
-                    Text = invitation.DisplayName(),
+                    Name = invitation.DisplayName(),
                     Invitation = invitation
                 }));
         }

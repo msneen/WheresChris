@@ -42,8 +42,8 @@ namespace WheresChris.Views
 
                 var itemList = contacts.Select(contact => new ContactDisplayItemVm
                 {
-                    Text = contact.Name,
-                    Detail = contact.PhoneNumber
+                    Name = contact.Name,
+                    PhoneNumber = contact.PhoneNumber
                 }).ToList();
                 return new ObservableCollection<ContactDisplayItemVm>(itemList);
             });

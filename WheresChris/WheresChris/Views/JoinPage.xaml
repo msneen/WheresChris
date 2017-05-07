@@ -25,7 +25,7 @@
     <!--Built in Cells-->
     <ListView.ItemTemplate>
       <DataTemplate>
-        <TextCell Text="{Binding Text}"/>
+        <TextCell Text="{Binding Name}"/>
       </DataTemplate>
     </ListView.ItemTemplate>
     
