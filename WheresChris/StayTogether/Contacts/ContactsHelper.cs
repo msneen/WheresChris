@@ -15,74 +15,21 @@ namespace StayTogether
         {
             if (!await CrossContacts.Current.RequestPermission()) return null;
 
-            //var contacts = new List<GroupMemberVm>();
             CrossContacts.Current.PreferContactAggregation = true;
 
-            List<Contact> contactList = null;
-           // var contacts1 = contacts;
-            //await Task.Run(() =>
-            //{
-                if (CrossContacts.Current == null || CrossContacts.Current.Contacts == null) return null;
+            if (CrossContacts.Current == null || CrossContacts.Current.Contacts == null) return null;
 
-                contactList = CrossContacts.Current.Contacts.ToList();
-                if (contactList == null) return null;
+            var contactList = CrossContacts.Current.Contacts.ToList();
                 
-                contactList = contactList
-                    .Where(c=> !string.IsNullOrWhiteSpace(CleanName(c)))
-                    .Where(p=>
-                        !string.IsNullOrWhiteSpace( CleanPhoneNumber(p.Phones.FirstOrDefault(x=>x.Type == PhoneType.Mobile)?.Number))
-                        ).ToList();
-
-                //Todo:  Turn me back on.  For debugging iPhone Crashes
-                var contacts = contactList.Where(x=>x.Phones.FirstOrDefault(p=>p.Type == PhoneType.Mobile)?.Number != "").Select(x => new GroupMemberVm
+            return contactList
+                .Where( contact => contact.HasValidNameAndPhone())
+                .Select(filteredContact => new GroupMemberVm
                 {
-                    Name = CleanName(x),
-                    PhoneNumber = CleanPhoneNumber( x.Phones.FirstOrDefault(p=>p.Type == PhoneType.Mobile)?.Number)
-                });
-                return contacts.ToList();
-                ////////for some reason we can't use linq
-                //////foreach (var contact in CrossContacts.Current.Contacts)
-                //////{
-                //////    var cleanedName = CleanName(contact);
-                //////    if (string.IsNullOrWhiteSpace(cleanedName) || contact.Phones == null) continue;
-
-                //////    contacts1.AddRange(from phone in contact.Phones
-                //////        let cleanedPhone = CleanPhoneNumber(phone.Number)
-                //////        where phone.Type == PhoneType.Mobile && !string.IsNullOrWhiteSpace(cleanedPhone)
-                //////        select new GroupMemberVm
-                //////        {
-                //////            Name = cleanedName, PhoneNumber = 
-                //////            cleanedPhone
-                //////        });
-                //////}
-            //});
-
-            //var sortedcontacts = contacts1.OrderBy(c => c.Name).ToList();
-            //return sortedcontacts;
-
-
-            ////for some reason we can't use linq
-            //foreach (var contact in CrossContacts.Current.Contacts)
-            //{
-            //    var cleanedName = CleanName(contact);
-            //    if (string.IsNullOrWhiteSpace(cleanedName) || contact.Phones == null) continue;
-            //    foreach (var phone in contact.Phones)
-            //    {
-            //        var cleanedPhone = CleanPhoneNumber(phone.Number);
-            //        if (phone.Type != PhoneType.Mobile || string.IsNullOrWhiteSpace(cleanedPhone)) continue;
-
-            //        var contactSynopsis = new GroupMemberVm
-            //        {
-            //            Name = cleanedName,
-            //            PhoneNumber = cleanedPhone
-            //        };
-            //        contacts.Add(contactSynopsis);
-            //    }
-            //}
-
-            //var sortedcontacts = contacts.OrderBy(c => c.Name).ToList();
-            //contacts = sortedcontacts;
-            //return contacts;           
+                    Name = filteredContact.CleanName(),
+                    PhoneNumber = filteredContact.FirstOrDefaultMobileNumber()
+                })
+                .OrderBy(groupMemberVm => groupMemberVm.Name)
+                .ToList();
         }
 
         public static string CleanName(Contact contact)
@@ -100,10 +47,14 @@ namespace StayTogether
             }
             cleanedName += contact.FirstName;
 
-            return cleanedName;
-           
+            return cleanedName;           
         }
 
+        public static bool IsValidPhoneNumber(string number)
+        {
+            var cleanNumber = CleanPhoneNumber(number);
+            return cleanNumber.Length == 10;
+        }
 
         public static string CleanPhoneNumber(string number)
         {
@@ -119,6 +70,50 @@ namespace StayTogether
         public static string NameOrPhone(string phoneNumber, string name)
         {
             return string.IsNullOrEmpty(name) ? phoneNumber : name;
+        }
+    }
+
+    public static class ContactExtensions
+    {
+        public static bool HasValidNameAndPhone(this Contact contact)
+        {
+            return contact.HasValidName() && contact.HasValidPhoneNumber();
+        }
+
+        public static string CleanName(this Contact contact)
+        {
+            return ContactsHelper.CleanName(contact);
+        }
+
+        public static bool HasValidPhoneNumber(this Contact contact)
+        {
+            return !string.IsNullOrWhiteSpace(contact?.Phones?.FirstOrDefaultMobileNumber());
+        }
+
+        public static string FirstOrDefaultMobileNumber(this Contact contact)
+        {
+            return contact?.Phones?.FirstOrDefaultMobilePhone()?.Number;
+        }
+
+        public static Phone FirstOrDefaultMobilePhone(this List<Phone> phones)
+        {
+            return phones.FirstOrDefault(x => x.Type == PhoneType.Mobile);
+        }
+
+        public static string FirstOrDefaultMobileNumber(this List<Phone> phones)
+        {
+            return phones.FirstOrDefaultMobilePhone()?.Number;
+        }
+
+        public static bool IsValidPhoneNumber(this string number)
+        {
+            var cleanNumber = ContactsHelper.CleanPhoneNumber(number);
+            return cleanNumber.Length == 10;
+        }
+
+        public static bool HasValidName(this Contact contact)
+        {
+            return !string.IsNullOrWhiteSpace(ContactsHelper.CleanName(contact));
         }
     }
 }
