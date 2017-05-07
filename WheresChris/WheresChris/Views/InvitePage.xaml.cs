@@ -91,6 +91,13 @@ namespace WheresChris.Views
             if (!selectedGroupMemberVms.Any()) return;
 
             await GroupActionsHelper.StartGroup(selectedGroupMemberVms, userPhoneNumber, expirationHours);
+            foreach (var groupMember in selectedGroupMemberVms)
+            {
+                invitePageViewModel
+                    .Items
+                    .FirstOrDefault(x => x.Detail == groupMember.PhoneNumber)
+                    .Selected = false;
+            }
             SetFormEnabled(false);
             NavigateToPage("Map");
         }

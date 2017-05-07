@@ -1,15 +1,28 @@
+using System.ComponentModel;
 using StayTogether.Models;
 
 namespace WheresChris.Views
 {
-    public class ContactDisplayItemVm
+    public class ContactDisplayItemVm : INotifyPropertyChanged
     {
         public string Text { get; set; }
         public string Detail { get; set; }
-        public bool Selected { get; set; }
+
+        private bool _selected;
+        public bool Selected
+        {
+            get { return _selected;}
+            set
+            {
+                _selected = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Selected"));
+            }
+        }
 
         public InvitationVm Invitation { get; set; }
 
         public override string ToString() => Text;
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
