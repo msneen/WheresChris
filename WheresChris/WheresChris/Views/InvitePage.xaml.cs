@@ -31,7 +31,7 @@ namespace WheresChris.Views
             InitializeMessagingCenterSubscriptions();
             BindingContext = new InvitePageViewModel();
             InitializeExpirationPicker();
-            Task.Run(() => InitializeContacts()).Wait();            
+            InitializeContacts();            
         }
 
         private void InitializeMessagingCenterSubscriptions()
@@ -104,22 +104,20 @@ namespace WheresChris.Views
             ContactsListView.IsEnabled = isSelected;
         }
 
-        protected override async void OnAppearing()
-        {
-        }
-        protected async void InitializeContacts()
+        protected void InitializeContacts()
         { 
-            var status = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Contacts);
-            if (status != PermissionStatus.Granted)
-            {
-                var results = await CrossPermissions.Current.RequestPermissionsAsync(new[] {Permission.Contacts});
-                status = results[Permission.Contacts];
-            }
-            if (status == PermissionStatus.Granted)
-            {
-                await ((InvitePageViewModel) BindingContext).InitializeContacts();
-                ContactsListView.ItemsSource = ((InvitePageViewModel) BindingContext).Items;
-            }
+            //Todo:temporarily turned off for debugging wayne's phone.  Turn me back on 
+            //////var status = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Contacts);
+            //////if (status != PermissionStatus.Granted)
+            //////{
+            //////    var results = await CrossPermissions.Current.RequestPermissionsAsync(new[] {Permission.Contacts});
+            //////    status = results[Permission.Contacts];
+            //////}
+            //////if (status == PermissionStatus.Granted)
+            //////{
+            //////    await ((InvitePageViewModel) BindingContext).InitializeContacts();
+            //////    ContactsListView.ItemsSource = ((InvitePageViewModel) BindingContext).Items;
+            //////}
             PhoneNumber.Text = SettingsHelper.GetPhoneNumber();
             Nickname.Text = CrossSettings.Current.GetValueOrDefault<string>("nickname");           
         }
