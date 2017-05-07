@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 
@@ -11,9 +8,9 @@ namespace WheresChris.Helpers
     {
         public static bool HasNecessaryPermissions()
         {
-            var phonePermissionGranted = PermissionHelper.HasPhonePermission();
-            var locationPermissionGranted = PermissionHelper.HasLocationPermission();
-            var contactPermissionGranted = PermissionHelper.HasContactPermission();
+            var phonePermissionGranted = HasPhonePermission();
+            var locationPermissionGranted = HasLocationPermission();
+            var contactPermissionGranted = HasContactPermission();
             return phonePermissionGranted && locationPermissionGranted && contactPermissionGranted;
         }
 
