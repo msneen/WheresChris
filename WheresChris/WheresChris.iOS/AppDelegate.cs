@@ -34,14 +34,11 @@ namespace WheresChris.iOS
 			//LoadApplication(new App());
 
             MobileCenter.Start("2cd11ff1-c5b1-47d8-ac96-9fa5b74a47bd", typeof(Analytics), typeof(Crashes), typeof(Distribute));
-
             Xamarin.FormsMaps.Init();
             TKCustomMapRenderer.InitMapRenderer();
-
             NotificationManager.RegisterNotifications(app);
             NotificationManager.InitializeNotifications(options, Window);
             ToastNotification.Init();
-
             InitializeToastPlugin(app);
 
             TryToStartLocationService();
@@ -95,34 +92,34 @@ namespace WheresChris.iOS
 
 	    private async void TryToStartLocationService()
 	    {
-	        var count = 0;
-	        while (count < 3)
-	        {
-	            var phonePermissionGranted = PermissionHelper.HasPhonePermission();
-	            var locationPermissionGranted = PermissionHelper.HasLocationPermission();
-	            var contactPermissionGranted = PermissionHelper.HasContactPermission();
+            var count = 0;
+            while (count < 3)
+            {
+                var phonePermissionGranted = PermissionHelper.HasPhonePermission();
+                var locationPermissionGranted = PermissionHelper.HasLocationPermission();
+                var contactPermissionGranted = PermissionHelper.HasContactPermission();
 
-	            if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
-	            {
+                if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
+                {
                     InitializeBackgroundLocation();
                     LoadApplication(new App());
-	                return;
-	            }
-	            if (!locationPermissionGranted)
-	            {
-	                await PermissionHelper.RequestLocationPermission();
-	            }
-	            else if (!phonePermissionGranted)
-	            {
-	                await PermissionHelper.RequestPhonePermission();
-	            }
-	            else
-	            {
-	                await PermissionHelper.RequestContactPermission();
-	            }
-	            count++;
-	        }
-	    }
+                    return;
+                }
+                if (!locationPermissionGranted)
+                {
+                    await PermissionHelper.RequestLocationPermission();
+                }
+                else if (!phonePermissionGranted)
+                {
+                    await PermissionHelper.RequestPhonePermission();
+                }
+                else
+                {
+                    await PermissionHelper.RequestContactPermission();
+                }
+                count++;
+            }
+        }
 
 	    private void InitializeEvents(LocationManager manager)
         {
