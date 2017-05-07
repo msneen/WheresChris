@@ -32,12 +32,12 @@ namespace WheresChris
 
             AddPage(new MainPage(), "Main");
 
-            if (PermissionHelper.HasNecessaryPermissions())
-            {
-                AddPage(new InvitePage(), "Invite");
-                AddPage(new JoinPage(), "Join");
-                AddPage(new MapPage(), "Map");
-            }
+            //if (PermissionHelper.HasNecessaryPermissions())
+            //{
+            //    AddPage(new InvitePage(), "Invite");
+            //    AddPage(new JoinPage(), "Join");
+            //    AddPage(new MapPage(), "Map");
+            //}
             AddPage(new AboutPage(), "About");           
             Current.MainPage = _mainTabbedPage;
         }

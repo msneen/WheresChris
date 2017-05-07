@@ -127,9 +127,10 @@ namespace WheresChris.Droid
             BindToService();
         }
 
-        protected override void OnDestroy()
+        protected override async void OnDestroy()
         {
             base.OnDestroy();
+            await PermissionHelper.GetNecessaryPermissionInformation();
             CleanupGroupsForExit();
             Binder?.GetLocationSenderService()?.SetGroupJoinedCallback(null);
             Binder?.GetLocationSenderService()?.StopSelf();
