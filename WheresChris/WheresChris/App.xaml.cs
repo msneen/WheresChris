@@ -1,9 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Azure.Mobile;
+using Microsoft.Azure.Mobile.Analytics;
+using Microsoft.Azure.Mobile.Crashes;
+using Newtonsoft.Json.Linq;
 using WheresChris.Helpers;
 using WheresChris.Views;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Device = Xamarin.Forms.Device;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace WheresChris
@@ -17,6 +23,7 @@ namespace WheresChris
             InitializeComponent();
 
             SetMainPage();
+            throw new Exception("Testing Mobile Center Crashes");
         }
 
         public static void SetMainPage()
@@ -44,10 +51,10 @@ namespace WheresChris
             });
         }
 
-        //protected override void OnStart()
-        //{
-        //    // Handle when your app starts
-        //}
+        protected override void OnStart()
+        {
+            MobileCenter.Start("ios=2cd11ff1-c5b1-47d8-ac96-9fa5b74a47bd;android=14162ca6-0c56-4822-9d95-f265b524bd98;", typeof(Analytics), typeof(Crashes));
+        }
 
         //protected override void OnSleep()
         //{
