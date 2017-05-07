@@ -27,13 +27,17 @@ namespace StayTogether
                 contactList = CrossContacts.Current.Contacts.ToList();
                 if (contactList == null) return null;
                 
-                contactList = contactList.OrderBy(c => c.LastName).ToList();
+                contactList = contactList
+                    .Where(c=> !string.IsNullOrWhiteSpace(CleanName(c)))
+                    .Where(p=>
+                        !string.IsNullOrWhiteSpace( CleanPhoneNumber(p.Phones.FirstOrDefault(x=>x.Type == PhoneType.Mobile)?.Number))
+                        ).ToList();
 
                 //Todo:  Turn me back on.  For debugging iPhone Crashes
                 var contacts = contactList.Where(x=>x.Phones.FirstOrDefault(p=>p.Type == PhoneType.Mobile)?.Number != "").Select(x => new GroupMemberVm
                 {
                     Name = CleanName(x),
-                    PhoneNumber = x.Phones.FirstOrDefault(p=>p.Type == PhoneType.Mobile)?.Number
+                    PhoneNumber = CleanPhoneNumber( x.Phones.FirstOrDefault(p=>p.Type == PhoneType.Mobile)?.Number)
                 });
                 return contacts.ToList();
                 ////////for some reason we can't use linq
