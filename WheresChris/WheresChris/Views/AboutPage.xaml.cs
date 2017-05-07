@@ -11,8 +11,15 @@ namespace WheresChris.Views
 		{
 			InitializeComponent();
 		    Title = "About Where's Chris";
-		    var permissions = PermissionHelper.GetNecessaryPermissionInformation().Result;
-		    VersionSpan.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString() + "    " + permissions;
+		    DisplayVersionNumber();
 		}
+
+	    private void DisplayVersionNumber()
+	    {
+	        var permissions = PermissionHelper.GetNecessaryPermissionInformation().Result;
+	        var version = Assembly.GetExecutingAssembly().GetName().Version;
+	        var versionNumber = $"{version.Major}.{version.Minor}.{version.Build}";
+	        VersionSpan.Text = versionNumber + permissions;
+	    }
 	}
 }

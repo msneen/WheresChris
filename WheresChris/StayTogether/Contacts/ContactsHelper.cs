@@ -26,10 +26,10 @@ namespace StayTogether
 
                 contactList = CrossContacts.Current.Contacts.ToList();
                 if (contactList == null) return;
+                
+                contactList = contactList.OrderBy(c => c.LastName).ToList();
 
                 //Todo:  Turn me back on.  For debugging iPhone Crashes
-                //////contactList = contactList.OrderBy(c => c.LastName).ToList();
-
                 ////////for some reason we can't use linq
                 //////foreach (var contact in CrossContacts.Current.Contacts)
                 //////{
