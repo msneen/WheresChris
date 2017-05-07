@@ -29,10 +29,10 @@
                 <RelativeLayout Padding="5,0,0,0">
                     <Label Text="My Phone#"
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
-                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.25,Constant=0}"/>
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.35,Constant=0}"/>
                     <Entry x:Name="PhoneNumber" Text=""
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.3, Constant=0}"
-                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.75,Constant=0}" />
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.65,Constant=0}" />
                 </RelativeLayout>
                 <RelativeLayout Padding="5,0,0,0">
                     <Label Text="My Name"

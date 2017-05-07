@@ -32,10 +32,9 @@ namespace WheresChris
 
             AddPage(new MainPage(), "Main");
 
-            //Todo:  Turn me back on.  For debugging iPhone Crashes
             if (PermissionHelper.HasNecessaryPermissions())
             {
-            //    AddPage(new InvitePage(), "Invite");
+                AddPage(new InvitePage(), "Invite");
                 AddPage(new JoinPage(), "Join");
                 AddPage(new MapPage(), "Map");
             }

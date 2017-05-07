@@ -110,10 +110,11 @@ namespace WheresChris.Views
             }
             if (status == PermissionStatus.Granted)
             {
-                await ((InvitePageViewModel) BindingContext).InitializeContacts();
-                ContactsListView.ItemsSource = ((InvitePageViewModel) BindingContext).Items;
+                //Todo:  Turn me back on.  For debugging iPhone Crashes
+                //await ((InvitePageViewModel) BindingContext).InitializeContacts();
+                //ContactsListView.ItemsSource = ((InvitePageViewModel) BindingContext).Items;
             }
-         
+
         }
         private void NavigateToPage(string title)
         {
