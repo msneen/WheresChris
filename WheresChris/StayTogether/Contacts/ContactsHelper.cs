@@ -24,11 +24,10 @@ namespace StayTogether
             {
                 if (CrossContacts.Current == null || CrossContacts.Current.Contacts == null) return;
 
+                contactList = CrossContacts.Current.Contacts.ToList();
+                if (contactList == null) return;
+
                 //Todo:  Turn me back on.  For debugging iPhone Crashes
-                //////contactList = CrossContacts.Current.Contacts.ToList();
-
-                //////if (contactList == null) return;
-
                 //////contactList = contactList.OrderBy(c => c.LastName).ToList();
 
                 ////////for some reason we can't use linq
