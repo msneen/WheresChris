@@ -82,13 +82,15 @@ namespace WheresChris.iOS
 	    private void InitializeBackgroundLocation()
 	    {
 	        var phoneNumber = SettingsHelper.GetPhoneNumber();
-	        if (!string.IsNullOrWhiteSpace(phoneNumber))
-	        {
+
 	            LocationManager = new LocationManager();
 	            InitializeEvents(LocationManager);
-	            LocationManager.UserPhoneNumber = phoneNumber;
-	            LocationManager.StartLocationUpdates();
-	        }
+            if (!string.IsNullOrWhiteSpace(phoneNumber))
+            {
+                LocationManager.UserPhoneNumber = phoneNumber;
+            }
+            LocationManager.StartLocationUpdates();
+	        
 	    }
 
 	    public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)

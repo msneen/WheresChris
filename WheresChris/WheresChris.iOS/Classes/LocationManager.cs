@@ -8,6 +8,7 @@ using StayTogether.Classes;
 using StayTogether.Group;
 using StayTogether.Location;
 using UIKit;
+using WheresChris.Helpers;
 
 namespace WheresChris.iOS.Classes
 {
@@ -80,18 +81,19 @@ namespace WheresChris.iOS.Classes
 
                 _clLocationManager?.StartUpdatingLocation();
 
-                if (UserPhoneNumber != null && UserPhoneNumber.Length >= 10)
-                {
-                    InitializeLocationSender();
-                }
+                //if (UserPhoneNumber != null && UserPhoneNumber.Length >= 10)
+                //{
+                InitializeLocationSender();
+                //}
             }
         }
 
         private void SendPositionUpdate()
         {
             var position = GetPosition();
+            UserPhoneNumber = SettingsHelper.GetPhoneNumber();            
 
-            if (UserPhoneNumber == null || !_sendMeter.CanSend(position)) return;
+            if (string.IsNullOrWhiteSpace(UserPhoneNumber) || !_sendMeter.CanSend(position)) return;
 
             //Send position update
             var groupMemberVm = new GroupMemberVm
