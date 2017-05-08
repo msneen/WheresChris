@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Microsoft.Azure.Mobile.Analytics;
 using UIKit;
 
 
@@ -8,10 +9,18 @@ namespace StayTogether.iOS.NotificationCenter
     {
         public static void ReceiveNotification(UILocalNotification notification, UIWindow window)
         {
+            Analytics.TrackEvent("IPhoneNotificationStrategyHandlerEntered", new Dictionary<string, string>
+            {
+                { "notificationIsNull", notification == null ? "Null": "Ok"},
+                {"windowIsNull", window == null ? "Null": "Ok" }
+            });
+
             var notificationActions = new List<UIAlertAction>();
             // show an alert
-            var okayAlertController = UIAlertController.Create(notification.AlertAction, notification.AlertBody,
-                UIAlertControllerStyle.Alert);
+            if (notification == null || window == null) return;
+
+            var okayAlertController = UIAlertController.Create(notification.AlertAction, notification.AlertBody, UIAlertControllerStyle.Alert);
+
             switch (notification.ApplicationIconBadgeNumber)
             {
                 case 10101:
@@ -40,7 +49,5 @@ namespace StayTogether.iOS.NotificationCenter
             // reset our badge
             UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
         }
-
-
     }
 }

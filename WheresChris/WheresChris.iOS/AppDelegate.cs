@@ -94,6 +94,7 @@ namespace WheresChris.iOS
 
 	    public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
         {
+
             NotificationStrategyHandler.ReceiveNotification(notification, Window);
         }
 

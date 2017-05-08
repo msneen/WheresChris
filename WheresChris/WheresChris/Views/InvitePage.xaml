@@ -7,9 +7,11 @@
 
     <StackLayout>
         <!--Put Search Box Here-->
-        <ListView
+        <ListView 
             x:Name="ContactsListView"
-            HasUnevenRows="true"       
+            HasUnevenRows="true"  
+            ItemTapped="ContactsListView_OnItemTapped"
+            ItemSelected="ContactsListView_OnItemSelected"
             IsPullToRefreshEnabled="false"
             CachingStrategy="RetainElement">
             <ListView.Header>

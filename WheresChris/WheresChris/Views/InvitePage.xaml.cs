@@ -127,5 +127,15 @@ namespace WheresChris.Views
                 masterPage.CurrentPage = masterPage.Children[index];
             }
         }
+
+        private void ContactsListView_OnItemTapped(object sender, ItemTappedEventArgs e)
+        {
+            //((ContactDisplayItemVm) e.Item).Selected = !((ContactDisplayItemVm) e.Item).Selected;
+        }
+
+        private void ContactsListView_OnItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            ((ContactDisplayItemVm)e.SelectedItem).Selected = !((ContactDisplayItemVm)e.SelectedItem).Selected;
+        }
     }
 }
