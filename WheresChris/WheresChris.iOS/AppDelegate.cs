@@ -36,12 +36,13 @@ namespace WheresChris.iOS
             MobileCenter.Start("2cd11ff1-c5b1-47d8-ac96-9fa5b74a47bd", typeof(Analytics), typeof(Crashes), typeof(Distribute));
             Xamarin.FormsMaps.Init();
             TKCustomMapRenderer.InitMapRenderer();
-            NotificationManager.RegisterNotifications(app);
-            NotificationManager.InitializeNotifications(options, Window);
             ToastNotification.Init();
             InitializeToastPlugin(app);
 
             TryToStartLocationService();
+
+            NotificationManager.RegisterNotifications(app);
+            NotificationManager.InitializeNotifications(options, Window);
 
             return base.FinishedLaunching(app, options);
 		}
