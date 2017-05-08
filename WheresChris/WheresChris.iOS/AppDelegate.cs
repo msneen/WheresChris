@@ -83,8 +83,8 @@ namespace WheresChris.iOS
 	    {
 	        var phoneNumber = SettingsHelper.GetPhoneNumber();
 
-	            LocationManager = new LocationManager();
-	            InitializeEvents(LocationManager);
+	        LocationManager = new LocationManager();
+	        InitializeEvents(LocationManager);
             if (!string.IsNullOrWhiteSpace(phoneNumber))
             {
                 LocationManager.UserPhoneNumber = phoneNumber;
@@ -159,6 +159,7 @@ namespace WheresChris.iOS
             {
 
             };
+            Analytics.TrackEvent("IPhoneLocationEventsInitialized");
             _eventsInitialized = true;
         }
     }

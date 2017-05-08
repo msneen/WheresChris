@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Foundation;
+using Microsoft.Azure.Mobile.Analytics;
 using Plugin.ExternalMaps;
 using Plugin.ExternalMaps.Abstractions;
 using StayTogether.Classes;
@@ -17,6 +19,7 @@ namespace StayTogether.iOS.NotificationCenter
 
         public static void DisplayLostNotification(GroupMemberVm groupMemberVm)
         {
+            Analytics.TrackEvent("IPhoneDisplayLostNotificationEntered");
             if (string.IsNullOrWhiteSpace(groupMemberVm.PhoneNumber)) return;
 
             var previousNotifications = LastLocation.Where(n => n.Value.PhoneNumber == groupMemberVm.PhoneNumber);
@@ -42,7 +45,14 @@ namespace StayTogether.iOS.NotificationCenter
             notification.UserInfo = dictionary;
 
             UIApplication.SharedApplication.ScheduleLocalNotification(notification);
-         
+
+            Analytics.TrackEvent("IPhoneDisplayLostNotificationEntered", new Dictionary<string, string>
+            {
+                { "Name", groupMemberVm.Name},
+                {"PhoneNumber", groupMemberVm.PhoneNumber },
+                {"Latitude", groupMemberVm.Latitude.ToString() },
+                {"Longitude", groupMemberVm.Longitude.ToString() }
+            });
         }
 
 
@@ -52,6 +62,12 @@ namespace StayTogether.iOS.NotificationCenter
             var dictionary = notification.UserInfo;
             var name = GetValue("Name", ref dictionary);
             var phoneNumber = GetValue("PhoneNumber", ref dictionary);
+
+            Analytics.TrackEvent("IPhoneDisplayLostOnNotifyEntered", new Dictionary<string, string>
+            {
+                { "Name", name},
+                {"PhoneNumber", phoneNumber }
+            });
 
             var okAction =  UIAlertAction.Create("OK", UIAlertActionStyle.Default, alertAction =>
             {
