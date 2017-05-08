@@ -160,7 +160,7 @@ namespace WheresChris.iOS
             {
 
             };
-            Analytics.TrackEvent("IPhoneLocationEventsInitialized");
+            //Analytics.TrackEvent("IPhoneLocationEventsInitialized");
             _eventsInitialized = true;
         }
     }

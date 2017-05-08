@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using CoreLocation;
+using Microsoft.Azure.Mobile.Analytics;
 using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
 using StayTogether;
@@ -91,7 +92,14 @@ namespace WheresChris.iOS.Classes
         private void SendPositionUpdate()
         {
             var position = GetPosition();
-            UserPhoneNumber = SettingsHelper.GetPhoneNumber();            
+            UserPhoneNumber = SettingsHelper.GetPhoneNumber();
+
+            Analytics.TrackEvent("IPhone_SendPositionUpdate_Entered", new Dictionary<string, string>
+                    {
+                        { "PhoneNumber", UserPhoneNumber},
+                        {"Latitude", position?.Latitude.ToString() },
+                        {"Longitude", position?.Longitude.ToString() }
+                    });
 
             if (string.IsNullOrWhiteSpace(UserPhoneNumber) || !_sendMeter.CanSend(position)) return;
 
@@ -105,6 +113,13 @@ namespace WheresChris.iOS.Classes
                 Longitude = _lastLocation.Coordinate.Longitude
             };
             _locationSender?.SendUpdatePosition(groupMemberVm);
+
+            Analytics.TrackEvent("IPhone_SendPositionUpdate_Sent", new Dictionary<string, string>
+                    {
+                        { "PhoneNumber", UserPhoneNumber},
+                        {"Latitude", position?.Latitude.ToString() },
+                        {"Longitude", position?.Longitude.ToString() }
+                    });
         }
 
         public Position GetPosition()

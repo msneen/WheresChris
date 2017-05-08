@@ -63,11 +63,11 @@ namespace StayTogether.iOS.NotificationCenter
             var name = GetValue("Name", ref dictionary);
             var phoneNumber = GetValue("PhoneNumber", ref dictionary);
 
-            Analytics.TrackEvent("IPhoneDisplayLostOnNotifyEntered", new Dictionary<string, string>
-            {
-                { "Name", name},
-                {"PhoneNumber", phoneNumber }
-            });
+            //Analytics.TrackEvent("IPhoneDisplayLostOnNotifyEntered", new Dictionary<string, string>
+            //{
+            //    { "Name", name},
+            //    {"PhoneNumber", phoneNumber }
+            //});
 
             var okAction =  UIAlertAction.Create("OK", UIAlertActionStyle.Default, alertAction =>
             {
