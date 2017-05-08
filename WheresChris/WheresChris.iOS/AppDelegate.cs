@@ -42,7 +42,7 @@ namespace WheresChris.iOS
             TryToStartLocationService();
 
             NotificationManager.RegisterNotifications(app);
-            NotificationManager.InitializeNotifications(options, Window);
+            NotificationManager.InitializeNotifications(options, this.GetWindow());
 
             return base.FinishedLaunching(app, options);
 		}
