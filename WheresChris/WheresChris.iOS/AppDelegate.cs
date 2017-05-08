@@ -95,8 +95,8 @@ namespace WheresChris.iOS
 
 	    public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
         {
-
-            NotificationStrategyHandler.ReceiveNotification(notification, Window);
+            //application.KeyWindow
+            NotificationStrategyHandler.ReceiveNotification(notification, UIApplication.SharedApplication.KeyWindow);
         }
 
 	    private async void TryToStartLocationService()
