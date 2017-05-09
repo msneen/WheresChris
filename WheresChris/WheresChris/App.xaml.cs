@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Azure.Mobile;
+﻿using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
 using Microsoft.Azure.Mobile.Distribute;
-using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
+using StayTogether.Helpers;
 using WheresChris.Helpers;
 using WheresChris.Views;
-
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Device = Xamarin.Forms.Device;
@@ -23,7 +21,7 @@ namespace WheresChris
         {
             InitializeComponent();
 
-            SetMainPage();
+            SetMainPage();           
         }
 
         public static void SetMainPage()

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
+using StayTogether.Helpers;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using WheresChris.Helpers;
@@ -114,7 +115,7 @@ namespace WheresChris.Views
                 await ((InvitePageViewModel)BindingContext).InitializeContacts();
                 ContactsListView.ItemsSource = ((InvitePageViewModel)BindingContext).Items;
             }
-
+            await PositionHelper.GetMapPosition();//Initializing position so map page loads faster
         }
         private void NavigateToPage(string title)
         {

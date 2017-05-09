@@ -85,7 +85,7 @@ namespace StayTogether.Helpers
             {
                 var minLatitude = groupMembers.Min(x => x.Latitude);
                 var minLongitude = groupMembers.Min(x => x.Longitude);
-                radius = StayTogether.Helpers.DistanceCalculator.Distance.CalculateMiles(mapCenterPosition.Latitude,
+                radius = DistanceCalculator.Distance.CalculateMiles(mapCenterPosition.Latitude,
                     mapCenterPosition.Longitude, minLatitude, minLongitude);
             }
             radius = radius < .03 ? .03 : radius;
@@ -95,13 +95,26 @@ namespace StayTogether.Helpers
 
         public static Xamarin.Forms.Maps.Position GetMapCenter(List<GroupMemberSimpleVm> groupMembers)
         {
-            return PositionHelper.ConvertPluginPositionToMapPosition(PositionHelper.GetCentralGeoCoordinate(groupMembers));
+            return ConvertPluginPositionToMapPosition(GetCentralGeoCoordinate(groupMembers));
         }
 
         public static async Task<Xamarin.Forms.Maps.Position> GetMapPosition()
         {
-            CrossGeolocator.Current.DesiredAccuracy = 5;
-            var userPosition = await CrossGeolocator.Current.GetPositionAsync(new TimeSpan(0, 0, 10));
+            var positionList = new List<Position>();
+            CrossGeolocator.Current.DesiredAccuracy = 1;
+            for (var i = 0; i < 3; i++)
+            {
+                var position = await CrossGeolocator.Current.GetPositionAsync(new TimeSpan(0, 0, 10));
+                positionList.Add(position);
+            }
+
+            var medianLatitude = positionList.OrderBy(l => l.Latitude).ToArray()[1].Latitude;
+            var medianLongitude = positionList.OrderBy(l => l.Longitude).ToArray()[1].Longitude;
+            var userPosition = new Position
+            {
+                Latitude = medianLatitude,
+                Longitude = medianLongitude
+            };
 
             userPosition = PositionConverter.GetValidGeoLocatorPosition(userPosition);
 
