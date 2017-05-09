@@ -11,7 +11,7 @@
             IsShowingUser="true"
             MapType="Hybrid"
         />-->
-        <customMap:TKCustomMap x:Name="GroupMap" MapType="Hybrid" IsShowingUser="true"  WidthRequest="320" HeightRequest="400"/>
+        <customMap:TKCustomMap x:Name="GroupMap" MapType="Hybrid"  WidthRequest="320" HeightRequest="400"/>
         <RelativeLayout Padding="5,0,0,0">
             <Button x:Name="AddMembersButton" Text="Add" Clicked="AddMembersButton_OnClicked"  
                 RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
