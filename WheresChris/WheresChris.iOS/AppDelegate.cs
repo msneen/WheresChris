@@ -49,7 +49,12 @@ namespace WheresChris.iOS
 
 	    public override async void WillTerminate(UIApplication application)
 	    {
-	        await PermissionHelper.GetNecessaryPermissionInformation();
+	        var leaveGroup = LocationManager?.LocationSender?.LeaveGroup();
+	        if (leaveGroup != null) await leaveGroup;
+	        var endGroup = LocationManager?.LocationSender?.EndGroup();
+	        if (endGroup != null) await endGroup;
+
+	        await PermissionHelper.GetNecessaryPermissionInformation();//for troubleshooting wayne's phone crash
 	        base.WillTerminate(application);
 	    }
         public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
