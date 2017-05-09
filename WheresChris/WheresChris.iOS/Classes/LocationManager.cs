@@ -41,7 +41,7 @@ namespace WheresChris.iOS.Classes
 
         public LocationManager()
         {
-            _sendMeter = new SendMeter(100, TimeSpan.FromMinutes(2));
+            _sendMeter = new SendMeter(150, TimeSpan.FromSeconds(30));
             _clLocationManager = new CLLocationManager
             {
                 PausesLocationUpdatesAutomatically = false
@@ -158,29 +158,6 @@ namespace WheresChris.iOS.Classes
                 Longitude = _lastLocation.Coordinate.Longitude
             };
             return position;
-        }
-
-        //Todo: Delete me.  Replaced by WheresChris.InvitePage.xaml.cs.StartGroup, or whereever it's been refactored to
-        public async void StartGroup(List<GroupMemberVm> selectedContacts, int expireInHours)
-        {
-
-            if (_lastLocation != null)
-            {
-                var position = new Position
-                {
-                    Latitude = _lastLocation.Coordinate.Latitude,
-                    Longitude = _lastLocation.Coordinate.Longitude
-                };
-
-                var groupVm = GroupHelper.InitializeGroupVm(selectedContacts, position, UserPhoneNumber, expireInHours);
-
-                if (_locationSender == null)
-                {
-                    InitializeLocationSender();
-                }
-                await _locationSender.StartGroup(groupVm);
-            }
-
         }
     }
 }

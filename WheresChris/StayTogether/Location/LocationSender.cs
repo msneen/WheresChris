@@ -89,6 +89,57 @@ namespace StayTogether
 	        IsInitialized = true;
         }
 
+        public void SetUpLocationEvents()
+        {
+
+            _geoLocator = CrossGeolocator.Current;
+
+            _geoLocator.DesiredAccuracy = 1; //100 is new default
+
+            if (!_geoLocator.IsGeolocationEnabled || !_geoLocator.IsGeolocationAvailable) return;
+
+            _geoLocator.StartListeningAsync(TimeSpan.FromSeconds(5), 5, false, new Plugin.Geolocator.Abstractions.ListenerSettings
+            {
+                ActivityType = Plugin.Geolocator.Abstractions.ActivityType.Fitness,
+                AllowBackgroundUpdates = true,
+                DeferLocationUpdates = true,
+                DeferralDistanceMeters = 1,
+                DeferralTime = TimeSpan.FromSeconds(1),
+                ListenForSignificantChanges = true,
+                PauseLocationUpdatesAutomatically = false
+            });
+
+            _geoLocator.PositionChanged += LocatorOnPositionChanged;
+        }
+
+        private async void LocatorOnPositionChanged(object sender, PositionEventArgs positionEventArgs)
+        {
+            var currentPosition = await PositionHelper.GetMapPosition();
+            if (!currentPosition.HasValue)
+            {
+                Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionNull");
+                return;
+            }
+            if (!PositionHelper.LocationValid(currentPosition.Value))
+            {
+                Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionInvalid");
+                return;
+            }
+
+            var groupMemberVm = new GroupMemberVm()
+            {
+                Latitude = currentPosition.Value.Latitude, //positionEventArgs.Position.Latitude,
+                Longitude = currentPosition.Value.Longitude, //positionEventArgs.Position.Longitude,
+                PhoneNumber = _phoneNumber,
+                Name = _nickName
+            };
+
+            SendUpdatePosition(groupMemberVm);
+            Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionSent");
+        }
+
+
+
         private void OnGroupPositionUpdate(List<GroupMemberSimpleVm> groupMembers)
         {
             try
@@ -124,58 +175,6 @@ namespace StayTogether
             });
             MessagingCenter.Send<LocationSender>(this, SomeoneLeftMsg);
         }
-
-
-	    public void SetUpLocationEvents()
-	    {
-
-	        _geoLocator = CrossGeolocator.Current;
-
-	        _geoLocator.DesiredAccuracy = 1; //100 is new default
-
-	        if (!_geoLocator.IsGeolocationEnabled || !_geoLocator.IsGeolocationAvailable) return;
-
-            _geoLocator.StartListeningAsync(TimeSpan.FromSeconds(5), 5, false, new Plugin.Geolocator.Abstractions.ListenerSettings
-            {
-                ActivityType = Plugin.Geolocator.Abstractions.ActivityType.Fitness,
-                AllowBackgroundUpdates = true,
-                DeferLocationUpdates = true,
-                DeferralDistanceMeters = 1,
-                DeferralTime = TimeSpan.FromSeconds(1),
-                ListenForSignificantChanges = true,
-                PauseLocationUpdatesAutomatically = false
-            });
-
-            _geoLocator.PositionChanged += LocatorOnPositionChanged;
-        }
-
-	    private async void LocatorOnPositionChanged(object sender, PositionEventArgs positionEventArgs)
-	    {
-            var currentPosition = await PositionHelper.GetMapPosition();
-	        if (!currentPosition.HasValue)
-	        {
-                Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionNull");
-                return;
-            }
-	        if( !PositionHelper.LocationValid(currentPosition.Value))
-	        {
-                Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionInvalid");
-                return;
-	        }
-
-	        var groupMemberVm = new GroupMemberVm()
-	        {
-	            Latitude = currentPosition.Value.Latitude, //positionEventArgs.Position.Latitude,
-	            Longitude = currentPosition.Value.Longitude, //positionEventArgs.Position.Longitude,
-	            PhoneNumber = _phoneNumber,
-                Name = _nickName
-	        };
-
-	        SendUpdatePosition(groupMemberVm);
-            Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionSent");
-        }
-
-
 
 	    private void GroupDisbanded(string groupId)
 	    {
@@ -248,7 +247,6 @@ namespace StayTogether
 	    {
 	        AddNotification("Where's Chris Update", message);
 	    }
-
 
 	    private void AddNotification(string title, string message)
 	    {
@@ -370,7 +368,6 @@ namespace StayTogether
 	            return new List<GroupMemberVm>();
 	        }
 	    }
-
 
         private void GetNickname()
         {

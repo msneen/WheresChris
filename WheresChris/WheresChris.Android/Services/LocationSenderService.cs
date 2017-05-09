@@ -13,6 +13,7 @@ using StayTogether.Droid.NotificationCenter;
 using StayTogether.Helpers;
 using WheresChris.Droid.Classes;
 using WheresChris.Helpers;
+using Position = Xamarin.Forms.Maps.Position;
 
 namespace StayTogether.Droid.Services
 {
@@ -77,13 +78,6 @@ namespace StayTogether.Droid.Services
                 .SetContentIntent(pendingIntent).Build();
             return notification;
         }
-
-        public Position GetPosition()
-        {
-            var position = GpsService.GetLocation();
-            return position;
-        }
-
 
         public async Task SendError(string message)
         {

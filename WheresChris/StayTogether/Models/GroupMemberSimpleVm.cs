@@ -4,11 +4,15 @@ using System.Text;
 
 namespace StayTogether.Models
 {
-    public class GroupMemberSimpleVm
+    public class GroupMemberSimpleVm : Plugin.Geolocator.Abstractions.Position
     {
-        public string PhoneNumber { get; set; }
+        private string _phoneNumber;
+
+        public string PhoneNumber
+        {
+            get { return ContactsHelper.CleanPhoneNumber(_phoneNumber); }
+            set { _phoneNumber = value; }
+        }
         public string Name { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
     }
 }
