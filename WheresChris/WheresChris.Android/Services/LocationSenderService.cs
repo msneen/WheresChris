@@ -10,6 +10,7 @@ using StayTogether.Group;
 using StayTogether.Location;
 using WheresChris.Droid;
 using StayTogether.Droid.NotificationCenter;
+using StayTogether.Helpers;
 using WheresChris.Droid.Classes;
 using WheresChris.Helpers;
 
@@ -107,9 +108,10 @@ namespace StayTogether.Droid.Services
         }
 
 
-        private void SendFirstPositionUpdate(string phoneNumber)
+        private async void SendFirstPositionUpdate(string phoneNumber)
         {
-            var position = GpsService.GetLocation();
+            var mapPosition = await PositionHelper.GetMapPosition();//var position = GpsService.GetLocation();
+            var position = PositionConverter.Convert(mapPosition);
             if (position == null) return;
 
             var groupMemberVm = GroupMemberPositionAdapter.Adapt(position);

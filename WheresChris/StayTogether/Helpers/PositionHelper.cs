@@ -72,11 +72,7 @@ namespace StayTogether.Helpers
             return GetCentralGeoCoordinate(positions);
         }
 
-        public static Xamarin.Forms.Maps.Position ConvertPluginPositionToMapPosition(
-            Position plugInPosition)
-        {
-            return new Xamarin.Forms.Maps.Position(plugInPosition.Latitude, plugInPosition.Longitude);
-        }
+
 
         public static double GetRadius(List<GroupMemberSimpleVm> groupMembers, Xamarin.Forms.Maps.Position mapCenterPosition)
         {
@@ -95,7 +91,7 @@ namespace StayTogether.Helpers
 
         public static Xamarin.Forms.Maps.Position GetMapCenter(List<GroupMemberSimpleVm> groupMembers)
         {
-            return ConvertPluginPositionToMapPosition(GetCentralGeoCoordinate(groupMembers));
+            return PositionConverter.Convert(GetCentralGeoCoordinate(groupMembers));
         }
 
         public static async Task<Xamarin.Forms.Maps.Position> GetMapPosition()

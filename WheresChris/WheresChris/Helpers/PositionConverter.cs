@@ -6,8 +6,16 @@ namespace WheresChris.Helpers
     {
         public static Position Convert(Plugin.Geolocator.Abstractions.Position geolocatorPosition)
         {
-            Position mapPosition = new Position(geolocatorPosition.Latitude, geolocatorPosition.Longitude);
-            return mapPosition;
+            return new Xamarin.Forms.Maps.Position(geolocatorPosition.Latitude, geolocatorPosition.Longitude);
+        }
+
+        public static Plugin.Geolocator.Abstractions.Position Convert(Xamarin.Forms.Maps.Position geolocatorPosition)
+        {
+            return new Plugin.Geolocator.Abstractions.Position
+            {
+                Latitude = geolocatorPosition.Latitude,
+                Longitude = geolocatorPosition.Longitude
+            };
         }
 
         public static Plugin.Geolocator.Abstractions.Position GetValidGeoLocatorPosition(Plugin.Geolocator.Abstractions.Position userPosition)
