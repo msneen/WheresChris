@@ -7,13 +7,12 @@
              x:Class="WheresChris.Views.MapPage">
     <RelativeLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
         <customMap:TKCustomMap x:Name="GroupMap" MapType="Hybrid"
-                RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height,Factor=0.85,Constant=0}"
+                RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height,Factor=0.84,Constant=0}"
                 RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=0}"
                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=1.0,Constant=0}"/>
 
         <RelativeLayout Padding="5,0,0,0"
-                RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.85, Constant=0}"                        
-                RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height,Factor=0.15,Constant=0}">
+                RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.84, Constant=0}">
             
             <Button x:Name="AddMembersButton" Text="Add" Clicked="AddMembersButton_OnClicked"  
                 RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
