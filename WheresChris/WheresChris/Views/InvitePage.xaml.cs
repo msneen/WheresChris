@@ -128,14 +128,19 @@ namespace WheresChris.Views
             }
         }
 
-        private void ContactsListView_OnItemTapped(object sender, ItemTappedEventArgs e)
+        private void TapGestureRecognizer_OnTapped(object sender, EventArgs e)
         {
-            //((ContactDisplayItemVm) e.Item).Selected = !((ContactDisplayItemVm) e.Item).Selected;
-        }
 
-        private void ContactsListView_OnItemSelected(object sender, SelectedItemChangedEventArgs e)
-        {
-            ((ContactDisplayItemVm)e.SelectedItem).Selected = !((ContactDisplayItemVm)e.SelectedItem).Selected;
+            var selectedColor = Color.LightSkyBlue;
+            object themeColor;
+            if (Application.Current.Resources.TryGetValue("ListViewSelectedColor", out themeColor))
+            {
+                selectedColor = (Color)themeColor;
+            }
+            var contactDisplayItemVm = (ContactDisplayItemVm)((RelativeLayout) sender).BindingContext;
+            contactDisplayItemVm.Selected = !contactDisplayItemVm.Selected;
+            var color = contactDisplayItemVm.Selected ? selectedColor : ContactsListView.BackgroundColor;
+            ((RelativeLayout) sender).BackgroundColor = color;
         }
     }
 }

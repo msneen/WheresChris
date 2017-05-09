@@ -10,8 +10,6 @@
         <ListView 
             x:Name="ContactsListView"
             HasUnevenRows="true"  
-            ItemTapped="ContactsListView_OnItemTapped"
-            ItemSelected="ContactsListView_OnItemSelected"
             IsPullToRefreshEnabled="false"
             CachingStrategy="RetainElement">
             <ListView.Header>
@@ -30,15 +28,18 @@
                 <DataTemplate>
                     <ViewCell>
                         <RelativeLayout>
-                            <Label Text="{Binding Name}"
+                            <RelativeLayout.GestureRecognizers> 
+                                <TapGestureRecognizer Tapped="TapGestureRecognizer_OnTapped"></TapGestureRecognizer>
+                            </RelativeLayout.GestureRecognizers>
+                            <Label Text="{Binding Name}" 
                                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=5}"
-                                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.6,Constant=0}"/>
+                                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.7,Constant=0}"/>
                             <Label Text="{Binding PhoneNumber}"
-                                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.6, Constant=0}"
+                                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.7, Constant=0}"
                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.3,Constant=0}" />
-                            <controls:CheckBox Checked="{Binding Selected, Mode=TwoWay}"
+                            <!--<controls:CheckBox Checked="{Binding Selected, Mode=TwoWay}"
                                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.9, Constant=0}"
-                                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.1,Constant=0}" />
+                                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.1,Constant=0}" />-->
                         </RelativeLayout>
                     </ViewCell>
                 </DataTemplate>

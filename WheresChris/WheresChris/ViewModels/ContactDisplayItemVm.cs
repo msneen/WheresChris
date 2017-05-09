@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using StayTogether.Models;
+using Xamarin.Forms;
 
 namespace WheresChris.Views
 {
@@ -15,7 +16,19 @@ namespace WheresChris.Views
             set
             {
                 _selected = value;
+                BackgroundColor = _selected ? Color.Blue : Color.White;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Selected"));
+            }
+        }
+
+        private Color _backgroundColor;
+        public Color BackgroundColor
+        {
+            get { return _backgroundColor;}
+            set
+            {
+                _backgroundColor = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("BackGroundColor"));
             }
         }
 
