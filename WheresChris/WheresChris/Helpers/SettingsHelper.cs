@@ -30,7 +30,7 @@ namespace WheresChris.Helpers
                 var phoneNumber = info.Line1Number;
                 var cleanPhone = ContactsHelper.CleanPhoneNumber(phoneNumber);
                 CrossSettings.Current.AddOrUpdateValue("phonenumber", cleanPhone);
-                return phoneNumber;
+                return cleanPhone;
             }
             return string.Empty;
 #else
