@@ -24,7 +24,7 @@ namespace StayTogether.Group
 
         public static GroupMemberVm CreateAdminMember(Position position, string phoneNumber, string nickname)
         {
-            var adminMember = GroupMemberPositionAdapter.Adapt(position);
+            var adminMember = GroupMemberConverter.Convert(position);
             adminMember.Name = nickname;
             adminMember.PhoneNumber = phoneNumber;
             adminMember.IsAdmin = true;

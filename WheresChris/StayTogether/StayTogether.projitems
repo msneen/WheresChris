@@ -10,11 +10,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Contacts\ContactsHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Converters\GroupMemberPositionAdapter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\GroupMemberConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\PositionConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Group\GroupHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\Distance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\PositionHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\SettingsHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\TimeGate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Location\Distance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Location\LocationSender.cs" />

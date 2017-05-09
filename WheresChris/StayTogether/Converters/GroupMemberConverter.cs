@@ -3,9 +3,9 @@ using StayTogether.Classes;
 
 namespace StayTogether.Location
 {
-    public class GroupMemberPositionAdapter
+    public class GroupMemberConverter
     {
-        public static GroupMemberVm Adapt(Position position)
+        public static GroupMemberVm Convert(Position position)
         {
             return new GroupMemberVm
             {
@@ -14,7 +14,7 @@ namespace StayTogether.Location
             };
         }
 
-        public static GroupMemberVm Adapt(Xamarin.Forms.Maps.Position position)
+        public static GroupMemberVm Convert(Xamarin.Forms.Maps.Position position)
         {
             return new GroupMemberVm
             {

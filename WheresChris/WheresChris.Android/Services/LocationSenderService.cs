@@ -110,7 +110,7 @@ namespace StayTogether.Droid.Services
             var position = PositionConverter.Convert(mapPosition.Value);
             if (position == null) return;
 
-            var groupMemberVm = GroupMemberPositionAdapter.Adapt(position);
+            var groupMemberVm = GroupMemberConverter.Convert(position);
             groupMemberVm.PhoneNumber = phoneNumber;
             LocationSender.SendUpdatePosition(groupMemberVm);
         }

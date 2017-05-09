@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Plugin.Geolocator;
+using Plugin.Geolocator.Abstractions;
 using StayTogether.Classes;
 using StayTogether.Models;
 using WheresChris.Helpers;
@@ -103,6 +104,14 @@ namespace StayTogether.Helpers
                 positionList.Add(position);
             }
 
+            var userPosition = GetMedianPosition(positionList);
+            if (!LocationValid(userPosition)) return null;
+            var mapPosition = PositionConverter.Convert(userPosition);
+            return mapPosition;
+        }
+
+        private static Position GetMedianPosition(List<Position> positionList)
+        {
             var medianLatitude = positionList.OrderBy(l => l.Latitude).ToArray()[1].Latitude;
             var medianLongitude = positionList.OrderBy(l => l.Longitude).ToArray()[1].Longitude;
             var userPosition = new Plugin.Geolocator.Abstractions.Position
@@ -110,9 +119,7 @@ namespace StayTogether.Helpers
                 Latitude = medianLatitude,
                 Longitude = medianLongitude
             };
-            if (!LocationValid(userPosition)) return null;
-            var mapPosition = PositionConverter.Convert(userPosition);
-            return mapPosition;
+            return userPosition;
         }
 
         public static bool LocationValid(Plugin.Geolocator.Abstractions.Position position)

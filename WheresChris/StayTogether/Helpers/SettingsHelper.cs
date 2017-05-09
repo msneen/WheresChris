@@ -1,8 +1,8 @@
-﻿using Plugin.Permissions;
-using Plugin.Permissions.Abstractions;
-using Plugin.Settings;
+﻿using Plugin.Settings;
 using StayTogether;
 #if __ANDROID__
+using Plugin.Permissions;
+using Plugin.Permissions.Abstractions;
 using Android.App;
 using Android.Content;
 using Android.Telephony;
