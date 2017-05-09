@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Plugin.Geolocator;
-using Plugin.Geolocator.Abstractions;
 using StayTogether.Classes;
 using StayTogether.Models;
 using WheresChris.Helpers;
@@ -12,7 +11,7 @@ namespace StayTogether.Helpers
 {
     public class PositionHelper
     {
-        public static Position GetCentralGeoCoordinate(List<Position> geoCoordinates)
+        public static Plugin.Geolocator.Abstractions.Position GetCentralGeoCoordinate(List<Plugin.Geolocator.Abstractions.Position> geoCoordinates)
         {
             if (geoCoordinates.Count == 1)
             {
@@ -43,7 +42,7 @@ namespace StayTogether.Helpers
             var centralSquareRoot = Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2));
             var centralLatitude = Math.Atan2(z, centralSquareRoot);
 
-            var position = new Position
+            var position = new Plugin.Geolocator.Abstractions.Position
             {
                 Longitude = centralLongitude*180/Math.PI,
                 Latitude = centralLatitude*180/Math.PI
@@ -52,9 +51,9 @@ namespace StayTogether.Helpers
             return position; //new Position(centralLatitude * 180 / Math.PI, centralLongitude * 180 / Math.PI);
         }
 
-        public static Position GetCentralGeoCoordinate(List<GroupMemberVm> groupMembers)
+        public static Plugin.Geolocator.Abstractions.Position GetCentralGeoCoordinate(List<GroupMemberVm> groupMembers)
         {
-            var positions = groupMembers.Select(x => new Position
+            var positions = groupMembers.Select(x => new Plugin.Geolocator.Abstractions.Position
             {
                 Latitude = x.Latitude,
                 Longitude = x.Longitude
@@ -62,9 +61,9 @@ namespace StayTogether.Helpers
             return GetCentralGeoCoordinate(positions);
         }
 
-        public static Position GetCentralGeoCoordinate(List<GroupMemberSimpleVm> groupMembers)
+        public static Plugin.Geolocator.Abstractions.Position GetCentralGeoCoordinate(List<GroupMemberSimpleVm> groupMembers)
         {
-            var positions = groupMembers.Where(x=> !(x.Latitude.Equals(0d ) || x.Longitude.Equals(0d) )).Select(x => new Position
+            var positions = groupMembers.Where(x=> !(x.Latitude.Equals(0d ) || x.Longitude.Equals(0d) )).Select(x => new Plugin.Geolocator.Abstractions.Position
             {
                 Latitude = x.Latitude,
                 Longitude = x.Longitude
@@ -96,7 +95,7 @@ namespace StayTogether.Helpers
 
         public static async Task<Xamarin.Forms.Maps.Position> GetMapPosition()
         {
-            var positionList = new List<Position>();
+            var positionList = new List<Plugin.Geolocator.Abstractions.Position>();
             CrossGeolocator.Current.DesiredAccuracy = 1;
             for (var i = 0; i < 3; i++)
             {
@@ -106,23 +105,32 @@ namespace StayTogether.Helpers
 
             var medianLatitude = positionList.OrderBy(l => l.Latitude).ToArray()[1].Latitude;
             var medianLongitude = positionList.OrderBy(l => l.Longitude).ToArray()[1].Longitude;
-            var userPosition = new Position
+            var userPosition = new Plugin.Geolocator.Abstractions.Position
             {
                 Latitude = medianLatitude,
                 Longitude = medianLongitude
             };
-
-            userPosition = PositionConverter.GetValidGeoLocatorPosition(userPosition);
-
+            if (!LocationValid(userPosition))
+            {
+                userPosition = PositionConverter.GetInitialPosition(userPosition);
+            }
             var mapPosition = PositionConverter.Convert(userPosition);
             return mapPosition;
         }
 
+        public static bool LocationValid(Plugin.Geolocator.Abstractions.Position position)
+        {
+            return LocationValid(position.Latitude, position.Longitude);
+        }
+
         public static bool LocationValid(Xamarin.Forms.Maps.Position position)
         {
-            if (Math.Abs(position.Latitude) < 0.1) return false;
-            if (Math.Abs(position.Longitude) < 0.1) return false;
-            return true;
+            return LocationValid(position.Latitude, position.Longitude);
+        }
+
+        private static bool LocationValid(double latitude, double longitude)
+        {
+            return !(Math.Abs(latitude) < 0.1) || !(Math.Abs(longitude) < 0.1);
         }
     }
 }

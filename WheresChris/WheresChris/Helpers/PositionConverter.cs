@@ -18,18 +18,13 @@ namespace WheresChris.Helpers
             };
         }
 
-        public static Plugin.Geolocator.Abstractions.Position GetValidGeoLocatorPosition(Plugin.Geolocator.Abstractions.Position userPosition)
+        public static Plugin.Geolocator.Abstractions.Position GetInitialPosition(Plugin.Geolocator.Abstractions.Position userPosition)
         {
-            if (userPosition == null || (userPosition.Latitude < .1 && userPosition.Longitude < .1))
+            return new Plugin.Geolocator.Abstractions.Position
             {
-                return new Plugin.Geolocator.Abstractions.Position
-                {
-                    Latitude = 32.7157,
-                    Longitude = -117.1611
-                };
-
-            }
-            return userPosition;
+                Latitude = 32.7157,
+                Longitude = -117.1611
+            };
         }
 
         public static Position GetValidMapPosition(Position? userPosition)
