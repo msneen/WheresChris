@@ -37,9 +37,6 @@
                             <Label Text="{Binding PhoneNumber}"
                                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.7, Constant=0}"
                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.3,Constant=0}" />
-                            <!--<controls:CheckBox Checked="{Binding Selected, Mode=TwoWay}"
-                                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.9, Constant=0}"
-                                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.1,Constant=0}" />-->
                         </RelativeLayout>
                     </ViewCell>
                 </DataTemplate>

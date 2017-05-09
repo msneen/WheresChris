@@ -7,7 +7,6 @@ using Plugin.Permissions.Abstractions;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using WheresChris.Helpers;
-using Plugin.Settings;
 using WheresChris.Messaging;
 
 namespace WheresChris.Views
@@ -84,10 +83,12 @@ namespace WheresChris.Views
             await GroupActionsHelper.StartGroup(selectedGroupMemberVms, userPhoneNumber, expirationHours);
             foreach (var groupMember in selectedGroupMemberVms)
             {
-                invitePageViewModel
+                var contactDisplayItemVm = invitePageViewModel
                     .Items
-                    .FirstOrDefault(x => x.PhoneNumber == groupMember.PhoneNumber)
-                    .Selected = false;
+                    .FirstOrDefault(x => x.PhoneNumber == groupMember.PhoneNumber);
+                if (contactDisplayItemVm != null)
+                    contactDisplayItemVm
+                        .Selected = false;
             }
             SetFormEnabled(false);
             NavigateToPage("Map");
