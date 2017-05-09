@@ -146,10 +146,6 @@ namespace WheresChris.Views
 	        });
 	    }
 
-
-
-
-
 	    private async void AddMembersButton_OnClicked(object sender, EventArgs e)
 	    {
 	        var addMemberPage = new AddMemberPage();
