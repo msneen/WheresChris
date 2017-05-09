@@ -102,14 +102,14 @@ namespace WheresChris.iOS.Classes
             var position = await GetPosition();
             UserPhoneNumber = SettingsHelper.GetPhoneNumber();
 
-            Analytics.TrackEvent("IPhone_SendPositionUpdate_Entered", new Dictionary<string, string>
-                    {
-                        { "PhoneNumber", UserPhoneNumber},
-                        {"Latitude", position?.Latitude.ToString() },
-                        {"Longitude", position?.Longitude.ToString() },
-                        {"LastLatitude", _lastLocation?.Coordinate.Latitude.ToString() },
-                        {"LastLongitude", _lastLocation?.Coordinate.Longitude.ToString() }
-                    });
+            //Analytics.TrackEvent("IPhone_SendPositionUpdate_Entered", new Dictionary<string, string>
+            //        {
+            //            { "PhoneNumber", UserPhoneNumber},
+            //            {"Latitude", position?.Latitude.ToString() },
+            //            {"Longitude", position?.Longitude.ToString() },
+            //            {"LastLatitude", _lastLocation?.Coordinate.Latitude.ToString() },
+            //            {"LastLongitude", _lastLocation?.Coordinate.Longitude.ToString() }
+            //        });
 
             if (string.IsNullOrWhiteSpace(UserPhoneNumber) || !_sendMeter.CanSend(position)) return;
 
@@ -124,14 +124,14 @@ namespace WheresChris.iOS.Classes
             };
             _locationSender?.SendUpdatePosition(groupMemberVm);
 
-            Analytics.TrackEvent("IPhone_SendPositionUpdate_Sent", new Dictionary<string, string>
-                    {
-                        { "PhoneNumber", UserPhoneNumber},
-                        {"Latitude", position?.Latitude.ToString() },
-                        {"Longitude", position?.Longitude.ToString() },
-                        {"LastLatitude", _lastLocation?.Coordinate.Latitude.ToString() },
-                        {"LastLongitude", _lastLocation?.Coordinate.Longitude.ToString() }
-                    });
+            //Analytics.TrackEvent("IPhone_SendPositionUpdate_Sent", new Dictionary<string, string>
+            //        {
+            //            { "PhoneNumber", UserPhoneNumber},
+            //            {"Latitude", position?.Latitude.ToString() },
+            //            {"Longitude", position?.Longitude.ToString() },
+            //            {"LastLatitude", _lastLocation?.Coordinate.Latitude.ToString() },
+            //            {"LastLongitude", _lastLocation?.Coordinate.Longitude.ToString() }
+            //        });
         }
 
         public async Task<Position> GetPosition()

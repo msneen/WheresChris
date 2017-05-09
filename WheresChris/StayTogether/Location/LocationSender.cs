@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR.Client;
+using Microsoft.Azure.Mobile.Analytics;
 using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
 using Plugin.LocalNotifications;
 using Plugin.Settings;
 using StayTogether.Classes;
+using StayTogether.Helpers;
 using StayTogether.Models;
 using Xamarin.Forms;
 
@@ -131,30 +131,43 @@ namespace StayTogether
 
 	        _geoLocator = CrossGeolocator.Current;
 
-	        _geoLocator.DesiredAccuracy = 5; //100 is new default
+	        _geoLocator.DesiredAccuracy = 1; //100 is new default
 
-	        if (_geoLocator.IsGeolocationEnabled && _geoLocator.IsGeolocationAvailable)
+	        if (!_geoLocator.IsGeolocationEnabled || !_geoLocator.IsGeolocationAvailable) return;
+
+            _geoLocator.StartListeningAsync(TimeSpan.FromSeconds(5), 5, false, new Plugin.Geolocator.Abstractions.ListenerSettings
+            {
+                ActivityType = Plugin.Geolocator.Abstractions.ActivityType.Fitness,
+                AllowBackgroundUpdates = true,
+                DeferLocationUpdates = true,
+                DeferralDistanceMeters = 1,
+                DeferralTime = TimeSpan.FromSeconds(1),
+                ListenForSignificantChanges = true,
+                PauseLocationUpdatesAutomatically = false
+            });
+
+            _geoLocator.PositionChanged += LocatorOnPositionChanged;
+        }
+
+	    private async void LocatorOnPositionChanged(object sender, PositionEventArgs positionEventArgs)
+	    {
+            var currentPosition = await PositionHelper.GetMapPosition();
+	        if (!PositionHelper.LocationValid(currentPosition))
 	        {
-                //ListenerSettings listenerSettings = new ListenerSettings();
-                //listenerSettings.
-	            _geoLocator.PositionChanged += LocatorOnPositionChanged;
-                var minimumTime = new TimeSpan(0,0,1);
-                _geoLocator.StartListeningAsync(minimumTime: minimumTime, minimumDistance: 5);
+                Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionInvalid");
+                return;
 	        }
 
-	    }
+	        var groupMemberVm = new GroupMemberVm()
+	        {
+	            Latitude = positionEventArgs.Position.Latitude,
+	            Longitude = positionEventArgs.Position.Longitude,
+	            PhoneNumber = _phoneNumber,
+                Name = _nickName
+	        };
 
-	    private void LocatorOnPositionChanged(object sender, PositionEventArgs positionEventArgs)
-	    {
-           
-            var groupMemberVm = new GroupMemberVm()
-            {
-                Latitude = positionEventArgs.Position.Latitude,
-                Longitude = positionEventArgs.Position.Longitude,
-                PhoneNumber = _phoneNumber
-            };
-
-            SendUpdatePosition(groupMemberVm);
+	        SendUpdatePosition(groupMemberVm);
+            Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionSent");
         }
 
 
@@ -172,7 +185,9 @@ namespace StayTogether
         }
 
         private readonly InvitationList _invitationList = new InvitationList();
-        private void OnGroupInvitation(string phoneNumber, string name)
+	    private string _nickName;
+
+	    private void OnGroupInvitation(string phoneNumber, string name)
         {
             // TODO: consider cleaning phoneNumber
             if (phoneNumber == _phoneNumber) return;//don't invite myself to a group
@@ -301,14 +316,19 @@ namespace StayTogether
 
             UpdateGroupId(phoneNumber);
 
-            var location = await _geoLocator.GetPositionAsync();
+            var currentPosition = await PositionHelper.GetMapPosition();
+            if (!PositionHelper.LocationValid(currentPosition))
+            {
+                Analytics.TrackEvent("LocationSender_ConfirmGroupInvitation_PositionInvalid");
+
+            }
 
             var groupMemberVm = new GroupMemberVm
             {
                 GroupId = phoneNumber,
                 PhoneNumber = _phoneNumber,
-                Latitude = Convert.ToDouble(location.Longitude),
-                Longitude = Convert.ToDouble(location.Longitude),
+                Latitude = currentPosition.Latitude,
+                Longitude = currentPosition.Longitude,
                 InvitationConfirmed = true
             };
             await _chatHubProxy.Invoke("confirmGroupInvitation", groupMemberVm);
@@ -344,14 +364,10 @@ namespace StayTogether
 
         private void GetNickname()
         {
-            var nickName = CrossSettings.Current.GetValueOrDefault<string>("nickname");
-            //if (string.IsNullOrWhiteSpace(nickName))
-            //{
-            //    AddNotification("Where's Chris nickname", "Please Add your nickname in settings");
-            //}
+            _nickName = CrossSettings.Current.GetValueOrDefault<string>("nickname");
         }
 
-        private void GetPhoneNumber()
+	    private void GetPhoneNumber()
         {
             var phoneNumber = CrossSettings.Current.GetValueOrDefault<string>("phonenumber");
             _phoneNumber = ContactsHelper.CleanPhoneNumber( phoneNumber);
