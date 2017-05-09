@@ -143,5 +143,17 @@ namespace WheresChris.Views
             var color = contactDisplayItemVm.Selected ? selectedColor : ContactsListView.BackgroundColor;
             ((RelativeLayout) sender).BackgroundColor = color;
         }
+
+        private void SearchButton_OnClicked(object sender, EventArgs e)
+        {
+            var searchText = SearchEntry.Text;
+            if (string.IsNullOrWhiteSpace(searchText)) return;
+
+            var foundItem = ((InvitePageViewModel)BindingContext).Items.FirstOrDefault(i=>i.Name.StartsWith(searchText,StringComparison.CurrentCultureIgnoreCase));
+            if (foundItem == null) return;
+
+            ContactsListView.ScrollTo(foundItem, ScrollToPosition.Center, false);
+            SearchEntry.Text = string.Empty;
+        }
     }
 }

@@ -6,7 +6,14 @@
              Title="{Binding Title}">
 
     <StackLayout>
-        <!--Put Search Box Here-->
+        <RelativeLayout Padding="5,0,0,0">
+            <Entry x:Name="SearchEntry"
+                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.7,Constant=0}"/>
+            <Button x:Name="SearchButton" Text="Search" Clicked="SearchButton_OnClicked"
+                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.7, Constant=0}"
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.3,Constant=0}" />
+        </RelativeLayout>
         <ListView 
             x:Name="ContactsListView"
             HasUnevenRows="true"  
