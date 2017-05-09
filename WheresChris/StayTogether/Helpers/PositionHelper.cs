@@ -121,5 +121,12 @@ namespace StayTogether.Helpers
             var mapPosition = PositionConverter.Convert(userPosition);
             return mapPosition;
         }
+
+        public static bool LocationValid(Xamarin.Forms.Maps.Position position)
+        {
+            if (Math.Abs(position.Latitude) < 0.1) return false;
+            if (Math.Abs(position.Longitude) < 0.1) return false;
+            return true;
+        }
     }
 }
