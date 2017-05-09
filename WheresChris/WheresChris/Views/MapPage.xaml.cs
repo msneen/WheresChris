@@ -95,15 +95,16 @@ namespace WheresChris.Views
 	    private static async Task<List<GroupMemberSimpleVm>> GetMyPositionList()
 	    {
 	        var userPosition = await PositionHelper.GetMapPosition();
-	        if (userPosition.Latitude < .1 && userPosition.Longitude < .1) return null;
+	        if (!userPosition.HasValue) return null;
+	        if (!PositionHelper.LocationValid(userPosition.Value)) return null;
 
 	        var userPhoneNumber = SettingsHelper.GetPhoneNumber();
 	        var justMeList = new List<GroupMemberSimpleVm>
 	        {
 	            new GroupMemberSimpleVm
 	            {
-	                Latitude = userPosition.Latitude,
-	                Longitude = userPosition.Longitude,
+	                Latitude = userPosition.Value.Latitude,
+	                Longitude = userPosition.Value.Longitude,
 	                PhoneNumber = userPhoneNumber,
 	                Name = "Me"
 	            }
@@ -119,30 +120,31 @@ namespace WheresChris.Views
             foreach (var groupMember in groupMembers)
             {
                 var position = new Position(groupMember.Latitude, groupMember.Longitude);
-                position = PositionConverter.GetValidMapPosition(position);
-                customPins.Add(new TKCustomMapPin
+                if (PositionHelper.LocationValid(position))
                 {
-                    Title = ContactsHelper.NameOrPhone(groupMember.PhoneNumber, groupMember.Name),
-                    Position = position,
-                    ShowCallout = true,
-                    DefaultPinColor = groupMember.PhoneNumber == userPhoneNumber ? Color.Blue : Color.Red
-                });
+                    customPins.Add(new TKCustomMapPin
+                    {
+                        Title = ContactsHelper.NameOrPhone(groupMember.PhoneNumber, groupMember.Name),
+                        Position = position,
+                        ShowCallout = true,
+                        DefaultPinColor = groupMember.PhoneNumber == userPhoneNumber ? Color.Blue : Color.Red
+                    });
+                }
             }
 
             var mapCenterPosition = PositionHelper.GetMapCenter(groupMembers);
-	        mapCenterPosition = PositionConverter.GetValidMapPosition(mapCenterPosition);
+	        if (!PositionHelper.LocationValid(mapCenterPosition)) return;
 
 	        var radius = PositionHelper.GetRadius(groupMembers, mapCenterPosition);
 
-
 	        Device.BeginInvokeOnMainThread(() =>
-            {
-                GroupMap.MapType= MapType.Hybrid; //This doesn't seem to work
-                GroupMap.MapCenter = mapCenterPosition;
-                GroupMap.MapRegion = MapSpan.FromCenterAndRadius(mapCenterPosition, Distance.FromMiles(radius));
-                GroupMap.CustomPins = customPins;
-            });
-        }
+	        {
+	            GroupMap.MapType= MapType.Hybrid; //This doesn't seem to work on android
+	            GroupMap.MapCenter = mapCenterPosition;
+	            GroupMap.MapRegion = MapSpan.FromCenterAndRadius(mapCenterPosition, Distance.FromMiles(radius));
+	            GroupMap.CustomPins = customPins;
+	        });
+	    }
 
 
 

@@ -137,11 +137,11 @@ namespace WheresChris.iOS.Classes
         public async Task<Position> GetPosition()
         {
             var currentPosition = await PositionHelper.GetMapPosition();
-            if (PositionHelper.LocationValid(currentPosition))
+            if (currentPosition.HasValue &&  PositionHelper.LocationValid(currentPosition.Value))
             {
                 var averageList = new List<CLLocation>
                 {
-                    new CLLocation(currentPosition.Latitude, currentPosition.Longitude),
+                    new CLLocation(currentPosition.Value.Latitude, currentPosition.Value.Longitude),
                     _lastLocation
                 };
                 var averageLatitude = averageList.Average(x => x.Coordinate.Latitude);

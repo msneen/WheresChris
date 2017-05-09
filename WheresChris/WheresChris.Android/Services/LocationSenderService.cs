@@ -111,7 +111,9 @@ namespace StayTogether.Droid.Services
         private async void SendFirstPositionUpdate(string phoneNumber)
         {
             var mapPosition = await PositionHelper.GetMapPosition();//var position = GpsService.GetLocation();
-            var position = PositionConverter.Convert(mapPosition);
+            if (!mapPosition.HasValue) return;
+
+            var position = PositionConverter.Convert(mapPosition.Value);
             if (position == null) return;
 
             var groupMemberVm = GroupMemberPositionAdapter.Adapt(position);

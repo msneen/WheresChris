@@ -93,7 +93,7 @@ namespace StayTogether.Helpers
             return PositionConverter.Convert(GetCentralGeoCoordinate(groupMembers));
         }
 
-        public static async Task<Xamarin.Forms.Maps.Position> GetMapPosition()
+        public static async Task<Xamarin.Forms.Maps.Position?> GetMapPosition()
         {
             var positionList = new List<Plugin.Geolocator.Abstractions.Position>();
             CrossGeolocator.Current.DesiredAccuracy = 1;
@@ -110,10 +110,7 @@ namespace StayTogether.Helpers
                 Latitude = medianLatitude,
                 Longitude = medianLongitude
             };
-            if (!LocationValid(userPosition))
-            {
-                userPosition = PositionConverter.GetInitialPosition(userPosition);
-            }
+            if (!LocationValid(userPosition)) return null;
             var mapPosition = PositionConverter.Convert(userPosition);
             return mapPosition;
         }

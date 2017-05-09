@@ -27,14 +27,6 @@ namespace WheresChris.Helpers
             };
         }
 
-        public static Position GetValidMapPosition(Position? userPosition)
-        {
-            if (userPosition == null || (userPosition.Value.Latitude < .1 && userPosition.Value.Longitude < .1))
-            {
-                return new Position(32.7157, -117.1611);
 
-            }
-            return userPosition.Value;
-        }
     }
 }

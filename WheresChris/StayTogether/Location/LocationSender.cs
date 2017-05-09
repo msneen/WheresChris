@@ -152,7 +152,12 @@ namespace StayTogether
 	    private async void LocatorOnPositionChanged(object sender, PositionEventArgs positionEventArgs)
 	    {
             var currentPosition = await PositionHelper.GetMapPosition();
-	        if (!PositionHelper.LocationValid(currentPosition))
+	        if (!currentPosition.HasValue)
+	        {
+                Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionNull");
+                return;
+            }
+	        if( !PositionHelper.LocationValid(currentPosition.Value))
 	        {
                 Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionInvalid");
                 return;
@@ -160,8 +165,8 @@ namespace StayTogether
 
 	        var groupMemberVm = new GroupMemberVm()
 	        {
-	            Latitude = positionEventArgs.Position.Latitude,
-	            Longitude = positionEventArgs.Position.Longitude,
+	            Latitude = currentPosition.Value.Latitude, //positionEventArgs.Position.Latitude,
+	            Longitude = currentPosition.Value.Longitude, //positionEventArgs.Position.Longitude,
 	            PhoneNumber = _phoneNumber,
                 Name = _nickName
 	        };
@@ -317,18 +322,23 @@ namespace StayTogether
             UpdateGroupId(phoneNumber);
 
             var currentPosition = await PositionHelper.GetMapPosition();
-            if (!PositionHelper.LocationValid(currentPosition))
+            if(!currentPosition.HasValue)
+            {
+                Analytics.TrackEvent("LocationSender_ConfirmGroupInvitation_PositionNull");
+                return false;
+            }
+
+            if (!PositionHelper.LocationValid(currentPosition.Value))
             {
                 Analytics.TrackEvent("LocationSender_ConfirmGroupInvitation_PositionInvalid");
-
             }
 
             var groupMemberVm = new GroupMemberVm
             {
                 GroupId = phoneNumber,
                 PhoneNumber = _phoneNumber,
-                Latitude = currentPosition.Latitude,
-                Longitude = currentPosition.Longitude,
+                Latitude = currentPosition.Value.Latitude,
+                Longitude = currentPosition.Value.Longitude,
                 InvitationConfirmed = true
             };
             await _chatHubProxy.Invoke("confirmGroupInvitation", groupMemberVm);
