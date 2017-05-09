@@ -17,16 +17,5 @@ namespace WheresChris.Helpers
                 Longitude = geolocatorPosition.Longitude
             };
         }
-
-        public static Plugin.Geolocator.Abstractions.Position GetInitialPosition(Plugin.Geolocator.Abstractions.Position userPosition)
-        {
-            return new Plugin.Geolocator.Abstractions.Position
-            {
-                Latitude = 32.7157,
-                Longitude = -117.1611
-            };
-        }
-
-
     }
 }
