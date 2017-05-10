@@ -41,6 +41,7 @@ namespace WheresChris.Views
                 {
                     SetFormEnabled(false);
                 });
+                App.SetCurrentTab("Map");
             };
 
             GroupLeftEvent = new GroupLeftEvent();
@@ -69,7 +70,7 @@ namespace WheresChris.Views
         }
 
         public async void StartGroup(object sender, EventArgs e)
-        {                      
+        {
             var userPhoneNumber = SettingsHelper.GetPhoneNumber();
 
             var invitePageViewModel = BindingContext as InvitePageViewModel;
@@ -92,7 +93,8 @@ namespace WheresChris.Views
                         .Selected = false;
             }
             SetFormEnabled(false);
-            NavigateToPage("Map");
+            App.SetCurrentTab("Map");
+
         }
 
         private void SetFormEnabled(bool isSelected)
@@ -116,18 +118,6 @@ namespace WheresChris.Views
                 ContactsListView.ItemsSource = ((InvitePageViewModel)BindingContext).Items;
             }
             await PositionHelper.GetMapPosition();//Initializing position so map page loads faster
-        }
-        private void NavigateToPage(string title)
-        {
-            var masterPage = Parent.Parent as TabbedPage;
-            var invitePage = masterPage?.Children.FirstOrDefault(x => x.Title == title);
-            if (invitePage == null) return;
-
-            var index = masterPage.Children.IndexOf(invitePage);
-            if (index > -1)
-            {
-                masterPage.CurrentPage = masterPage.Children[index];
-            }
         }
 
         private void TapGestureRecognizer_OnTapped(object sender, EventArgs e)

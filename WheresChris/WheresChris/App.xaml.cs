@@ -1,9 +1,8 @@
-﻿using Microsoft.Azure.Mobile;
+﻿using System.Linq;
+using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
 using Microsoft.Azure.Mobile.Distribute;
-using System.Threading.Tasks;
-using StayTogether.Helpers;
 using WheresChris.Helpers;
 using WheresChris.Views;
 using Xamarin.Forms;
@@ -21,8 +20,28 @@ namespace WheresChris
         {
             InitializeComponent();
 
-            SetMainPage();           
+            SetMainPage();     
         }
+
+        public static Page GetCurrentTab()
+        {
+            var tabbedPage = Current.MainPage as TabbedPage;
+            return tabbedPage?.CurrentPage;
+        }
+
+        public static void SetCurrentTab(string title)
+        {
+            var tabbedPage = Current.MainPage as TabbedPage;
+            var invitePage = tabbedPage?.Children.FirstOrDefault(x => x.Title == title);
+            if (invitePage == null) return;
+
+            var index = tabbedPage.Children.IndexOf(invitePage);
+            if (index > -1)
+            {
+                tabbedPage.CurrentPage = tabbedPage.Children[index];
+            }
+        }
+       
 
         public static void SetMainPage()
         {
