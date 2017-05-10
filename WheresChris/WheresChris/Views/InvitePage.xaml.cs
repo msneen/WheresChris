@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Azure.Mobile.Analytics;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using StayTogether.Helpers;
@@ -114,8 +115,20 @@ namespace WheresChris.Views
             }
             if (status == PermissionStatus.Granted)
             {
-                await ((InvitePageViewModel)BindingContext).InitializeContacts();
-                ContactsListView.ItemsSource = ((InvitePageViewModel)BindingContext).Items;
+                try
+                {
+                    Device.BeginInvokeOnMainThread(async () => {
+                        await ((InvitePageViewModel)BindingContext).InitializeContacts();
+                        ContactsListView.ItemsSource = ((InvitePageViewModel)BindingContext).Items;
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Analytics.TrackEvent("InvitePage_InitializeContacts", new Dictionary<string, string>
+                    {
+                        {"ErrorMessage", ex.Message.Substring(0, Math.Min(60, ex.Message.Length))}
+                    });
+                }
             }
             await PositionHelper.GetMapPosition();//Initializing position so map page loads faster
         }
