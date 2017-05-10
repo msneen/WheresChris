@@ -24,7 +24,6 @@ namespace WheresChris.Droid
 
         public const int SdkVersionMarshmallow = 23;
 
-
         protected override void OnNewIntent(Intent intent)
         {
             base.OnNewIntent(intent);
@@ -85,7 +84,6 @@ namespace WheresChris.Droid
             _locationServiceStarted = true;
         }
 
-
         protected void BindToService()
         {
             _locationSenderServiceConnection = new LocationSenderServiceConnection(this);
@@ -93,7 +91,6 @@ namespace WheresChris.Droid
             BindService(new Intent(this, typeof(LocationSenderService)), _locationSenderServiceConnection, Bind.AutoCreate);
             IsBound = true;
         }
-
 
         protected void UnbindFromService()
         {
@@ -113,7 +110,6 @@ namespace WheresChris.Droid
             base.OnPause();
             Binder?.GetLocationSenderService()?.StartForeground();
             UnbindFromService();
-
         }
 
         protected override void OnResume()
@@ -128,7 +124,7 @@ namespace WheresChris.Droid
             base.OnDestroy();
             await PermissionHelper.GetNecessaryPermissionInformation();
             CleanupGroupsForExit();
-            Binder?.GetLocationSenderService()?.SetGroupJoinedCallback(null);
+            //Binder?.GetLocationSenderService()?.SetGroupJoinedCallback(null);
             Binder?.GetLocationSenderService()?.StopSelf();
             Process.KillProcess(Process.MyPid());
             System.Environment.Exit(0);
@@ -140,6 +136,5 @@ namespace WheresChris.Droid
 
             TryToStartLocationService();
         }
-
     }
 }

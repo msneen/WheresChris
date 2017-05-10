@@ -1,19 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Plugin.Geolocator.Abstractions;
 using StayTogether.Classes;
-using StayTogether.Droid.Classes;
-using StayTogether.Group;
 using StayTogether.Location;
 using WheresChris.Droid;
 using StayTogether.Droid.NotificationCenter;
 using StayTogether.Helpers;
-using WheresChris.Droid.Classes;
 using WheresChris.Helpers;
-using Position = Xamarin.Forms.Maps.Position;
 
 namespace StayTogether.Droid.Services
 {
