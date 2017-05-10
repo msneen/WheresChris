@@ -1,16 +1,12 @@
-﻿using System.Threading.Tasks;
-using Android;
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Android.Support.V4.App;
 using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
 using Microsoft.Azure.Mobile.Distribute;
 using Plugin.Permissions;
-using Plugin.Permissions.Abstractions;
 using Plugin.Toasts;
 using StayTogether.Droid.NotificationCenter;
 using StayTogether.Droid.Services;
