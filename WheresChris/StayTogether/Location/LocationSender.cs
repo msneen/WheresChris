@@ -80,6 +80,7 @@ namespace StayTogether
             _chatHubProxy.On<string, string>("GroupInvitation", OnGroupInvitation);
             _chatHubProxy.On<string, string>("MemberAlreadyInGroup", OnMemberAlreadyInGroup);
             _chatHubProxy.On<List<GroupMemberSimpleVm>>("GroupPositionUpdate", OnGroupPositionUpdate);
+            _chatHubProxy.On<string>("RequestMemberLocations", RequestMemberPositions);
 
             // Start the connection
             _hubConnection.Start().Wait();
@@ -89,7 +90,12 @@ namespace StayTogether
 	        IsInitialized = true;
         }
 
-        public void SetUpLocationEvents()
+	    private async void RequestMemberPositions(string leaderPhoneNumber)
+	    {
+	        await SendUpdatePosition();
+	    }
+
+	    public void SetUpLocationEvents()
         {
 
             _geoLocator = CrossGeolocator.Current;
@@ -114,33 +120,37 @@ namespace StayTogether
 
         private async void LocatorOnPositionChanged(object sender, PositionEventArgs positionEventArgs)
         {
-            var currentPosition = await PositionHelper.GetMapPosition();
-            if (!currentPosition.HasValue)
-            {
-                Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionNull");
-                return;
-            }
-            if (!PositionHelper.LocationValid(currentPosition.Value))
-            {
-                Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionInvalid");
-                return;
-            }
-
-            var groupMemberVm = new GroupMemberVm()
-            {
-                Latitude = currentPosition.Value.Latitude, //positionEventArgs.Position.Latitude,
-                Longitude = currentPosition.Value.Longitude, //positionEventArgs.Position.Longitude,
-                PhoneNumber = _phoneNumber,
-                Name = _nickName
-            };
-
-            SendUpdatePosition(groupMemberVm);
-            Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionSent");
+            await SendUpdatePosition();
         }
 
+	    public async Task SendUpdatePosition()
+	    {
+	        var currentPosition = await PositionHelper.GetMapPosition();
+	        if (!currentPosition.HasValue)
+	        {
+	            Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionNull");
+	            return;
+	        }
+	        if (!PositionHelper.LocationValid(currentPosition.Value))
+	        {
+	            Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionInvalid");
+	            return;
+	        }
+
+	        var groupMemberVm = new GroupMemberVm()
+	        {
+	            Latitude = currentPosition.Value.Latitude, //positionEventArgs.Position.Latitude,
+	            Longitude = currentPosition.Value.Longitude, //positionEventArgs.Position.Longitude,
+	            PhoneNumber = _phoneNumber,
+	            Name = _nickName
+	        };
+
+	        SendUpdatePosition(groupMemberVm);
+	        Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionSent");
+	    }
 
 
-        private void OnGroupPositionUpdate(List<GroupMemberSimpleVm> groupMembers)
+	    private void OnGroupPositionUpdate(List<GroupMemberSimpleVm> groupMembers)
         {
             try
             {
@@ -227,6 +237,7 @@ namespace StayTogether
 	    public void SomeoneIsLost(LostMemberVm lostMemberVm)//string phoneNumber, string latitude, string longitude, string name, double distance
 	    {
 	        if (!PositionHelper.LocationValid(lostMemberVm)) return;
+	        if (lostMemberVm.LostDistance > 5280*60) return;
 	        if (string.IsNullOrWhiteSpace(_groupId)) return;
 
 	        OnSomeoneIsLost?.Invoke(this, new LostEventArgs
@@ -341,6 +352,7 @@ namespace StayTogether
             };
             await _chatHubProxy.Invoke("confirmGroupInvitation", groupMemberVm);
             GroupMembers = new List<GroupMemberSimpleVm>();
+            await SendUpdatePosition();//Send out my current position so group member's maps will update
             MessagingCenter.Send<LocationSender>(this, GroupJoinedMsg);
             return true;
         }
