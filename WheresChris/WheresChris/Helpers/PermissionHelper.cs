@@ -67,13 +67,19 @@ namespace WheresChris.Helpers
             var contacts = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Contacts);
             var phone = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Phone);
             var location = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Location);
-            PermissionHelper.HasLocationPermission();
-            Analytics.TrackEvent("Permissions", new Dictionary<string, string>
+            PermissionHelper.HasLocationPermission();//Mws why am I doing this?
+
+            if (contacts == PermissionStatus.Granted && phone == PermissionStatus.Granted &&
+                location == PermissionStatus.Granted)
             {
-                {"Phone" , phone.ToString()},
-                {"Location", location.ToString() },
-                {"Contacts", contacts.ToString() }
-            });
+                Analytics.TrackEvent("Permissions", new Dictionary<string, string>
+                {
+                    {"Phone" , phone.ToString()},
+                    {"Location", location.ToString() },
+                    {"Contacts", contacts.ToString() }
+                });                
+            }
+
             var information = $"\n\rContacts={contacts}\n\rPhone={phone}\n\rLocation={location}";
             return information;
         }
