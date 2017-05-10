@@ -1,7 +1,7 @@
 ﻿using WheresChris.Helpers;
 using WheresChris.Models;
 using WheresChris.Services;
-
+using WheresChris.Views;
 using Xamarin.Forms;
 
 namespace WheresChris.ViewModels
@@ -11,7 +11,7 @@ namespace WheresChris.ViewModels
 		/// <summary>
 		/// Get the azure service instance
 		/// </summary>
-		public IDataStore<Item> DataStore => DependencyService.Get<IDataStore<Item>>();
+		public IDataStore<ContactDisplayItemVm> DataStore => DependencyService.Get<IDataStore<ContactDisplayItemVm>>();
 
 		bool isBusy = false;
 		public bool IsBusy

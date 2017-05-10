@@ -26,7 +26,7 @@ namespace StayTogether.Location
             }
 
             //get the distance from the last position update
-            var distanceInFeet = Distance.Calculate(_lastLocation.Latitude, 
+            var distanceInFeet = Helpers.DistanceCalculator.Distance.CalculateFeet(_lastLocation.Latitude, 
                                               _lastLocation.Longitude, 
                                               currentLocation.Latitude,
                                               currentLocation.Longitude);

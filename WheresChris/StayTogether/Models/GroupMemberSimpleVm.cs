@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace StayTogether.Models
+﻿namespace StayTogether.Models
 {
     public class GroupMemberSimpleVm : Plugin.Geolocator.Abstractions.Position
     {
