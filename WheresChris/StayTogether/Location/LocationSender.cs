@@ -225,22 +225,22 @@ namespace StayTogether
 	    }
 
 	    public void SomeoneIsLost(LostMemberVm lostMemberVm)//string phoneNumber, string latitude, string longitude, string name, double distance
-        {
-	        if (!string.IsNullOrWhiteSpace(_groupId))
+	    {
+	        if (!PositionHelper.LocationValid(lostMemberVm)) return;
+	        if (string.IsNullOrWhiteSpace(_groupId)) return;
+
+	        OnSomeoneIsLost?.Invoke(this, new LostEventArgs
 	        {
-                OnSomeoneIsLost?.Invoke(this, new LostEventArgs
-                {
-                    GroupMember = new GroupMemberVm
-                    {
-                        PhoneNumber = lostMemberVm.PhoneNumber,
-                        Name = lostMemberVm.Name,
-                        Latitude = Convert.ToDouble(lostMemberVm.Latitude),
-                        Longitude = Convert.ToDouble(lostMemberVm.Longitude),
-                        LostDistance = lostMemberVm.LostDistance
-                    }
-                });
-                MessagingCenter.Send<LocationSender>(this, SomeoneIsLostMsg);
-            }
+	            GroupMember = new GroupMemberVm
+	            {
+	                PhoneNumber = lostMemberVm.PhoneNumber,
+	                Name = lostMemberVm.Name,
+	                Latitude = Convert.ToDouble(lostMemberVm.Latitude),
+	                Longitude = Convert.ToDouble(lostMemberVm.Longitude),
+	                LostDistance = lostMemberVm.LostDistance
+	            }
+	        });
+	        MessagingCenter.Send<LocationSender>(this, SomeoneIsLostMsg);
 	    }
 
 	    public void ReceiveGroupMessage(string phoneNumber, string message)
