@@ -146,7 +146,7 @@ namespace StayTogether
 	        };
 
 	        SendUpdatePosition(groupMemberVm);
-	        Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionSent");
+	        //Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionSent");
 	    }
 
 
