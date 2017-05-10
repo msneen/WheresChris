@@ -22,6 +22,14 @@ namespace WheresChris.Messaging
                     OnGroupJoinedMsg?.Invoke(this, EventArgs.Empty);
                 }
             });
+            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupCreatedMsg,
+            (sender) =>
+            {
+                if (MessageTimeGate.CanProcess(true))
+                {
+                    OnGroupJoinedMsg?.Invoke(this, EventArgs.Empty);
+                }
+            });
         }
     }
 }
