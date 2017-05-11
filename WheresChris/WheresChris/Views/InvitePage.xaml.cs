@@ -130,7 +130,7 @@ namespace WheresChris.Views
                     });
                 }
             }
-            await PositionHelper.GetMapPosition();//Initializing position so map page loads faster
+            //await PositionHelper.GetMapPosition();//Initializing position so map page loads faster
         }
 
         private void TapGestureRecognizer_OnTapped(object sender, EventArgs e)
