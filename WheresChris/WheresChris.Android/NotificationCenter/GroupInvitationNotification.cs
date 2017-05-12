@@ -2,6 +2,7 @@ using Android.App;
 using Android.Content;
 using StayTogether.Droid.Services;
 using WheresChris.Droid;
+using WheresChris.Droid.Services;
 
 namespace StayTogether.Droid.NotificationCenter
 {

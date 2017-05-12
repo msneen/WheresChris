@@ -2,14 +2,14 @@
 using Android.App;
 using Android.Content;
 using Android.OS;
-using StayTogether.Classes;
-using StayTogether.Location;
-using WheresChris.Droid;
+using StayTogether;
 using StayTogether.Droid.NotificationCenter;
+using StayTogether.Droid.Services;
 using StayTogether.Helpers;
+using StayTogether.Location;
 using WheresChris.Helpers;
 
-namespace StayTogether.Droid.Services
+namespace WheresChris.Droid.Services
 {
 
     [Service]
@@ -17,7 +17,6 @@ namespace StayTogether.Droid.Services
     [IntentFilter(new string[] {"com.StayTogether.Droid.LocationSenderService"})]
     public class LocationSenderService : Service
     {
-
         private LocationSenderBinder _binder;
         public LocationSender LocationSender;
 

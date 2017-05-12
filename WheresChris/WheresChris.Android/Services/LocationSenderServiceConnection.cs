@@ -2,6 +2,7 @@ using System;
 using Android.Content;
 using Android.OS;
 using WheresChris.Droid;
+using WheresChris.Droid.Services;
 
 namespace StayTogether.Droid.Services
 {

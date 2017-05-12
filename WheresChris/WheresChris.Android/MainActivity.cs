@@ -10,6 +10,7 @@ using Plugin.Permissions;
 using Plugin.Toasts;
 using StayTogether.Droid.NotificationCenter;
 using StayTogether.Droid.Services;
+using WheresChris.Droid.Services;
 using WheresChris.Helpers;
 using Permission = Android.Content.PM.Permission;
 

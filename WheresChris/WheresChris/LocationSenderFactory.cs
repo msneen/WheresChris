@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using StayTogether;
+using WheresChris.Droid.Services;
 #if __ANDROID__
 using StayTogether.Droid.Services;
 #endif

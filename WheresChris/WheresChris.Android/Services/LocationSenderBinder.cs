@@ -1,4 +1,5 @@
 using Android.OS;
+using WheresChris.Droid.Services;
 
 namespace StayTogether.Droid.Services
 {
