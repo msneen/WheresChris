@@ -62,6 +62,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -103,6 +106,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -119,6 +125,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -140,7 +149,7 @@ namespace StayTogether
 
                 _geoLocator.StartListeningAsync(TimeSpan.FromSeconds(5), 5, false, new Plugin.Geolocator.Abstractions.ListenerSettings
                 {
-                    ActivityType = Plugin.Geolocator.Abstractions.ActivityType.Fitness,
+                    ActivityType = ActivityType.Fitness,
                     AllowBackgroundUpdates = true,
                     DeferLocationUpdates = true,
                     DeferralDistanceMeters = 1,
@@ -153,6 +162,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -169,6 +181,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -205,6 +220,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -227,6 +245,9 @@ namespace StayTogether
 	        }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -249,6 +270,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -270,6 +294,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -293,6 +320,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -327,6 +357,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -344,6 +377,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -363,6 +399,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -395,6 +434,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -421,6 +463,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -441,6 +486,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -458,6 +506,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -482,6 +533,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -506,6 +560,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -556,6 +613,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -580,6 +640,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -599,6 +662,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -617,6 +683,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
@@ -639,6 +708,9 @@ namespace StayTogether
             }
             catch (Exception ex)
             {
+#if (DEBUG)
+                Debugger.Break();
+#endif
                 var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
                 Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
                 {
