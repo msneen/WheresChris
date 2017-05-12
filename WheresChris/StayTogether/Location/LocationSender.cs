@@ -285,6 +285,7 @@ Debugger.Break();
 	    {
             try
             {
+                if (memberPhoneNumber == _phoneNumber) return; //I dont need to notify myself that I left
                 OnSomeoneLeft?.Invoke(this, new MemberMinimalEventArgs
                 {
                     Name = memberName,
