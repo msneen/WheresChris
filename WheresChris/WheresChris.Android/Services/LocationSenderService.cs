@@ -91,7 +91,7 @@ namespace WheresChris.Droid.Services
 
         private void InitializeLocationSender(string phoneNumber)
         {
-            LocationSender = new LocationSender();
+            LocationSender = LocationSenderFactory.GetLocationSender();
             LocationSender.InitializeSignalRAsync();
             LocationSender.OnSomeoneIsLost += (sender, args) =>
             {

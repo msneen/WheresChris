@@ -19,6 +19,10 @@ namespace StayTogether
 
 	public class LocationSender
 	{
+	    private static LocationSender _instance;
+
+	    public static LocationSender Instance => _instance ?? (_instance = new LocationSender());
+
 	    public event EventHandler<LostEventArgs> OnSomeoneIsLost;
         public event EventHandler<InvitedEventArgs> OnGroupInvitationReceived;
         public event EventHandler OnGroupJoined;
