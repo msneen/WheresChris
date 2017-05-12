@@ -60,11 +60,6 @@ namespace WheresChris.Droid.Services
             return notification;
         }
 
-        public async Task SendError(string message)
-        {
-            await LocationSender.SendError(message);
-        }
-
         private void StartLocationSender()
         {
             var phoneNumber = SettingsHelper.GetPhoneNumber();
@@ -117,7 +112,7 @@ namespace WheresChris.Droid.Services
 
             //};
             LocationSender.OnSomeoneLeft += (sender, args) =>
-            {
+            {                
                 LeftGroupNotification.DisplayLostNotification(args.PhoneNumber, args.Name);
             };
             LocationSender.OnSomeoneAlreadyInAnotherGroup += (sender, args) =>

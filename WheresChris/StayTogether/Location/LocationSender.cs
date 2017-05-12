@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR.Client;
 using Microsoft.Azure.Mobile.Analytics;
 using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
-using Plugin.LocalNotifications;
 using Plugin.Settings;
 using StayTogether.Classes;
 using StayTogether.Helpers;
@@ -55,99 +55,163 @@ namespace StayTogether
 
         public LocationSender ()
 	    {
-	        GetNickname();
-            GetPhoneNumber();
-	    }
+            try
+            {
+                GetNickname();
+                GetPhoneNumber();
+            }
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }
+        }
 
 	    public void InitializeSignalRAsync()
         {
-            // Connect to the server
-            _hubConnection = new HubConnection("https://staytogetherserver.azurewebsites.net/");//mike
-            //_hubConnection = new HubConnection("http://162.231.59.41/StayTogetherServer/");//mike
-            _hubConnection.Headers.Add("AuthToken", "x0y2!tJyHR%$Sip@*%amaGxvs");
+            try
+            {
+                // Connect to the server
+                _hubConnection = new HubConnection("https://staytogetherserver.azurewebsites.net/");//mike
+                                                                                                    //_hubConnection = new HubConnection("http://162.231.59.41/StayTogetherServer/");//mike
+                _hubConnection.Headers.Add("AuthToken", "x0y2!tJyHR%$Sip@*%amaGxvs");
 
-            // Create a proxy to the 'ChatHub' SignalR Hub
-            _chatHubProxy = _hubConnection.CreateHubProxy("StayTogetherHub");
-            //I think this string will be the name of Jeff's main class
+                // Create a proxy to the 'ChatHub' SignalR Hub
+                _chatHubProxy = _hubConnection.CreateHubProxy("StayTogetherHub");
+                //I think this string will be the name of Jeff's main class
 
-            // Wire up a handler for the 'UpdateChatMessage' for the server
-            // to be called on our client
-            _chatHubProxy.On<string, string>("BroadcastMessage", ReceiveGroupMessage);
-            _chatHubProxy.On<string>("UpdateGroupId", UpdateGroupId);
-            _chatHubProxy.On<LostMemberVm>("SomeoneIsLost", SomeoneIsLost);
-            _chatHubProxy.On<string>("GroupDisbanded", GroupDisbanded);
-            _chatHubProxy.On<string, string>("MemberLeft", OnMemberLeftGroup);
-            _chatHubProxy.On<string, string>("GroupInvitation", OnGroupInvitation);
-            _chatHubProxy.On<string, string>("MemberAlreadyInGroup", OnMemberAlreadyInGroup);
-            _chatHubProxy.On<List<GroupMemberSimpleVm>>("GroupPositionUpdate", OnGroupPositionUpdate);
-            _chatHubProxy.On<string>("RequestMemberLocations", RequestMemberPositions);
+                // Wire up a handler for the 'UpdateChatMessage' for the server
+                // to be called on our client
+                _chatHubProxy.On<string>("UpdateGroupId", UpdateGroupId);
+                _chatHubProxy.On<LostMemberVm>("SomeoneIsLost", SomeoneIsLost);
+                _chatHubProxy.On<string>("GroupDisbanded", GroupDisbanded);
+                _chatHubProxy.On<string, string>("MemberLeft", OnMemberLeftGroup);
+                _chatHubProxy.On<string, string>("GroupInvitation", OnGroupInvitation);
+                _chatHubProxy.On<string, string>("MemberAlreadyInGroup", OnMemberAlreadyInGroup);
+                _chatHubProxy.On<List<GroupMemberSimpleVm>>("GroupPositionUpdate", OnGroupPositionUpdate);
+                _chatHubProxy.On<string>("RequestMemberLocations", RequestMemberPositions);
 
-            // Start the connection
-            _hubConnection.Start().Wait();
+                // Start the connection
+                _hubConnection.Start().Wait();
 
-            SetUpLocationEvents();
+                SetUpLocationEvents();
 
-	        IsInitialized = true;
+                IsInitialized = true;
+            }
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }
         }
 
 	    private async void RequestMemberPositions(string leaderPhoneNumber)
 	    {
-	        await SendUpdatePosition();
-	    }
+            try
+            {
+                await SendUpdatePosition();
+            }
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }
+        }
 
 	    public void SetUpLocationEvents()
         {
 
-            _geoLocator = CrossGeolocator.Current;
-
-            _geoLocator.DesiredAccuracy = 1; //100 is new default
-
-            if (!_geoLocator.IsGeolocationEnabled || !_geoLocator.IsGeolocationAvailable) return;
-
-            _geoLocator.StartListeningAsync(TimeSpan.FromSeconds(5), 5, false, new Plugin.Geolocator.Abstractions.ListenerSettings
+            try
             {
-                ActivityType = Plugin.Geolocator.Abstractions.ActivityType.Fitness,
-                AllowBackgroundUpdates = true,
-                DeferLocationUpdates = true,
-                DeferralDistanceMeters = 1,
-                DeferralTime = TimeSpan.FromSeconds(1),
-                ListenForSignificantChanges = true,
-                PauseLocationUpdatesAutomatically = false
-            });
+                _geoLocator = CrossGeolocator.Current;
 
-            _geoLocator.PositionChanged += LocatorOnPositionChanged;
+                _geoLocator.DesiredAccuracy = 1; //100 is new default
+
+                if (!_geoLocator.IsGeolocationEnabled || !_geoLocator.IsGeolocationAvailable) return;
+
+                _geoLocator.StartListeningAsync(TimeSpan.FromSeconds(5), 5, false, new Plugin.Geolocator.Abstractions.ListenerSettings
+                {
+                    ActivityType = Plugin.Geolocator.Abstractions.ActivityType.Fitness,
+                    AllowBackgroundUpdates = true,
+                    DeferLocationUpdates = true,
+                    DeferralDistanceMeters = 1,
+                    DeferralTime = TimeSpan.FromSeconds(1),
+                    ListenForSignificantChanges = true,
+                    PauseLocationUpdatesAutomatically = false
+                });
+
+                _geoLocator.PositionChanged += LocatorOnPositionChanged;
+            }
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }
         }
 
         private async void LocatorOnPositionChanged(object sender, PositionEventArgs positionEventArgs)
         {
-            await SendUpdatePosition();
+            try
+            {
+                await SendUpdatePosition();
+            }
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }
         }
 
 	    public async Task SendUpdatePosition()
 	    {
-	        var currentPosition = await PositionHelper.GetMapPosition();
-	        if (!currentPosition.HasValue)
-	        {
-	            Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionNull");
-	            return;
-	        }
-	        if (!PositionHelper.LocationValid(currentPosition.Value))
-	        {
-	            Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionInvalid");
-	            return;
-	        }
+            try
+            {
+                var currentPosition = await PositionHelper.GetMapPosition();
+                if (!currentPosition.HasValue)
+                {
+                    Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionNull");
+                    return;
+                }
+                if (!PositionHelper.LocationValid(currentPosition.Value))
+                {
+                    Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionInvalid");
+                    return;
+                }
 
-	        var groupMemberVm = new GroupMemberVm()
-	        {
-	            Latitude = currentPosition.Value.Latitude, //positionEventArgs.Position.Latitude,
-	            Longitude = currentPosition.Value.Longitude, //positionEventArgs.Position.Longitude,
-	            PhoneNumber = _phoneNumber,
-	            Name = _nickName
-	        };
+                var groupMemberVm = new GroupMemberVm()
+                {
+                    Latitude = currentPosition.Value.Latitude, //positionEventArgs.Position.Latitude,
+                    Longitude = currentPosition.Value.Longitude, //positionEventArgs.Position.Longitude,
+                    PhoneNumber = _phoneNumber,
+                    Name = _nickName
+                };
 
-	        SendUpdatePosition(groupMemberVm);
-	        //Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionSent");
-	    }
+                SendUpdatePosition(groupMemberVm);
+            }
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }
+        }
 
 
 	    private void OnGroupPositionUpdate(List<GroupMemberSimpleVm> groupMembers)
@@ -161,44 +225,80 @@ namespace StayTogether
 	            }
 	            MessagingCenter.Send<LocationSender>(this, GroupPositionUpdateMsg);
 	        }
-	        catch (Exception)
-	        {
-	            
-	        }
-
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }
         }
 
         private void OnMemberAlreadyInGroup(string memberPhoneNumber, string memberName)
 	    {
-            OnSomeoneAlreadyInAnotherGroup?.Invoke(this, new MemberMinimalEventArgs
+            try
             {
-                Name = memberName,
-                PhoneNumber = memberPhoneNumber
-            });
-	        
-            MessagingCenter.Send<LocationSender>(this, MemberAlreadyInGroupMsg);
+                OnSomeoneAlreadyInAnotherGroup?.Invoke(this, new MemberMinimalEventArgs
+                {
+                    Name = memberName,
+                    PhoneNumber = memberPhoneNumber
+                });
+
+                MessagingCenter.Send<LocationSender>(this, MemberAlreadyInGroupMsg);
+            }
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }
         }
 
 	    private void OnMemberLeftGroup(string memberPhoneNumber, string memberName)
 	    {
-            OnSomeoneLeft?.Invoke(this, new MemberMinimalEventArgs
+            try
             {
-                Name = memberName,
-                PhoneNumber = memberPhoneNumber
-            });
-            MessagingCenter.Send<LocationSender>(this, SomeoneLeftMsg);
+                OnSomeoneLeft?.Invoke(this, new MemberMinimalEventArgs
+                {
+                    Name = memberName,
+                    PhoneNumber = memberPhoneNumber
+                });
+                MessagingCenter.Send<LocationSender>(this, SomeoneLeftMsg);
+            }
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }
         }
 
 	    private void GroupDisbanded(string groupId)
 	    {
-	        InAGroup = false;
-	        _groupId = "";
-            GroupLeader = false;
-	        GroupMembers = null;
-            
-            //AddNotification("Group Disbanded", "Your Group has been disbanded");
-            OnGroupDisbanded?.Invoke(this, new EventArgs());
-            MessagingCenter.Send<LocationSender>(this, GroupDisbandedMsg);
+            try
+            {
+                InAGroup = false;
+                _groupId = "";
+                GroupLeader = false;
+                GroupMembers = null;
+
+                //AddNotification("Group Disbanded", "Your Group has been disbanded");
+                OnGroupDisbanded?.Invoke(this, new EventArgs());
+                MessagingCenter.Send<LocationSender>(this, GroupDisbandedMsg);
+            }
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }
         }
 
         private readonly InvitationList _invitationList = new InvitationList();
@@ -206,121 +306,211 @@ namespace StayTogether
 
 	    private void OnGroupInvitation(string phoneNumber, string name)
         {
-            // TODO: consider cleaning phoneNumber
-            if (phoneNumber == _phoneNumber) return;//don't invite myself to a group
-
-            OnGroupInvitationReceived?.Invoke(this, new InvitedEventArgs
+            try
             {
-                Name = name,
-                GroupId =   phoneNumber
-            });
+                // TODO: consider cleaning phoneNumber
+                if (phoneNumber == _phoneNumber) return;//don't invite myself to a group
 
-            _invitationList.AddInvitation(new InvitationVm
+                OnGroupInvitationReceived?.Invoke(this, new InvitedEventArgs
+                {
+                    Name = name,
+                    GroupId = phoneNumber
+                });
+
+                _invitationList.AddInvitation(new InvitationVm
+                {
+                    Name = name,
+                    PhoneNumber = phoneNumber,
+                    ReceivedTime = DateTime.Now
+                });
+                MessagingCenter.Send<LocationSender>(this, GroupInvitationReceivedMsg);
+            }
+            catch (Exception ex)
             {
-                Name = name,
-                PhoneNumber = phoneNumber,
-                ReceivedTime = DateTime.Now
-            });
-            MessagingCenter.Send<LocationSender>(this, GroupInvitationReceivedMsg);
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }
         }
 
 	    public List<InvitationVm> GetInvitations(int hours = 3)
 	    {
-	        _invitationList.Clean();
-           return _invitationList;
-        }
+            try
+            {
+                _invitationList.Clean();
+                return _invitationList;
+            }
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }
+	        return null;
+	    }
 
         public void UpdateGroupId(string id)
 	    {
-            OnGroupJoined?.Invoke(this, new EventArgs());
-            _groupId = id;
-	        InAGroup = true;
-	    }
+            try
+            {
+                OnGroupJoined?.Invoke(this, new EventArgs());
+                _groupId = id;
+                InAGroup = true;
+            }
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }
+        }
 
 	    public void SomeoneIsLost(LostMemberVm lostMemberVm)//string phoneNumber, string latitude, string longitude, string name, double distance
 	    {
-            //for some reason, this pause prevents a crash right after I invite someone else to a group and they accept
-	        Task.Delay(15000);
 
-            if (!PositionHelper.LocationValid(lostMemberVm)) return;
-            if (lostMemberVm.LostDistance > 5280 * 60) return;
-            if (string.IsNullOrWhiteSpace(_groupId)) return;
-
-            OnSomeoneIsLost?.Invoke(this, new LostEventArgs
+            try
             {
-                GroupMember = new GroupMemberVm
+                if (!PositionHelper.LocationValid(lostMemberVm)) return;
+                if (lostMemberVm.LostDistance > 5280 * 60) return;
+                if (string.IsNullOrWhiteSpace(_groupId)) return;
+
+                OnSomeoneIsLost?.Invoke(this, new LostEventArgs
                 {
-                    PhoneNumber = lostMemberVm.PhoneNumber,
-                    Name = lostMemberVm.Name,
-                    Latitude = Convert.ToDouble(lostMemberVm.Latitude),
-                    Longitude = Convert.ToDouble(lostMemberVm.Longitude),
-                    LostDistance = lostMemberVm.LostDistance
-                }
-            });
-            MessagingCenter.Send<LocationSender>(this, SomeoneIsLostMsg);          
+                    GroupMember = new GroupMemberVm
+                    {
+                        PhoneNumber = lostMemberVm.PhoneNumber,
+                        Name = lostMemberVm.Name,
+                        Latitude = Convert.ToDouble(lostMemberVm.Latitude),
+                        Longitude = Convert.ToDouble(lostMemberVm.Longitude),
+                        LostDistance = lostMemberVm.LostDistance
+                    }
+                });
+                MessagingCenter.Send<LocationSender>(this, SomeoneIsLostMsg);
+            }
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }         
 	    }
 
-	    public void ReceiveGroupMessage(string phoneNumber, string message)
-	    {
-	        AddNotification("Where's Chris Update", message);
-	    }
 
-	    private void AddNotification(string title, string message)
-	    {
-            CrossLocalNotifications.Current.Show(title, message);
-        }
 
 	    public async Task StartOrAddToGroup(GroupVm groupVm)
 	    {
-	        if (GroupLeader && InAGroup)
-	        {
-	            await AddToGroup(groupVm);
-	        }
-	        else if(!InAGroup)
-	        {
-	            await StartGroup(groupVm);
-	        }
-            GroupMembers = new List<GroupMemberSimpleVm>();
-	    }
+            try
+            {
+                if (GroupLeader && InAGroup)
+                {
+                    await AddToGroup(groupVm);
+                }
+                else if (!InAGroup)
+                {
+                    await StartGroup(groupVm);
+                }
+                GroupMembers = new List<GroupMemberSimpleVm>();
+            }
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }
+        }
 
 	    public async Task StartGroup(GroupVm groupVm)
 	    {
-            await _chatHubProxy.Invoke("CreateGroup", groupVm);
-	        GroupLeader = true;
-	        InAGroup = true;
-            _groupId = _phoneNumber;
-            MessagingCenter.Send<LocationSender>(this, GroupCreatedMsg);
+            try
+            {
+                await _chatHubProxy.Invoke("CreateGroup", groupVm);
+                GroupLeader = true;
+                InAGroup = true;
+                _groupId = _phoneNumber;
+                MessagingCenter.Send<LocationSender>(this, GroupCreatedMsg);
+            }
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }
         }
 
 	    public async Task AddToGroup(GroupVm groupVm)
 	    {
-            await _chatHubProxy.Invoke("AddToGroup", groupVm);
-            MessagingCenter.Send<LocationSender>(this, SomeoneAddedToGroupMsg);
+            try
+            {
+                await _chatHubProxy.Invoke("AddToGroup", groupVm);
+                MessagingCenter.Send<LocationSender>(this, SomeoneAddedToGroupMsg);
+            }
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }
         }
 
 	    public async Task EndGroup()
 	    {
-	        if (InAGroup && GroupLeader)
-	        {
-	            await _chatHubProxy.Invoke("EndGroup", _phoneNumber);
-	            InAGroup = false;
-	            GroupLeader = false;
-	            _groupId = "";
-	            GroupMembers = null;
-                MessagingCenter.Send<LocationSender>(this, GroupDisbandedMsg);
+            try
+            {
+                if (InAGroup && GroupLeader)
+                {
+                    await _chatHubProxy.Invoke("EndGroup", _phoneNumber);
+                    InAGroup = false;
+                    GroupLeader = false;
+                    _groupId = "";
+                    GroupMembers = null;
+                    MessagingCenter.Send<LocationSender>(this, GroupDisbandedMsg);
+                }
             }
-	    }
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }
+        }
 
         public async Task LeaveGroup()
         {
-            if (InAGroup && !GroupLeader)
+            try
             {
-                await _chatHubProxy.Invoke("LeaveGroup", _groupId, _phoneNumber);
-                InAGroup = false;
-                GroupLeader = false;
-                _groupId = "";
-                GroupMembers = null;
-                MessagingCenter.Send<LocationSender>(this, ThisUserLeftGroupMsg);
+                if (InAGroup && !GroupLeader)
+                {
+                    await _chatHubProxy.Invoke("LeaveGroup", _groupId, _phoneNumber);
+                    InAGroup = false;
+                    GroupLeader = false;
+                    _groupId = "";
+                    GroupMembers = null;
+                    MessagingCenter.Send<LocationSender>(this, ThisUserLeftGroupMsg);
+                }
+            }
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
             }
         }
 
@@ -332,81 +522,130 @@ namespace StayTogether
         /// <returns></returns>
 	    public async Task<bool> ConfirmGroupInvitation(string phoneNumber, string name)
         {
-            if (InAGroup) return false;//Don't allow them to join a group
-
-            UpdateGroupId(phoneNumber);
-
-            var currentPosition = await PositionHelper.GetMapPosition();
-            if(!currentPosition.HasValue)
+            try
             {
-                Analytics.TrackEvent("LocationSender_ConfirmGroupInvitation_PositionNull");
-                return false;
+                if (InAGroup) return false;//Don't allow them to join a group
+
+                UpdateGroupId(phoneNumber);
+
+                var currentPosition = await PositionHelper.GetMapPosition();
+                if (!currentPosition.HasValue)
+                {
+                    Analytics.TrackEvent("LocationSender_ConfirmGroupInvitation_PositionNull");
+                    return false;
+                }
+
+                if (!PositionHelper.LocationValid(currentPosition.Value))
+                {
+                    Analytics.TrackEvent("LocationSender_ConfirmGroupInvitation_PositionInvalid");
+                }
+
+                var groupMemberVm = new GroupMemberVm
+                {
+                    GroupId = phoneNumber,
+                    PhoneNumber = _phoneNumber,
+                    Latitude = currentPosition.Value.Latitude,
+                    Longitude = currentPosition.Value.Longitude,
+                    InvitationConfirmed = true
+                };
+                await _chatHubProxy.Invoke("confirmGroupInvitation", groupMemberVm);
+                GroupMembers = new List<GroupMemberSimpleVm>();
+                await SendUpdatePosition();//Send out my current position so group member's maps will update
+                MessagingCenter.Send<LocationSender>(this, GroupJoinedMsg);
+                return true;
             }
-
-            if (!PositionHelper.LocationValid(currentPosition.Value))
+            catch (Exception ex)
             {
-                Analytics.TrackEvent("LocationSender_ConfirmGroupInvitation_PositionInvalid");
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
             }
-
-            var groupMemberVm = new GroupMemberVm
-            {
-                GroupId = phoneNumber,
-                PhoneNumber = _phoneNumber,
-                Latitude = currentPosition.Value.Latitude,
-                Longitude = currentPosition.Value.Longitude,
-                InvitationConfirmed = true
-            };
-            await _chatHubProxy.Invoke("confirmGroupInvitation", groupMemberVm);
-            GroupMembers = new List<GroupMemberSimpleVm>();
-            await SendUpdatePosition();//Send out my current position so group member's maps will update
-            MessagingCenter.Send<LocationSender>(this, GroupJoinedMsg);
-            return true;
+            return false;
         }
 
 	    public void SendUpdatePosition(GroupMemberVm groupMemberVm)
 	    {
-	        groupMemberVm.PhoneNumber = _phoneNumber;
-	        groupMemberVm.GroupId = _groupId;
-            if(GroupLeader && InAGroup)
+            try
             {
-                groupMemberVm.InvitationConfirmed = true;
+                groupMemberVm.PhoneNumber = _phoneNumber;
+                groupMemberVm.GroupId = _groupId;
+                if (GroupLeader && InAGroup)
+                {
+                    groupMemberVm.InvitationConfirmed = true;
+                }
+                _chatHubProxy.Invoke("updatePosition", groupMemberVm);
+                MessagingCenter.Send<LocationSender>(this, LocationSentMsg);
             }
-            _chatHubProxy.Invoke("updatePosition", groupMemberVm);
-            MessagingCenter.Send<LocationSender>(this, LocationSentMsg);
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }
         }
 
 	    public async Task<List<GroupMemberVm>> GetMembers(GroupMemberVm groupMemberVm)
 	    {
-	        if (InAGroup)
-	        {
-	            return await _chatHubProxy.Invoke<List<GroupMemberVm>>("GetGroupMembers", groupMemberVm);
-	        }
-	        else
-	        {
-	            return new List<GroupMemberVm>();
-	        }
+            try
+            {
+                if (InAGroup)
+                {
+                    return await _chatHubProxy.Invoke<List<GroupMemberVm>>("GetGroupMembers", groupMemberVm);
+                }
+            }
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }
+
+            return new List<GroupMemberVm>();
 	    }
 
         private void GetNickname()
         {
-            _nickName = CrossSettings.Current.GetValueOrDefault<string>("nickname");
+            try
+            {
+                _nickName = CrossSettings.Current.GetValueOrDefault<string>("nickname");
+            }
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }
         }
 
 	    private void GetPhoneNumber()
         {
-            var phoneNumber = CrossSettings.Current.GetValueOrDefault<string>("phonenumber");
-            _phoneNumber = ContactsHelper.CleanPhoneNumber( phoneNumber);
-            if (string.IsNullOrWhiteSpace(_phoneNumber))
+            try
             {
-                AddNotification("Where's Chris PhoneNumber", "Please Add your Phone Number in settings");
+                var phoneNumber = CrossSettings.Current.GetValueOrDefault<string>("phonenumber");
+                _phoneNumber = ContactsHelper.CleanPhoneNumber(phoneNumber);
+                if (string.IsNullOrWhiteSpace(_phoneNumber))
+                {
+                    //Todo:  figure out a way to do this
+                    //AddNotification("Where's Chris PhoneNumber", "Please Add your Phone Number in settings");
+                }
+            }
+            catch (Exception ex)
+            {
+                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
+                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
             }
         }
-
-        public Task SendError(string message)
-	    {
-	        _chatHubProxy.Invoke("SendErrorMessage", message, _phoneNumber);
-            return Task.CompletedTask;
-	    }
 
 	}
 
