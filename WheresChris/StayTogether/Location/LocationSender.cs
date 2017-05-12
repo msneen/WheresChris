@@ -152,16 +152,19 @@ namespace StayTogether
 
 	    private void OnGroupPositionUpdate(List<GroupMemberSimpleVm> groupMembers)
         {
-            try
-            {
-                if (GroupMembers != null)
-                {
-                    GroupMembers.Clear();
-                    GroupMembers.AddRange(groupMembers);
-                }
-                MessagingCenter.Send<LocationSender>(this, GroupPositionUpdateMsg);
-            }
-            catch(Exception) { }
+	        try
+	        {
+	            if (GroupMembers != null)
+	            {
+	                GroupMembers.Clear();
+	                GroupMembers.AddRange(groupMembers);
+	            }
+	            MessagingCenter.Send<LocationSender>(this, GroupPositionUpdateMsg);
+	        }
+	        catch (Exception)
+	        {
+	            
+	        }
 
         }
 
@@ -236,22 +239,25 @@ namespace StayTogether
 
 	    public void SomeoneIsLost(LostMemberVm lostMemberVm)//string phoneNumber, string latitude, string longitude, string name, double distance
 	    {
-	        if (!PositionHelper.LocationValid(lostMemberVm)) return;
-	        if (lostMemberVm.LostDistance > 5280*60) return;
-	        if (string.IsNullOrWhiteSpace(_groupId)) return;
+            //for some reason, this pause prevents a crash right after I invite someone else to a group and they accept
+	        Task.Delay(15000);
 
-	        OnSomeoneIsLost?.Invoke(this, new LostEventArgs
-	        {
-	            GroupMember = new GroupMemberVm
-	            {
-	                PhoneNumber = lostMemberVm.PhoneNumber,
-	                Name = lostMemberVm.Name,
-	                Latitude = Convert.ToDouble(lostMemberVm.Latitude),
-	                Longitude = Convert.ToDouble(lostMemberVm.Longitude),
-	                LostDistance = lostMemberVm.LostDistance
-	            }
-	        });
-	        MessagingCenter.Send<LocationSender>(this, SomeoneIsLostMsg);
+            if (!PositionHelper.LocationValid(lostMemberVm)) return;
+            if (lostMemberVm.LostDistance > 5280 * 60) return;
+            if (string.IsNullOrWhiteSpace(_groupId)) return;
+
+            OnSomeoneIsLost?.Invoke(this, new LostEventArgs
+            {
+                GroupMember = new GroupMemberVm
+                {
+                    PhoneNumber = lostMemberVm.PhoneNumber,
+                    Name = lostMemberVm.Name,
+                    Latitude = Convert.ToDouble(lostMemberVm.Latitude),
+                    Longitude = Convert.ToDouble(lostMemberVm.Longitude),
+                    LostDistance = lostMemberVm.LostDistance
+                }
+            });
+            MessagingCenter.Send<LocationSender>(this, SomeoneIsLostMsg);          
 	    }
 
 	    public void ReceiveGroupMessage(string phoneNumber, string message)

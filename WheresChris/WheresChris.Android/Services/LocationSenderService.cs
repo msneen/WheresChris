@@ -11,34 +11,23 @@ using WheresChris.Helpers;
 
 namespace StayTogether.Droid.Services
 {
-    public interface GroupJoinedCallback
-    {
-        void GroupJoined();
-        void GroupDisbanded();
-    }
-
 
     [Service]
     // ReSharper disable once RedundantExplicitArrayCreation
     [IntentFilter(new string[] {"com.StayTogether.Droid.LocationSenderService"})]
     public class LocationSenderService : Service
     {
-        private GroupJoinedCallback _groupJoinedCallback;
 
         private LocationSenderBinder _binder;
         public LocationSender LocationSender;
 
         public static LocationSenderService Instance;
 
-        public void SetGroupJoinedCallback(GroupJoinedCallback groupJoinedCallback)
-        {
-            _groupJoinedCallback = groupJoinedCallback;
-        }
-
         public void StartForeground()
         {
+#if (DEBUG)
             var notification = DisplayServiceNotification();
-
+#endif
             StartForeground(1337, notification);
         }
 
@@ -57,7 +46,6 @@ namespace StayTogether.Droid.Services
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
             StartLocationSender();
-
             return StartCommandResult.Sticky;
         }
 
@@ -115,22 +103,20 @@ namespace StayTogether.Droid.Services
             LocationSender.InitializeSignalRAsync();
             LocationSender.OnSomeoneIsLost += (sender, args) =>
             {
-                OnNotifySomeoneIsLost(args.GroupMember);
+                LostNotification.DisplayLostNotification(args.GroupMember);//OnNotifySomeoneIsLost(args.GroupMember);
             };
             LocationSender.OnGroupInvitationReceived += (sender, args) => 
             {
                 GroupInvitationNotification.DisplayGroupInvitationNotification(args.GroupId, args.Name);
             };
-            LocationSender.OnGroupJoined += (sender, args) =>
-            {
-                //When the location sender fires the group joined event, call the callback in the activity 
-                //so we can disable the joinGroup button and hide the contact list
-                _groupJoinedCallback?.GroupJoined();
-            };
-            LocationSender.OnGroupDisbanded +=(sender, args) =>
-            {
-                _groupJoinedCallback?.GroupDisbanded();
-            };
+            //LocationSender.OnGroupJoined += (sender, args) =>
+            //{
+
+            //};
+            //LocationSender.OnGroupDisbanded +=(sender, args) =>
+            //{
+
+            //};
             LocationSender.OnSomeoneLeft += (sender, args) =>
             {
                 LeftGroupNotification.DisplayLostNotification(args.PhoneNumber, args.Name);
@@ -139,11 +125,6 @@ namespace StayTogether.Droid.Services
             {
                 InAnotherGroupNotification.DisplayInAnotherGroupNotification(args.PhoneNumber, args.Name);
             };
-        }
-
-        private void OnNotifySomeoneIsLost(GroupMemberVm groupMember)
-        {
-            LostNotification.DisplayLostNotification(groupMember);
         }
 
         public override IBinder OnBind(Intent intent)
