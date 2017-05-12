@@ -24,9 +24,7 @@ namespace WheresChris.Droid.Services
 
         public void StartForeground()
         {
-#if (DEBUG)
             var notification = DisplayServiceNotification();
-#endif
             StartForeground(1337, notification);
         }
 
@@ -55,7 +53,7 @@ namespace WheresChris.Droid.Services
             var notification = new Notification.Builder(this)
                 .SetSmallIcon(Resource.Drawable.ic_speaker_dark)
                 .SetContentTitle("Where's Chris")
-                .SetContentText("Watching Chris...")
+                .SetContentText("Wheres Chris")
                 .SetContentIntent(pendingIntent).Build();
             return notification;
         }
