@@ -102,6 +102,7 @@ namespace StayTogether.Helpers
             {
                 var position = await CrossGeolocator.Current.GetPositionAsync(new TimeSpan(0, 0, 10));
                 positionList.Add(position);
+                await Task.Delay(2000);
             }
 
             var userPosition = GetMedianPosition(positionList);
