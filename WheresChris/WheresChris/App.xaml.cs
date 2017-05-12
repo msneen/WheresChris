@@ -53,7 +53,7 @@ namespace WheresChris
             {
                 AddPage(new InvitePage(), "Invite");
                 AddPage(new JoinPage(), "Join");
-                //AddPage(new MapPage(), "Map");
+                AddPage(new MapPage(), "Map");
             }
             AddPage(new AboutPage(), "About");           
             Current.MainPage = _mainTabbedPage;

@@ -625,7 +625,7 @@ Debugger.Break();
             return false;
         }
 
-	    public void SendUpdatePosition(GroupMemberVm groupMemberVm)
+	    public async void SendUpdatePosition(GroupMemberVm groupMemberVm)
 	    {
             try
             {
@@ -635,8 +635,12 @@ Debugger.Break();
                 {
                     groupMemberVm.InvitationConfirmed = true;
                 }
-                _chatHubProxy.Invoke("updatePosition", groupMemberVm);
-                MessagingCenter.Send<LocationSender>(this, LocationSentMsg);
+                await _chatHubProxy.Invoke("updatePosition", groupMemberVm);
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    MessagingCenter.Send(this, LocationSentMsg);
+                });
+
             }
             catch (Exception ex)
             {
