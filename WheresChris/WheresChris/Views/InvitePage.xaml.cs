@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Mobile.Analytics;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
-using StayTogether.Helpers;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using WheresChris.Helpers;

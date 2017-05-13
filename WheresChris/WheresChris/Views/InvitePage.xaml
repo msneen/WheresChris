@@ -17,8 +17,8 @@
         <ListView 
             x:Name="ContactsListView"
             HasUnevenRows="true"  
-            IsPullToRefreshEnabled="false"
-            CachingStrategy="RetainElement">
+            IsPullToRefreshEnabled="false"          
+            CachingStrategy="RecycleElement">
             <ListView.Header>
                 <StackLayout Padding="10" 
                        Orientation="Horizontal"
