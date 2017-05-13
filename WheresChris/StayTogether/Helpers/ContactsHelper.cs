@@ -11,25 +11,32 @@ namespace StayTogether
     public class ContactsHelper
     {
 
-        public async Task<List<GroupMemberVm>> GetContacts()
+        public async Task<List<GroupMemberVm>> GetContactsAsync()
         {
+            var groupMemberVms = new List<GroupMemberVm>();
             if (!await CrossContacts.Current.RequestPermission()) return null;
 
-            CrossContacts.Current.PreferContactAggregation = true;
+            CrossContacts.Current.PreferContactAggregation = false;
 
-            if (CrossContacts.Current == null || CrossContacts.Current.Contacts == null) return null;
+            await Task.Run(() =>
+            {
+                if (CrossContacts.Current == null || CrossContacts.Current.Contacts == null) return;
 
-            var contactList = CrossContacts.Current.Contacts.ToList();
-                
-            return contactList
-                .Where( contact => contact.HasValidNameAndPhone())
-                .Select(filteredContact => new GroupMemberVm
-                {
-                    Name = filteredContact.CleanName(),
-                    PhoneNumber = filteredContact.FirstOrDefaultMobileNumber()
-                })
-                .OrderBy(groupMemberVm => groupMemberVm.Name)
-                .ToList();
+                var contactList = CrossContacts.Current.Contacts.ToList();
+
+                groupMemberVms = contactList
+                    .Where(contact => contact.HasValidNameAndPhone())
+                    .Select(filteredContact => new GroupMemberVm
+                    {
+                        Name = filteredContact.CleanName(),
+                        PhoneNumber = filteredContact.FirstOrDefaultMobileNumber()
+                    })
+                    .OrderBy(groupMemberVm => groupMemberVm.Name)
+                    .ToList();
+            });
+
+
+            return groupMemberVms;
         }
 
         public static string CleanName(Contact contact)

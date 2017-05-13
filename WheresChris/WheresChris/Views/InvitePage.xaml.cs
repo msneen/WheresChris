@@ -29,8 +29,17 @@ namespace WheresChris.Views
             {
                 Title = "Invite Chris"
             };
-            InitializeExpirationPicker();
-            Task.Run(() => InitializeContacts()).Wait();            
+            InitializeExpirationPicker();                      
+        }
+
+        private bool _hasAppeared;
+        protected override async void OnAppearing()
+        {
+            if (_hasAppeared) return;
+
+            await InitializeContactsAsync();
+        
+            _hasAppeared = true;
         }
 
         private void InitializeMessagingCenterSubscriptions()
@@ -105,7 +114,7 @@ namespace WheresChris.Views
             ContactsListView.IsEnabled = isSelected;
         }
 
-        protected async void InitializeContacts()
+        public async Task InitializeContactsAsync()
         { 
             var status = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Contacts);
             if (status != PermissionStatus.Granted)
@@ -117,9 +126,14 @@ namespace WheresChris.Views
             {
                 try
                 {
-                    Device.BeginInvokeOnMainThread(async () => {
-                        await ((InvitePageViewModel)BindingContext).InitializeContacts();
-                        ContactsListView.ItemsSource = ((InvitePageViewModel)BindingContext).Items;
+                    Device.BeginInvokeOnMainThread(async () =>
+                    {
+                        await Task.Run(async () =>
+                        {
+                            await ((InvitePageViewModel)BindingContext).InitializeContactsAsync();
+                            ContactsListView.ItemsSource = ((InvitePageViewModel)BindingContext).Items;
+                        });
+
                     });
                 }
                 catch (Exception ex)

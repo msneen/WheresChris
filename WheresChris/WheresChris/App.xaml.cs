@@ -23,26 +23,6 @@ namespace WheresChris
             SetMainPage();     
         }
 
-        public static Page GetCurrentTab()
-        {
-            var tabbedPage = Current.MainPage as TabbedPage;
-            return tabbedPage?.CurrentPage;
-        }
-
-        public static void SetCurrentTab(string title)
-        {
-            var tabbedPage = Current.MainPage as TabbedPage;
-            var invitePage = tabbedPage?.Children.FirstOrDefault(x => x.Title == title);
-            if (invitePage == null) return;
-
-            var index = tabbedPage.Children.IndexOf(invitePage);
-            if (index > -1)
-            {
-                tabbedPage.CurrentPage = tabbedPage.Children[index];
-            }
-        }
-       
-
         public static void SetMainPage()
         {
             _mainTabbedPage = new TabbedPage();
@@ -66,6 +46,31 @@ namespace WheresChris
                 Title = title,
                 Icon = Device.OnPlatform<string>("tab_feed.png", null, null)
             });
+        }
+
+        public static Page GetCurrentTab()
+        {
+            var tabbedPage = Current.MainPage as TabbedPage;
+            return tabbedPage?.CurrentPage;
+        }
+
+        public static TabbedPage GetMainTab()
+        {
+            return Current.MainPage as TabbedPage;
+        }
+
+        public static void SetCurrentTab(string title)
+        {
+            GetMainTab().CurrentPage = GetPage(title);
+        }
+
+        public static Page GetPage(string title)
+        {
+            var requestedPage = GetMainTab()?.Children.FirstOrDefault(x => x.Title == title);
+            if (requestedPage == null) return null;
+
+            var index = GetMainTab().Children.IndexOf(requestedPage);
+            return index <= -1 ? null : GetMainTab().Children[index];
         }
 
         protected override void OnStart()

@@ -63,7 +63,7 @@ namespace WheresChris.Views.GroupViews
             return Task.Run<ObservableCollection<ContactDisplayItemVm>>(async () =>
             {
                 var contactsHelper = new ContactsHelper();
-                var contacts = await contactsHelper.GetContacts();
+                var contacts = await contactsHelper.GetContactsAsync();
                 var itemList = new List<ContactDisplayItemVm>();
                 foreach (var contact in contacts)
                 {

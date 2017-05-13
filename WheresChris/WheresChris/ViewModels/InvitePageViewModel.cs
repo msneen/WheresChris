@@ -23,21 +23,22 @@ namespace WheresChris.Views
                 async () => await RefreshData());
         }
 
-        public async Task InitializeContacts()
+        public async Task InitializeContactsAsync()
         {
-            var contacts = await LoadContacts();
+            var contacts = await LoadContactsAsync();
             if (contacts != null)
             {
                 Items = contacts;
+                
             }
         }
 
-        private Task<ObservableCollection<ContactDisplayItemVm>> LoadContacts()
+        private async Task<ObservableCollection<ContactDisplayItemVm>> LoadContactsAsync()
         {
-            return Task.Run(async () =>
-            {
+            //return Task.Run(async () =>
+            //{
                 var contactsHelper = new ContactsHelper();
-                var contacts = await contactsHelper.GetContacts();
+                var contacts = await contactsHelper.GetContactsAsync();
                 if (contacts == null) return null;
 
                 var itemList = contacts.Select(contact => new ContactDisplayItemVm
@@ -46,7 +47,7 @@ namespace WheresChris.Views
                     PhoneNumber = contact.PhoneNumber
                 }).ToList();
                 return new ObservableCollection<ContactDisplayItemVm>(itemList);
-            });
+            //});
         }
 
 
