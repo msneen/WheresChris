@@ -21,7 +21,7 @@ namespace StayTogether
 	{
 	    private static LocationSender _instance;
 
-	    public static LocationSender Instance => _instance ?? (_instance = new LocationSender());
+	    public  static LocationSender Instance => _instance ?? (_instance = new LocationSender());
 
 	    public event EventHandler<LostEventArgs> OnSomeoneIsLost;
         public event EventHandler<InvitedEventArgs> OnGroupInvitationReceived;
@@ -77,7 +77,7 @@ Debugger.Break();
             }
         }
 
-	    public void InitializeSignalRAsync()
+	    public async Task InitializeSignalRAsync()
         {
             try
             {
@@ -102,9 +102,9 @@ Debugger.Break();
                 _chatHubProxy.On<string>("RequestMemberLocations", async s => await RequestMemberPositions(s));
 
                 // Start the connection
-                _hubConnection.Start().Wait();
+                await _hubConnection.Start();
 
-                SetUpLocationEvents();
+                await SetUpLocationEvents();
 
                 IsInitialized = true;
             }
@@ -140,7 +140,7 @@ Debugger.Break();
             }
         }
 
-	    public void SetUpLocationEvents()
+	    public async Task SetUpLocationEvents()
         {
 
             try
@@ -151,7 +151,7 @@ Debugger.Break();
 
                 if (!_geoLocator.IsGeolocationEnabled || !_geoLocator.IsGeolocationAvailable) return;
 
-                _geoLocator.StartListeningAsync(TimeSpan.FromSeconds(5), 5, false, new Plugin.Geolocator.Abstractions.ListenerSettings
+                await _geoLocator.StartListeningAsync(TimeSpan.FromSeconds(5), 5, false, new Plugin.Geolocator.Abstractions.ListenerSettings
                 {
                     ActivityType = ActivityType.Fitness,
                     AllowBackgroundUpdates = true,
@@ -162,7 +162,8 @@ Debugger.Break();
                     PauseLocationUpdatesAutomatically = false
                 });
 
-                _geoLocator.PositionChanged += LocatorOnPositionChanged;
+                _geoLocator.PositionChanged +=
+                    async delegate (object o, PositionEventArgs args) { await LocatorOnPositionChanged(o, args); };
             }
             catch (Exception ex)
             {
@@ -177,7 +178,7 @@ Debugger.Break();
             }
         }
 
-        private async void LocatorOnPositionChanged(object sender, PositionEventArgs positionEventArgs)
+        private async Task LocatorOnPositionChanged(object sender, PositionEventArgs positionEventArgs)
         {
             try
             {

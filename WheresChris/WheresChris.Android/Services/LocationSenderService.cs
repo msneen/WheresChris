@@ -42,7 +42,7 @@ namespace WheresChris.Droid.Services
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            StartLocationSender();
+            Task.Run(StartLocationSender).Wait();             
             return StartCommandResult.Sticky;
         }
 
@@ -58,10 +58,10 @@ namespace WheresChris.Droid.Services
             return notification;
         }
 
-        private void StartLocationSender()
+        private async Task StartLocationSender()
         {
             var phoneNumber = SettingsHelper.GetPhoneNumber();
-            InitializeLocationSender(phoneNumber);
+            await InitializeLocationSender(phoneNumber);
             SendFirstPositionUpdate(phoneNumber);
         }
 
@@ -89,10 +89,10 @@ namespace WheresChris.Droid.Services
             LocationSender.SendUpdatePosition(groupMemberVm);
         }
 
-        private void InitializeLocationSender(string phoneNumber)
+        private async Task InitializeLocationSender(string phoneNumber)
         {
             LocationSender = LocationSenderFactory.GetLocationSender();
-            LocationSender.InitializeSignalRAsync();
+            await LocationSender.InitializeSignalRAsync();
             LocationSender.OnSomeoneIsLost += (sender, args) =>
             {
                 LostNotification.DisplayLostNotification(args.GroupMember);//OnNotifySomeoneIsLost(args.GroupMember);

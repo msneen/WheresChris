@@ -61,13 +61,13 @@ namespace WheresChris.iOS.Classes
 
         }
 
-        private void InitializeLocationSender()
+        private async Task InitializeLocationSender()
         {
             _locationSender = new LocationSender();
-            _locationSender.InitializeSignalRAsync();
+            await _locationSender.InitializeSignalRAsync();
         }
 
-        public void StartLocationUpdates()
+        public async Task StartLocationUpdates()
         {
             if (CLLocationManager.LocationServicesEnabled)
             {
@@ -80,7 +80,7 @@ namespace WheresChris.iOS.Classes
 
                     var locationList = e.Locations.ToList();
                     var count = locationList.Count;
-                    var medianLatitude = locationList.OrderBy(l => l.Coordinate.Latitude).ToArray()[count/2].Coordinate.Latitude;
+                    var medianLatitude = locationList.OrderBy(l => l.Coordinate.Latitude).ToArray()[count / 2].Coordinate.Latitude;
                     var medianLongitude = locationList.OrderBy(l => l.Coordinate.Longitude).ToArray()[count / 2].Coordinate.Longitude;
 
                     _lastLocation = new CLLocation(medianLatitude, medianLongitude); //e.Locations[e.Locations.Length - 1];
@@ -90,10 +90,7 @@ namespace WheresChris.iOS.Classes
 
                 _clLocationManager?.StartUpdatingLocation();
 
-                //if (UserPhoneNumber != null && UserPhoneNumber.Length >= 10)
-                //{
-                InitializeLocationSender();
-                //}
+                await InitializeLocationSender();
             }
         }
 

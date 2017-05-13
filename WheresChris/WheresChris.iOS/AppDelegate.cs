@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Foundation;
 using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
@@ -39,7 +40,7 @@ namespace WheresChris.iOS
             ToastNotification.Init();
             InitializeToastPlugin(app);
 
-            TryToStartLocationService();
+            Task.Run(TryToStartLocationService).Wait();
 
             NotificationManager.RegisterNotifications(app);
             NotificationManager.InitializeNotifications(options, UIApplication.SharedApplication.KeyWindow);
@@ -85,7 +86,7 @@ namespace WheresChris.iOS
 	        }
 	    }
 
-	    private void InitializeBackgroundLocation()
+	    private async Task InitializeBackgroundLocation()
 	    {
 	        var phoneNumber = SettingsHelper.GetPhoneNumber();
 
@@ -94,7 +95,7 @@ namespace WheresChris.iOS
             {
                 LocationManager.UserPhoneNumber = phoneNumber;
             }
-            LocationManager.StartLocationUpdates();
+            await LocationManager.StartLocationUpdates();
             InitializeEvents(LocationManager);
         }
 
@@ -104,7 +105,7 @@ namespace WheresChris.iOS
             NotificationStrategyHandler.ReceiveNotification(notification, UIApplication.SharedApplication.KeyWindow);
         }
 
-	    private async void TryToStartLocationService()
+	    private async Task TryToStartLocationService()
 	    {
             var count = 0;
             while (count < 3)
@@ -115,7 +116,7 @@ namespace WheresChris.iOS
 
                 if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
                 {
-                    InitializeBackgroundLocation();
+                    await InitializeBackgroundLocation();
                     LoadApplication(new App());
                     return;
                 }
