@@ -5,22 +5,16 @@ using Android.OS;
 using StayTogether;
 using StayTogether.Droid.NotificationCenter;
 using StayTogether.Droid.Services;
-using StayTogether.Helpers;
-using StayTogether.Location;
-using WheresChris.Helpers;
 
 namespace WheresChris.Droid.Services
 {
-
     [Service]
     // ReSharper disable once RedundantExplicitArrayCreation
     [IntentFilter(new string[] {"com.StayTogether.Droid.LocationSenderService"})]
     public class LocationSenderService : Service
     {
         private LocationSenderBinder _binder;
-        public LocationSender _LocationSender;
-
-        public static LocationSenderService Instance;
+        private LocationSender _locationSender;//This Reference keeps the sender alive when app is backgrounded
 
         public void StartForeground()
         {
@@ -28,16 +22,9 @@ namespace WheresChris.Droid.Services
             StartForeground(1337, notification);
         }
 
-
         public void StopForeground()
         {
             StopForeground(true);
-        }
-
-        public override void OnCreate()
-        {
-            base.OnCreate();
-            Instance = this;
         }
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
@@ -65,13 +52,13 @@ namespace WheresChris.Droid.Services
 
         private void InitializeLocationSender()
         {
-            Task.Run(async () => { _LocationSender = await LocationSender.GetInstance(); }).Wait();
+            Task.Run(async () => { _locationSender = await LocationSender.GetInstance(); }).Wait();
 
-            _LocationSender.OnSomeoneIsLost += (sender, args) =>
+            _locationSender.OnSomeoneIsLost += (sender, args) =>
             {
                 LostNotification.DisplayLostNotification(args.GroupMember);//OnNotifySomeoneIsLost(args.GroupMember);
             };
-            _LocationSender.OnGroupInvitationReceived += (sender, args) => 
+            _locationSender.OnGroupInvitationReceived += (sender, args) => 
             {
                 GroupInvitationNotification.DisplayGroupInvitationNotification(args.GroupId, args.Name);
             };
@@ -83,11 +70,11 @@ namespace WheresChris.Droid.Services
             //{
 
             //};
-            _LocationSender.OnSomeoneLeft += (sender, args) =>
+            _locationSender.OnSomeoneLeft += (sender, args) =>
             {                
                 LeftGroupNotification.DisplayLostNotification(args.PhoneNumber, args.Name);
             };
-            _LocationSender.OnSomeoneAlreadyInAnotherGroup += (sender, args) =>
+            _locationSender.OnSomeoneAlreadyInAnotherGroup += (sender, args) =>
             {
                 InAnotherGroupNotification.DisplayInAnotherGroupNotification(args.PhoneNumber, args.Name);
             };
@@ -98,6 +85,5 @@ namespace WheresChris.Droid.Services
             _binder = new LocationSenderBinder(this);
             return _binder;
         }
-
     }
 }

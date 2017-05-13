@@ -62,7 +62,7 @@ namespace WheresChris.Droid
             {
                 LoadApplication(new App());
                 await App.InitializeContacts();
-                Task.Run(()=>StartLocationService()).Wait();//StartLocationService();//Todo: Turn me back on
+                Task.Run(()=>StartLocationService()).Wait();
                 
             }
             else if (!locationPermissionGranted)
