@@ -36,7 +36,8 @@ namespace WheresChris.Views
         {
             if (_hasAppeared) return;
 
-            await InitializeContactsAsync();
+            //Todo:  I want to move his call to App and call it from AppDelegate or the Android Service async
+            //await InitializeContactsAsync();
         
             _hasAppeared = true;
         }
@@ -125,15 +126,8 @@ namespace WheresChris.Views
             {
                 try
                 {
-                    Device.BeginInvokeOnMainThread(async () =>
-                    {
-                        await Task.Run(async () =>
-                        {
-                            await ((InvitePageViewModel)BindingContext).InitializeContactsAsync();
-                            ContactsListView.ItemsSource = ((InvitePageViewModel)BindingContext).Items;
-                        });
-
-                    });
+                    await ((InvitePageViewModel)BindingContext).InitializeContactsAsync();
+                    ContactsListView.ItemsSource = ((InvitePageViewModel)BindingContext).Items;
                 }
                 catch (Exception ex)
                 {

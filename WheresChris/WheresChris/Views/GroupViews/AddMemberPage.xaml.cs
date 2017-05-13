@@ -45,46 +45,19 @@ namespace WheresChris.Views.GroupViews
 
 
 
-    class AddMemberPageViewModel : INotifyPropertyChanged
+    public class AddMemberPageViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<ContactDisplayItemVm> Items { get; set; }
 
-        public AddMemberPageViewModel()
-        {
-        }
-
         public async Task InitializeContacts()
         {
-            Items = await LoadContacts();
+            var contactsHelper = new ContactsHelper();
+            Items = await contactsHelper.GetContactsAsync();
+
         }
-
-        private Task<ObservableCollection<ContactDisplayItemVm>> LoadContacts()
-        {
-            return Task.Run<ObservableCollection<ContactDisplayItemVm>>(async () =>
-            {
-                var contactsHelper = new ContactsHelper();
-                var contacts = await contactsHelper.GetContactsAsync();
-                var itemList = new List<ContactDisplayItemVm>();
-                foreach (var contact in contacts)
-                {
-                    var item = new ContactDisplayItemVm
-                    {
-                        Name = contact.Name,
-                        PhoneNumber = contact.PhoneNumber
-                    };
-                    itemList.Add(item);
-                }
-                return new ObservableCollection<ContactDisplayItemVm>(itemList);
-            });
-        }
-
-
-
 
         public event PropertyChangedEventHandler PropertyChanged;
-        void OnPropertyChanged([CallerMemberName]string propertyName = "") =>
+        private void OnPropertyChanged([CallerMemberName]string propertyName = "") =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-
     }
 }

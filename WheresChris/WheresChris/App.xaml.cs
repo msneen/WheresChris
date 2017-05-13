@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
@@ -20,16 +21,17 @@ namespace WheresChris
         {
             InitializeComponent();
 
-            SetMainPage();     
-        }
+            SetMainPage().Wait();     
+        }       
 
-        public static void SetMainPage()
+        public static async Task SetMainPage()
         {
             _mainTabbedPage = new TabbedPage();
 
             AddPage(new MainPage(), "Main");
 
-            if (PermissionHelper.HasNecessaryPermissions())
+            var hasPermissions = await PermissionHelper.HasNecessaryPermissions();
+            if (hasPermissions)
             {
                 AddPage(new InvitePage(), "Invite");
                 AddPage(new JoinPage(), "Join");
@@ -46,6 +48,13 @@ namespace WheresChris
                 Title = title,
                 Icon = Device.OnPlatform<string>("tab_feed.png", null, null)
             });
+        }
+
+        //Call this from AppDelegate or android service
+        public static async Task InitializeContacts()
+        {
+            var invitePage = GetPage("Invite");
+            await ((InvitePage) invitePage).InitializeContactsAsync();
         }
 
         public static Page GetCurrentTab()

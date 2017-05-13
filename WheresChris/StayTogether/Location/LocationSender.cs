@@ -21,7 +21,14 @@ namespace StayTogether
 	{
 	    private static LocationSender _instance;
 
-	    public  static LocationSender Instance => _instance ?? (_instance = new LocationSender());
+	    public static async Task<LocationSender> GetInstance()
+	    {
+	        if (_instance != null) return _instance;
+	        _instance = new LocationSender();
+	        await _instance.InitializeSignalRAsync();
+	        return _instance;
+	    }
+
 
 	    public event EventHandler<LostEventArgs> OnSomeoneIsLost;
         public event EventHandler<InvitedEventArgs> OnGroupInvitationReceived;
@@ -631,7 +638,7 @@ Debugger.Break();
             return false;
         }
 
-	    public async void SendUpdatePosition(GroupMemberVm groupMemberVm)
+	    public async Task SendUpdatePosition(GroupMemberVm groupMemberVm)
 	    {
             try
             {
@@ -642,10 +649,10 @@ Debugger.Break();
                     groupMemberVm.InvitationConfirmed = true;
                 }
                 await _chatHubProxy.Invoke("updatePosition", groupMemberVm);
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    MessagingCenter.Send(this, LocationSentMsg);
-                });
+                //Device.BeginInvokeOnMainThread(() =>
+                //{
+                MessagingCenter.Send(this, LocationSentMsg);
+                //});
 
             }
             catch (Exception ex)

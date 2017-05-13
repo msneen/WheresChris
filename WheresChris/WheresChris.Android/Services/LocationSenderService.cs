@@ -42,7 +42,7 @@ namespace WheresChris.Droid.Services
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            Task.Run(StartLocationSender).Wait();             
+            StartLocationSender().Wait();             
             return StartCommandResult.Sticky;
         }
 
@@ -61,22 +61,22 @@ namespace WheresChris.Droid.Services
         private async Task StartLocationSender()
         {
             var phoneNumber = SettingsHelper.GetPhoneNumber();
-            await InitializeLocationSender(phoneNumber);
-            SendFirstPositionUpdate(phoneNumber);
+            await InitializeLocationSender(phoneNumber);//Todo:Turn me back on
+            await SendFirstPositionUpdate(phoneNumber);
         }
 
-        public async void EndGroup()
+        public async Task EndGroup()
         {
             await LocationSender.EndGroup();
         }
 
-        public async void LeaveGroup()
+        public async Task LeaveGroup()
         {
             await LocationSender.LeaveGroup();
         }
 
 
-        private async void SendFirstPositionUpdate(string phoneNumber)
+        private async Task SendFirstPositionUpdate(string phoneNumber)
         {
             var mapPosition = await PositionHelper.GetMapPosition();//var position = GpsService.GetLocation();
             if (!mapPosition.HasValue) return;
@@ -86,13 +86,13 @@ namespace WheresChris.Droid.Services
 
             var groupMemberVm = GroupMemberConverter.Convert(position);
             groupMemberVm.PhoneNumber = phoneNumber;
-            LocationSender.SendUpdatePosition(groupMemberVm);
+            await LocationSender.SendUpdatePosition(groupMemberVm);
         }
 
         private async Task InitializeLocationSender(string phoneNumber)
         {
-            LocationSender = LocationSenderFactory.GetLocationSender();
-            await LocationSender.InitializeSignalRAsync();
+            LocationSender = await LocationSenderFactory.GetLocationSender();
+            //await LocationSender.InitializeSignalRAsync();
             LocationSender.OnSomeoneIsLost += (sender, args) =>
             {
                 LostNotification.DisplayLostNotification(args.GroupMember);//OnNotifySomeoneIsLost(args.GroupMember);

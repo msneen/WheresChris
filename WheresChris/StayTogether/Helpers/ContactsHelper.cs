@@ -1,42 +1,43 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Plugin.Contacts;
 using Plugin.Contacts.Abstractions;
 using StayTogether.Classes;
+using WheresChris.Views;
 
 
 namespace StayTogether
 {
     public class ContactsHelper
     {
+        public static ObservableCollection<ContactDisplayItemVm> GroupMemberListInstance { get; set; }
 
-        public async Task<List<GroupMemberVm>> GetContactsAsync()
+        public async Task<ObservableCollection<ContactDisplayItemVm>> GetContactsAsync()
         {
-            var groupMemberVms = new List<GroupMemberVm>();
+            if (GroupMemberListInstance != null) return GroupMemberListInstance;
+
             if (!await CrossContacts.Current.RequestPermission()) return null;
 
             CrossContacts.Current.PreferContactAggregation = false;
 
-            await Task.Run(() =>
-            {
-                if (CrossContacts.Current == null || CrossContacts.Current.Contacts == null) return;
+            if (CrossContacts.Current == null || CrossContacts.Current.Contacts == null) return null;
 
-                var contactList = CrossContacts.Current.Contacts.ToList();
+            var contactList = CrossContacts.Current.Contacts.ToList();
 
-                groupMemberVms = contactList
+            var itemList = contactList
                     .Where(contact => contact.HasValidNameAndPhone())
-                    .Select(filteredContact => new GroupMemberVm
+                    .Select(filteredContact => new ContactDisplayItemVm
                     {
                         Name = filteredContact.CleanName(),
                         PhoneNumber = filteredContact.FirstOrDefaultMobileNumber()
                     })
                     .OrderBy(groupMemberVm => groupMemberVm.Name)
                     .ToList();
-            });
+            GroupMemberListInstance = new ObservableCollection<ContactDisplayItemVm>(itemList);
 
-
-            return groupMemberVms;
+            return GroupMemberListInstance;
         }
 
         public static string CleanName(Contact contact)

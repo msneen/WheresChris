@@ -8,33 +8,33 @@ namespace WheresChris.Helpers
 {
     public class PermissionHelper
     {
-        public static bool HasNecessaryPermissions()
+        public static async Task<bool> HasNecessaryPermissions()
         {
-            var phonePermissionGranted = HasPhonePermission();
-            var locationPermissionGranted = HasLocationPermission();
-            var contactPermissionGranted = HasContactPermission();
+            var phonePermissionGranted = await HasPhonePermission();
+            var locationPermissionGranted = await HasLocationPermission();
+            var contactPermissionGranted = await HasContactPermission();
             return phonePermissionGranted && locationPermissionGranted && contactPermissionGranted;
         }
 
 
-        public static bool HasPhonePermission()
+        public static async Task<bool> HasPhonePermission()
         {
-            return HasPermission(Permission.Phone);
+            return await HasPermission(Permission.Phone);
         }
-        public static bool HasLocationPermission()
+        public static async Task<bool> HasLocationPermission()
         {
-            return HasPermission(Permission.Location);
-        }
-
-        public static bool HasContactPermission()
-        {
-            return HasPermission(Permission.Contacts);
+            return await HasPermission(Permission.Location);
         }
 
-        private static bool HasPermission(Permission permission)
+        public static async Task<bool> HasContactPermission()
+        {
+            return await HasPermission(Permission.Contacts);
+        }
+
+        private static async Task<bool> HasPermission(Permission permission)
         {
             var phonePermission =
-                CrossPermissions.Current.CheckPermissionStatusAsync(permission).Result;
+                await CrossPermissions.Current.CheckPermissionStatusAsync(permission);
             return phonePermission == PermissionStatus.Granted;
         }
 
@@ -67,7 +67,7 @@ namespace WheresChris.Helpers
             var contacts = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Contacts);
             var phone = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Phone);
             var location = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Location);
-            PermissionHelper.HasLocationPermission();//Mws why am I doing this?
+
 
             if (contacts == PermissionStatus.Granted && phone == PermissionStatus.Granted &&
                 location == PermissionStatus.Granted)

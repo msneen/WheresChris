@@ -9,7 +9,7 @@ using Xamarin.Forms;
 
 namespace WheresChris.Views
 {
-    class InvitePageViewModel : INotifyPropertyChanged
+    public class InvitePageViewModel : INotifyPropertyChanged
     {
         public string Title { get; set; }
         public ObservableCollection<ContactDisplayItemVm> Items { get; set; }
@@ -28,26 +28,14 @@ namespace WheresChris.Views
             var contacts = await LoadContactsAsync();
             if (contacts != null)
             {
-                Items = contacts;
-                
+                Items = contacts;                
             }
         }
 
-        private async Task<ObservableCollection<ContactDisplayItemVm>> LoadContactsAsync()
+        private static async Task<ObservableCollection<ContactDisplayItemVm>> LoadContactsAsync()
         {
-            return await Task.Run(async () =>
-            {
-                var contactsHelper = new ContactsHelper();
-                var contacts = await contactsHelper.GetContactsAsync();
-                if (contacts == null) return null;
-
-                var itemList = contacts.Select(contact => new ContactDisplayItemVm
-                {
-                    Name = contact.Name,
-                    PhoneNumber = contact.PhoneNumber
-                }).ToList();
-                return new ObservableCollection<ContactDisplayItemVm>(itemList);
-            });
+            var contactsHelper = new ContactsHelper();
+            return await contactsHelper.GetContactsAsync();
         }
 
 

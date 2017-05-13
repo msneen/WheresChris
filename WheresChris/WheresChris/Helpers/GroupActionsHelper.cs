@@ -25,7 +25,7 @@ namespace WheresChris.Helpers
             if (!selectedGroupMemberVms.Any()) return;
             if (String.IsNullOrWhiteSpace(userPhoneNumber)) return;
 
-            var locationSender = LocationSenderFactory.GetLocationSender();
+            var locationSender = await LocationSenderFactory.GetLocationSender();
             var userPosition = await CrossGeolocator.Current.GetLastKnownLocationAsync();
             var groupVm = GroupHelper.InitializeGroupVm(selectedGroupMemberVms, userPosition, userPhoneNumber, expirationHours);
             await locationSender.StartOrAddToGroup(groupVm);
@@ -58,7 +58,7 @@ namespace WheresChris.Helpers
                 Longitude = userPosition.Longitude,
                 PhoneNumber = userPhoneNumber
             };
-            var locationSender = LocationSenderFactory.GetLocationSender();
+            var locationSender = await LocationSenderFactory.GetLocationSender();
             if(locationSender == null) return new List<GroupMemberVm>();
 
             var groupMembers = await locationSender.GetMembers(groupMemberVm);
