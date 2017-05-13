@@ -53,8 +53,9 @@ namespace WheresChris
         //Call this from AppDelegate or android service
         public static async Task InitializeContacts()
         {
-            var invitePage = GetPage("Invite");
-            await ((InvitePage) invitePage).InitializeContactsAsync();
+            var inviteNavigationPage = (NavigationPage)GetPage("Invite");
+            var invitePage = (InvitePage)inviteNavigationPage.CurrentPage;
+            await invitePage.InitializeContactsAsync();
         }
 
         public static Page GetCurrentTab()
@@ -84,7 +85,8 @@ namespace WheresChris
 
         protected override void OnStart()
         {
-            MobileCenter.Start("ios=2cd11ff1-c5b1-47d8-ac96-9fa5b74a47bd;android=14162ca6-0c56-4822-9d95-f265b524bd98;", typeof(Analytics), typeof(Crashes), typeof(Distribute));
+            //Delete me
+            //MobileCenter.Start("ios=2cd11ff1-c5b1-47d8-ac96-9fa5b74a47bd;android=14162ca6-0c56-4822-9d95-f265b524bd98;", typeof(Analytics), typeof(Crashes), typeof(Distribute));
         }
 
         //protected override void OnSleep()

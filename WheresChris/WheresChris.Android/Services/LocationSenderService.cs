@@ -18,7 +18,7 @@ namespace WheresChris.Droid.Services
     public class LocationSenderService : Service
     {
         private LocationSenderBinder _binder;
-        public LocationSender LocationSender;
+        public LocationSender _LocationSender;
 
         public static LocationSenderService Instance;
 
@@ -42,7 +42,7 @@ namespace WheresChris.Droid.Services
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            StartLocationSender().Wait();             
+            StartLocationSender();             
             return StartCommandResult.Sticky;
         }
 
@@ -58,62 +58,36 @@ namespace WheresChris.Droid.Services
             return notification;
         }
 
-        private async Task StartLocationSender()
+        private void StartLocationSender()
         {
-            var phoneNumber = SettingsHelper.GetPhoneNumber();
-            await InitializeLocationSender(phoneNumber);//Todo:Turn me back on
-            await SendFirstPositionUpdate(phoneNumber);
+            InitializeLocationSender();
         }
 
-        public async Task EndGroup()
+        private void InitializeLocationSender()
         {
-            await LocationSender.EndGroup();
-        }
+            Task.Run(async () => { _LocationSender = await LocationSender.GetInstance(); }).Wait();
 
-        public async Task LeaveGroup()
-        {
-            await LocationSender.LeaveGroup();
-        }
-
-
-        private async Task SendFirstPositionUpdate(string phoneNumber)
-        {
-            var mapPosition = await PositionHelper.GetMapPosition();//var position = GpsService.GetLocation();
-            if (!mapPosition.HasValue) return;
-
-            var position = PositionConverter.Convert(mapPosition.Value);
-            if (position == null) return;
-
-            var groupMemberVm = GroupMemberConverter.Convert(position);
-            groupMemberVm.PhoneNumber = phoneNumber;
-            await LocationSender.SendUpdatePosition(groupMemberVm);
-        }
-
-        private async Task InitializeLocationSender(string phoneNumber)
-        {
-            LocationSender = await LocationSenderFactory.GetLocationSender();
-            //await LocationSender.InitializeSignalRAsync();
-            LocationSender.OnSomeoneIsLost += (sender, args) =>
+            _LocationSender.OnSomeoneIsLost += (sender, args) =>
             {
                 LostNotification.DisplayLostNotification(args.GroupMember);//OnNotifySomeoneIsLost(args.GroupMember);
             };
-            LocationSender.OnGroupInvitationReceived += (sender, args) => 
+            _LocationSender.OnGroupInvitationReceived += (sender, args) => 
             {
                 GroupInvitationNotification.DisplayGroupInvitationNotification(args.GroupId, args.Name);
             };
-            //LocationSender.OnGroupJoined += (sender, args) =>
+            //_LocationSender.OnGroupJoined += (sender, args) =>
             //{
 
             //};
-            //LocationSender.OnGroupDisbanded +=(sender, args) =>
+            //_LocationSender.OnGroupDisbanded +=(sender, args) =>
             //{
 
             //};
-            LocationSender.OnSomeoneLeft += (sender, args) =>
+            _LocationSender.OnSomeoneLeft += (sender, args) =>
             {                
                 LeftGroupNotification.DisplayLostNotification(args.PhoneNumber, args.Name);
             };
-            LocationSender.OnSomeoneAlreadyInAnotherGroup += (sender, args) =>
+            _LocationSender.OnSomeoneAlreadyInAnotherGroup += (sender, args) =>
             {
                 InAnotherGroupNotification.DisplayInAnotherGroupNotification(args.PhoneNumber, args.Name);
             };

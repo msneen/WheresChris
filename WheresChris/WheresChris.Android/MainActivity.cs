@@ -9,6 +9,7 @@ using Microsoft.Azure.Mobile.Crashes;
 using Microsoft.Azure.Mobile.Distribute;
 using Plugin.Permissions;
 using Plugin.Toasts;
+using StayTogether;
 using StayTogether.Droid.NotificationCenter;
 using StayTogether.Droid.Services;
 using WheresChris.Droid.Services;
@@ -60,7 +61,9 @@ namespace WheresChris.Droid
             if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
             {
                 LoadApplication(new App());
-                //StartLocationService();
+                await App.InitializeContacts();
+                Task.Run(()=>StartLocationService()).Wait();//StartLocationService();//Todo: Turn me back on
+                
             }
             else if (!locationPermissionGranted)
             {
@@ -103,11 +106,9 @@ namespace WheresChris.Droid
 
         public async Task CleanupGroupsForExit()
         {
-            if (LocationSenderService.Instance != null)
-            {
-                await LocationSenderService.Instance.LeaveGroup();
-                await LocationSenderService.Instance.EndGroup();
-            }
+            var locationSender = await LocationSender.GetInstance();
+            await locationSender.LeaveGroup();
+            await locationSender.EndGroup();
         }
 
         protected override void OnPause()

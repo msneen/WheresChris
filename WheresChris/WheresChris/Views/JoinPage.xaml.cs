@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using StayTogether;
 using WheresChris.Messaging;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -51,7 +52,7 @@ namespace WheresChris.Views
             var selectedItem = e.SelectedItem as ContactDisplayItemVm;
             if (selectedItem != null)
             {
-                var locationSender = await LocationSenderFactory.GetLocationSender();
+                var locationSender = await LocationSender.GetInstance();
                 await locationSender.ConfirmGroupInvitation(selectedItem.Invitation.PhoneNumber, selectedItem.Invitation.Name);
             }
             //Deselect Item

@@ -158,7 +158,7 @@ Debugger.Break();
 
                 if (!_geoLocator.IsGeolocationEnabled || !_geoLocator.IsGeolocationAvailable) return;
 
-                await _geoLocator.StartListeningAsync(TimeSpan.FromSeconds(5), 5, false, new Plugin.Geolocator.Abstractions.ListenerSettings
+                await _geoLocator.StartListeningAsync(TimeSpan.FromSeconds(5), 1, false, new Plugin.Geolocator.Abstractions.ListenerSettings
                 {
                     ActivityType = ActivityType.Fitness,
                     AllowBackgroundUpdates = true,
@@ -228,7 +228,7 @@ Debugger.Break();
                     Name = _nickName
                 };
 
-                SendUpdatePosition(groupMemberVm);
+                await SendUpdatePosition(groupMemberVm);
             }
             catch (Exception ex)
             {
@@ -643,6 +643,7 @@ Debugger.Break();
             try
             {
                 groupMemberVm.PhoneNumber = _phoneNumber;
+                groupMemberVm.Name = _nickName;
                 groupMemberVm.GroupId = _groupId;
                 if (GroupLeader && InAGroup)
                 {

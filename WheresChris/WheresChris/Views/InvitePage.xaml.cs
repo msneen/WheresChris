@@ -31,17 +31,6 @@ namespace WheresChris.Views
             InitializeExpirationPicker();                      
         }
 
-        private bool _hasAppeared;
-        protected override async void OnAppearing()
-        {
-            if (_hasAppeared) return;
-
-            //Todo:  I want to move his call to App and call it from AppDelegate or the Android Service async
-            //await InitializeContactsAsync();
-        
-            _hasAppeared = true;
-        }
-
         private void InitializeMessagingCenterSubscriptions()
         {
             GroupJoinedEvent = new GroupJoinedEvent();
