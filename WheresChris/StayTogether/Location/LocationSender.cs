@@ -99,7 +99,7 @@ Debugger.Break();
                 _chatHubProxy.On<string, string>("GroupInvitation", OnGroupInvitation);
                 _chatHubProxy.On<string, string>("MemberAlreadyInGroup", OnMemberAlreadyInGroup);
                 _chatHubProxy.On<List<GroupMemberSimpleVm>>("GroupPositionUpdate", OnGroupPositionUpdate);
-                _chatHubProxy.On<string>("RequestMemberLocations", RequestMemberPositions);
+                _chatHubProxy.On<string>("RequestMemberLocations", async s => await RequestMemberPositions(s));
 
                 // Start the connection
                 _hubConnection.Start().Wait();
@@ -121,7 +121,7 @@ Debugger.Break();
             }
         }
 
-	    private async void RequestMemberPositions(string leaderPhoneNumber)
+	    private async Task RequestMemberPositions(string leaderPhoneNumber)
 	    {
             try
             {
