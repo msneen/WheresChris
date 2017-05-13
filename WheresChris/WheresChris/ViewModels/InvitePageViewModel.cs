@@ -35,8 +35,8 @@ namespace WheresChris.Views
 
         private async Task<ObservableCollection<ContactDisplayItemVm>> LoadContactsAsync()
         {
-            //return Task.Run(async () =>
-            //{
+            return await Task.Run(async () =>
+            {
                 var contactsHelper = new ContactsHelper();
                 var contacts = await contactsHelper.GetContactsAsync();
                 if (contacts == null) return null;
@@ -47,7 +47,7 @@ namespace WheresChris.Views
                     PhoneNumber = contact.PhoneNumber
                 }).ToList();
                 return new ObservableCollection<ContactDisplayItemVm>(itemList);
-            //});
+            });
         }
 
 
