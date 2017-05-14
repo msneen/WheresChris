@@ -1,4 +1,5 @@
-﻿using Android.App;
+﻿using System.Threading.Tasks;
+using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
@@ -8,6 +9,7 @@ using Microsoft.Azure.Mobile.Crashes;
 using Microsoft.Azure.Mobile.Distribute;
 using Plugin.Permissions;
 using Plugin.Toasts;
+using StayTogether;
 using StayTogether.Droid.NotificationCenter;
 using StayTogether.Droid.Services;
 using WheresChris.Droid.Services;
@@ -31,7 +33,7 @@ namespace WheresChris.Droid
             NotificationStrategyController.GetNotificationHandler(intent)?.OnNotify(intent);
         }
 
-        protected override void OnCreate(Bundle bundle)
+        protected override async void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
            
@@ -46,20 +48,22 @@ namespace WheresChris.Droid
             Xamarin.FormsMaps.Init(this, bundle);
             ToastNotification.Init(this);
 
-            TryToStartLocationService();
+            await TryToStartLocationService();
 
         }
 
-        private async void TryToStartLocationService()
+        private async Task TryToStartLocationService()
         {
-            var phonePermissionGranted = PermissionHelper.HasPhonePermission();
-            var locationPermissionGranted = PermissionHelper.HasLocationPermission();
-            var contactPermissionGranted = PermissionHelper.HasContactPermission();
+            var phonePermissionGranted = await PermissionHelper.HasPhonePermission();
+            var locationPermissionGranted = await PermissionHelper.HasLocationPermission();
+            var contactPermissionGranted = await PermissionHelper.HasContactPermission();
 
             if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
             {
-                StartLocationService();
                 LoadApplication(new App());
+                await App.InitializeContacts();
+                Task.Run(()=>StartLocationService()).Wait();
+                
             }
             else if (!locationPermissionGranted)
             {
@@ -100,10 +104,11 @@ namespace WheresChris.Droid
             IsBound = false;
         }
 
-        public void CleanupGroupsForExit()
+        public async Task CleanupGroupsForExit()
         {
-            LocationSenderService.Instance.LeaveGroup();
-            LocationSenderService.Instance.EndGroup();
+            var locationSender = await LocationSender.GetInstance();
+            await locationSender.LeaveGroup();
+            await locationSender.EndGroup();
         }
 
         protected override void OnPause()
@@ -123,19 +128,17 @@ namespace WheresChris.Droid
         protected override async void OnDestroy()
         {
             base.OnDestroy();
-            await PermissionHelper.GetNecessaryPermissionInformation();
-            CleanupGroupsForExit();
-            //Binder?.GetLocationSenderService()?.SetGroupJoinedCallback(null);
+            await CleanupGroupsForExit();
             Binder?.GetLocationSenderService()?.StopSelf();
             Process.KillProcess(Process.MyPid());
             System.Environment.Exit(0);
         }
 
-        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
+        public override async void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
         {
             PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
-            TryToStartLocationService();
+            await TryToStartLocationService();
         }
     }
 }

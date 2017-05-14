@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Plugin.Geolocator;
+using StayTogether;
 using StayTogether.Classes;
 using StayTogether.Group;
+using StayTogether.Helpers;
 using WheresChris.Views;
 
 namespace WheresChris.Helpers
@@ -23,10 +25,11 @@ namespace WheresChris.Helpers
         public static async Task StartOrAddToGroup(List<GroupMemberVm> selectedGroupMemberVms, string userPhoneNumber, int expirationHours = 0)
         {
             if (!selectedGroupMemberVms.Any()) return;
-            if (String.IsNullOrWhiteSpace(userPhoneNumber)) return;
+            if (string.IsNullOrWhiteSpace(userPhoneNumber)) return;
 
-            var locationSender = LocationSenderFactory.GetLocationSender();
-            var userPosition = await CrossGeolocator.Current.GetLastKnownLocationAsync();
+            var locationSender = await LocationSender.GetInstance();
+            var userMapPosition = await PositionHelper.GetMapPosition();
+            var userPosition = PositionConverter.Convert(userMapPosition.Value);
             var groupVm = GroupHelper.InitializeGroupVm(selectedGroupMemberVms, userPosition, userPhoneNumber, expirationHours);
             await locationSender.StartOrAddToGroup(groupVm);
         }
@@ -58,7 +61,7 @@ namespace WheresChris.Helpers
                 Longitude = userPosition.Longitude,
                 PhoneNumber = userPhoneNumber
             };
-            var locationSender = LocationSenderFactory.GetLocationSender();
+            var locationSender = await LocationSenderFactory.GetLocationSender();
             if(locationSender == null) return new List<GroupMemberVm>();
 
             var groupMembers = await locationSender.GetMembers(groupMemberVm);

@@ -1,12 +1,13 @@
-﻿using StayTogether;
+﻿using System.Threading.Tasks;
+using StayTogether;
 
 namespace WheresChris
 {
     public class LocationSenderFactory
     {
-        public static LocationSender GetLocationSender()
+        public static async Task<LocationSender> GetLocationSender()
         {
-            return LocationSender.Instance;
+            return await LocationSender.GetInstance();
         }
     }
 }

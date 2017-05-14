@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreLocation;
-using Microsoft.Azure.Mobile.Analytics;
-using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
 using StayTogether;
 using StayTogether.Classes;
-using StayTogether.Group;
 using StayTogether.Helpers;
 using StayTogether.Location;
 using UIKit;
@@ -18,31 +15,19 @@ namespace WheresChris.iOS.Classes
 {
     public class LocationManager
     {
-
-        CLLocationManager _clLocationManager;
         private CLLocation _lastLocation;
         private LocationSender _locationSender;
-        private SendMeter _sendMeter;
+        private readonly SendMeter _sendMeter;
         public string UserPhoneNumber { get; set; }
 
         public LocationSender LocationSender => _locationSender;
 
-        public CLLocationManager ClLocationManager
-        {
-            get
-            {
-                return _clLocationManager;               
-            }
-            private set
-            {
-                _clLocationManager = value;
-            }
-        }
+        public CLLocationManager ClLocationManager { get; }
 
         public LocationManager()
         {
-            _sendMeter = new SendMeter(150, TimeSpan.FromSeconds(30));
-            _clLocationManager = new CLLocationManager
+            _sendMeter = new SendMeter(15, TimeSpan.FromSeconds(15));
+            ClLocationManager = new CLLocationManager
             {
                 PausesLocationUpdatesAutomatically = false
             };
@@ -50,21 +35,15 @@ namespace WheresChris.iOS.Classes
             // iOS 8 has additional permissions requirements
             if (UIDevice.CurrentDevice.CheckSystemVersion(8, 0))
             {
-                _clLocationManager.RequestAlwaysAuthorization(); // works in background
+                ClLocationManager.RequestAlwaysAuthorization(); // works in background
                 
             }
 
             if (UIDevice.CurrentDevice.CheckSystemVersion(9, 0))
             {
-                _clLocationManager.AllowsBackgroundLocationUpdates = true;
+                ClLocationManager.AllowsBackgroundLocationUpdates = true;
             }
 
-        }
-
-        private async Task InitializeLocationSender()
-        {
-            _locationSender = new LocationSender();
-            await _locationSender.InitializeSignalRAsync();
         }
 
         public async Task StartLocationUpdates()
@@ -72,8 +51,8 @@ namespace WheresChris.iOS.Classes
             if (CLLocationManager.LocationServicesEnabled)
             {
                 //set the desired accuracy, in meters
-                _clLocationManager.DesiredAccuracy = 1;
-                _clLocationManager.LocationsUpdated += async (object sender, CLLocationsUpdatedEventArgs e) =>
+                ClLocationManager.DesiredAccuracy = 1;
+                ClLocationManager.LocationsUpdated += async (sender, e) =>
                 {
                     // fire our custom Location Updated event
                     if (e.Locations == null || e.Locations.Length <= -1) return;
@@ -83,14 +62,13 @@ namespace WheresChris.iOS.Classes
                     var medianLatitude = locationList.OrderBy(l => l.Coordinate.Latitude).ToArray()[count / 2].Coordinate.Latitude;
                     var medianLongitude = locationList.OrderBy(l => l.Coordinate.Longitude).ToArray()[count / 2].Coordinate.Longitude;
 
-                    _lastLocation = new CLLocation(medianLatitude, medianLongitude); //e.Locations[e.Locations.Length - 1];
-                    //if more than 2 minutes or 100 feet from last location, send update to server
+                    _lastLocation = new CLLocation(medianLatitude, medianLongitude); 
                     await SendPositionUpdate();
                 };
 
-                _clLocationManager?.StartUpdatingLocation();
+                ClLocationManager?.StartUpdatingLocation();
 
-                await InitializeLocationSender();
+                _locationSender = await LocationSender.GetInstance();
             }
         }
 
@@ -98,19 +76,10 @@ namespace WheresChris.iOS.Classes
         {
             var position = await GetPosition();
             UserPhoneNumber = SettingsHelper.GetPhoneNumber();
-
-            //Analytics.TrackEvent("IPhone_SendPositionUpdate_Entered", new Dictionary<string, string>
-            //        {
-            //            { "PhoneNumber", UserPhoneNumber},
-            //            {"Latitude", position?.Latitude.ToString() },
-            //            {"Longitude", position?.Longitude.ToString() },
-            //            {"LastLatitude", _lastLocation?.Coordinate.Latitude.ToString() },
-            //            {"LastLongitude", _lastLocation?.Coordinate.Longitude.ToString() }
-            //        });
-
+            //                                                if more than x seconds or x feet from last location, send update to server
             if (string.IsNullOrWhiteSpace(UserPhoneNumber) || !_sendMeter.CanSend(position)) return;
 
-            //Send position update
+            
             var groupMemberVm = new GroupMemberVm
             {
                 //Get Group Member Properties
@@ -119,16 +88,11 @@ namespace WheresChris.iOS.Classes
                 Latitude = _lastLocation.Coordinate.Latitude,
                 Longitude = _lastLocation.Coordinate.Longitude
             };
-            _locationSender?.SendUpdatePosition(groupMemberVm);
 
-            //Analytics.TrackEvent("IPhone_SendPositionUpdate_Sent", new Dictionary<string, string>
-            //        {
-            //            { "PhoneNumber", UserPhoneNumber},
-            //            {"Latitude", position?.Latitude.ToString() },
-            //            {"Longitude", position?.Longitude.ToString() },
-            //            {"LastLatitude", _lastLocation?.Coordinate.Latitude.ToString() },
-            //            {"LastLongitude", _lastLocation?.Coordinate.Longitude.ToString() }
-            //        });
+            //Send position update
+            var sendUpdatePosition = _locationSender?.SendUpdatePosition(groupMemberVm);
+            if (sendUpdatePosition != null)
+                await sendUpdatePosition;
         }
 
         public async Task<Position> GetPosition()

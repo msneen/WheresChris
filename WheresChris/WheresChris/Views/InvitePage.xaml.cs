@@ -31,16 +31,6 @@ namespace WheresChris.Views
             InitializeExpirationPicker();                      
         }
 
-        private bool _hasAppeared;
-        protected override async void OnAppearing()
-        {
-            if (_hasAppeared) return;
-
-            await InitializeContactsAsync();
-        
-            _hasAppeared = true;
-        }
-
         private void InitializeMessagingCenterSubscriptions()
         {
             GroupJoinedEvent = new GroupJoinedEvent();
@@ -125,15 +115,8 @@ namespace WheresChris.Views
             {
                 try
                 {
-                    Device.BeginInvokeOnMainThread(async () =>
-                    {
-                        await Task.Run(async () =>
-                        {
-                            await ((InvitePageViewModel)BindingContext).InitializeContactsAsync();
-                            ContactsListView.ItemsSource = ((InvitePageViewModel)BindingContext).Items;
-                        });
-
-                    });
+                    await ((InvitePageViewModel)BindingContext).InitializeContactsAsync();
+                    ContactsListView.ItemsSource = ((InvitePageViewModel)BindingContext).Items;
                 }
                 catch (Exception ex)
                 {

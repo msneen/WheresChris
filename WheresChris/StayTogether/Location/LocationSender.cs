@@ -21,7 +21,14 @@ namespace StayTogether
 	{
 	    private static LocationSender _instance;
 
-	    public  static LocationSender Instance => _instance ?? (_instance = new LocationSender());
+	    public static async Task<LocationSender> GetInstance()
+	    {
+	        if (_instance != null) return _instance;
+	        _instance = new LocationSender();
+	        await _instance.InitializeSignalRAsync();
+	        return _instance;
+	    }
+
 
 	    public event EventHandler<LostEventArgs> OnSomeoneIsLost;
         public event EventHandler<InvitedEventArgs> OnGroupInvitationReceived;
@@ -151,7 +158,7 @@ Debugger.Break();
 
                 if (!_geoLocator.IsGeolocationEnabled || !_geoLocator.IsGeolocationAvailable) return;
 
-                await _geoLocator.StartListeningAsync(TimeSpan.FromSeconds(5), 5, false, new Plugin.Geolocator.Abstractions.ListenerSettings
+                await _geoLocator.StartListeningAsync(TimeSpan.FromSeconds(5), 1, false, new Plugin.Geolocator.Abstractions.ListenerSettings
                 {
                     ActivityType = ActivityType.Fitness,
                     AllowBackgroundUpdates = true,
@@ -221,7 +228,7 @@ Debugger.Break();
                     Name = _nickName
                 };
 
-                SendUpdatePosition(groupMemberVm);
+                await SendUpdatePosition(groupMemberVm);
             }
             catch (Exception ex)
             {
@@ -631,21 +638,22 @@ Debugger.Break();
             return false;
         }
 
-	    public async void SendUpdatePosition(GroupMemberVm groupMemberVm)
+	    public async Task SendUpdatePosition(GroupMemberVm groupMemberVm)
 	    {
             try
             {
                 groupMemberVm.PhoneNumber = _phoneNumber;
+                groupMemberVm.Name = _nickName;
                 groupMemberVm.GroupId = _groupId;
                 if (GroupLeader && InAGroup)
                 {
                     groupMemberVm.InvitationConfirmed = true;
                 }
                 await _chatHubProxy.Invoke("updatePosition", groupMemberVm);
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    MessagingCenter.Send(this, LocationSentMsg);
-                });
+                //Device.BeginInvokeOnMainThread(() =>
+                //{
+                MessagingCenter.Send(this, LocationSentMsg);
+                //});
 
             }
             catch (Exception ex)

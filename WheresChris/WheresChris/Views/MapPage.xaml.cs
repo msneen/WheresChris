@@ -158,7 +158,7 @@ namespace WheresChris.Views
 
 	    private async void LeaveGroupButton_OnClicked(object sender, EventArgs e)
 	    {
-            var locationSender = LocationSenderFactory.GetLocationSender();
+            var locationSender = await LocationSenderFactory.GetLocationSender();
             //Calling both because I can only leave if I'm not the group leader, otherwise I have to end the group
 	        await locationSender.LeaveGroup();
 	        await locationSender.EndGroup();

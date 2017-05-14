@@ -5,22 +5,16 @@ using Android.OS;
 using StayTogether;
 using StayTogether.Droid.NotificationCenter;
 using StayTogether.Droid.Services;
-using StayTogether.Helpers;
-using StayTogether.Location;
-using WheresChris.Helpers;
 
 namespace WheresChris.Droid.Services
 {
-
     [Service]
     // ReSharper disable once RedundantExplicitArrayCreation
     [IntentFilter(new string[] {"com.StayTogether.Droid.LocationSenderService"})]
     public class LocationSenderService : Service
     {
         private LocationSenderBinder _binder;
-        public LocationSender LocationSender;
-
-        public static LocationSenderService Instance;
+        private LocationSender _locationSender;//This Reference keeps the sender alive when app is backgrounded
 
         public void StartForeground()
         {
@@ -28,21 +22,14 @@ namespace WheresChris.Droid.Services
             StartForeground(1337, notification);
         }
 
-
         public void StopForeground()
         {
             StopForeground(true);
         }
 
-        public override void OnCreate()
-        {
-            base.OnCreate();
-            Instance = this;
-        }
-
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            Task.Run(StartLocationSender).Wait();             
+            StartLocationSender();             
             return StartCommandResult.Sticky;
         }
 
@@ -58,62 +45,36 @@ namespace WheresChris.Droid.Services
             return notification;
         }
 
-        private async Task StartLocationSender()
+        private void StartLocationSender()
         {
-            var phoneNumber = SettingsHelper.GetPhoneNumber();
-            await InitializeLocationSender(phoneNumber);
-            SendFirstPositionUpdate(phoneNumber);
+            InitializeLocationSender();
         }
 
-        public async void EndGroup()
+        private void InitializeLocationSender()
         {
-            await LocationSender.EndGroup();
-        }
+            Task.Run(async () => { _locationSender = await LocationSender.GetInstance(); }).Wait();
 
-        public async void LeaveGroup()
-        {
-            await LocationSender.LeaveGroup();
-        }
-
-
-        private async void SendFirstPositionUpdate(string phoneNumber)
-        {
-            var mapPosition = await PositionHelper.GetMapPosition();//var position = GpsService.GetLocation();
-            if (!mapPosition.HasValue) return;
-
-            var position = PositionConverter.Convert(mapPosition.Value);
-            if (position == null) return;
-
-            var groupMemberVm = GroupMemberConverter.Convert(position);
-            groupMemberVm.PhoneNumber = phoneNumber;
-            LocationSender.SendUpdatePosition(groupMemberVm);
-        }
-
-        private async Task InitializeLocationSender(string phoneNumber)
-        {
-            LocationSender = LocationSenderFactory.GetLocationSender();
-            await LocationSender.InitializeSignalRAsync();
-            LocationSender.OnSomeoneIsLost += (sender, args) =>
+            _locationSender.OnSomeoneIsLost += (sender, args) =>
             {
                 LostNotification.DisplayLostNotification(args.GroupMember);//OnNotifySomeoneIsLost(args.GroupMember);
             };
-            LocationSender.OnGroupInvitationReceived += (sender, args) => 
+            _locationSender.OnGroupInvitationReceived += (sender, args) => 
             {
                 GroupInvitationNotification.DisplayGroupInvitationNotification(args.GroupId, args.Name);
             };
-            //LocationSender.OnGroupJoined += (sender, args) =>
+            //_LocationSender.OnGroupJoined += (sender, args) =>
             //{
 
             //};
-            //LocationSender.OnGroupDisbanded +=(sender, args) =>
+            //_LocationSender.OnGroupDisbanded +=(sender, args) =>
             //{
 
             //};
-            LocationSender.OnSomeoneLeft += (sender, args) =>
+            _locationSender.OnSomeoneLeft += (sender, args) =>
             {                
                 LeftGroupNotification.DisplayLostNotification(args.PhoneNumber, args.Name);
             };
-            LocationSender.OnSomeoneAlreadyInAnotherGroup += (sender, args) =>
+            _locationSender.OnSomeoneAlreadyInAnotherGroup += (sender, args) =>
             {
                 InAnotherGroupNotification.DisplayInAnotherGroupNotification(args.PhoneNumber, args.Name);
             };
@@ -124,6 +85,5 @@ namespace WheresChris.Droid.Services
             _binder = new LocationSenderBinder(this);
             return _binder;
         }
-
     }
 }

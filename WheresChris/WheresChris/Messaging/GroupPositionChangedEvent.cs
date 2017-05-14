@@ -16,10 +16,9 @@ namespace WheresChris.Messaging
 
         public GroupPositionChangedEvent(TimeSpan? interval = null) : base(interval ?? new TimeSpan(0, 0, 30))
         {
-            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupPositionUpdateMsg,
-            (sender) =>
+            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupPositionUpdateMsg, async (sender) =>
             {
-                var locationSender = LocationSenderFactory.GetLocationSender();
+                var locationSender = await LocationSenderFactory.GetLocationSender();
                 if ((locationSender?.GroupMembers?.Any() ?? false) && MessageTimeGate.CanProcess(true))
                 {
                     OnGroupPositionChangedMsg?.Invoke(this, new GroupEventArgs

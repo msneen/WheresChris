@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using StayTogether;
 using WheresChris.Messaging;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -33,9 +34,9 @@ namespace WheresChris.Views
         private void InitializeMessagingCenterSubscriptions()
         {
             InvitationReceivedEvent = new InvitationReceivedEvent();
-            InvitationReceivedEvent.OnInvitationReceivedMsg += (sender, args) =>
+            InvitationReceivedEvent.OnInvitationReceivedMsg += async (sender, args) =>
             {
-                ((JoinPageViewModel)BindingContext).LoadInvitations();
+                await ((JoinPageViewModel)BindingContext).LoadInvitations();
             };
         }
 
@@ -51,16 +52,16 @@ namespace WheresChris.Views
             var selectedItem = e.SelectedItem as ContactDisplayItemVm;
             if (selectedItem != null)
             {
-                var locationSender = LocationSenderFactory.GetLocationSender();
+                var locationSender = await LocationSender.GetInstance();
                 await locationSender.ConfirmGroupInvitation(selectedItem.Invitation.PhoneNumber, selectedItem.Invitation.Name);
             }
             //Deselect Item
             ((ListView)sender).SelectedItem = null;
         }
 
-        private void RefreshButton_OnClicked(object sender, EventArgs e)
+        private async void RefreshButton_OnClicked(object sender, EventArgs e)
         {
-            ((JoinPageViewModel)BindingContext).LoadInvitations();
+            await ((JoinPageViewModel)BindingContext).LoadInvitations();
         }
     }
 
@@ -74,10 +75,10 @@ namespace WheresChris.Views
             Items = new ObservableCollection<ContactDisplayItemVm>();
         }
 
-        public void LoadInvitations()
+        public async Task LoadInvitations()
         {
             Items.Clear();
-            var locationSender = LocationSenderFactory.GetLocationSender();
+            var locationSender = await LocationSenderFactory.GetLocationSender();
             var invitationList = locationSender.GetInvitations();
             invitationList
                 .OrderBy(i => i.ReceivedTime)
