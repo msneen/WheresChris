@@ -31,7 +31,7 @@ namespace StayTogether
                     .Select(filteredContact => new ContactDisplayItemVm
                     {
                         Name = filteredContact.CleanName(),
-                        PhoneNumber = filteredContact.FirstOrDefaultMobileNumber()
+                        PhoneNumber = filteredContact.FirstOrDefaultMobileNumber().CleanPhoneNumber()
                     })
                     .OrderBy(groupMemberVm => groupMemberVm.Name)
                     .ToList();
@@ -83,6 +83,11 @@ namespace StayTogether
 
     public static class ContactExtensions
     {
+        public static string CleanPhoneNumber(this string phoneNumer)
+        {
+            return ContactsHelper.CleanPhoneNumber(phoneNumer);
+        }
+
         public static bool HasValidNameAndPhone(this Contact contact)
         {
             return contact.HasValidName() && contact.HasValidPhoneNumber();
