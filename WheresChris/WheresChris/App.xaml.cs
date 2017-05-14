@@ -43,11 +43,12 @@ namespace WheresChris
 
         private static void AddPage(Page page, string title)
         {
-            _mainTabbedPage.Children.Add(new NavigationPage(page)
+            var navigationPage = new NavigationPage(page)
             {
                 Title = title,
-                Icon = Device.OnPlatform<string>("tab_feed.png", null, null)
-            });
+                Icon = Device.OnPlatform("tab_feed.png", null, null),
+            };
+            _mainTabbedPage.Children.Add(navigationPage);
         }
 
         //Call this from AppDelegate or android service
