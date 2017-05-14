@@ -1,19 +1,11 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Plugin.Geolocator;
-using Plugin.Settings;
 using Plugin.Toasts;
 using WheresChris.Helpers;
 using WheresChris.Messaging;
 using Xamarin.Forms;
-using XLabs.Platform.Services.Geolocation;
-#if __ANDROID__
-using StayTogether.Droid.Services;
-#endif
-#if __IOS__
-using WheresChris.iOS;
-#endif
+
 
 namespace WheresChris.Views
 {
@@ -27,9 +19,9 @@ namespace WheresChris.Views
         public MainPage()
         {
             InitializeComponent();
+            SaveButton.Clicked += SaveButton_OnClicked;
             InitializeMessagingCenterSubscriptions();
             CheckLocationServicesEnabled();
-
             InitializePhoneAndNickname();
         }
 

@@ -42,7 +42,7 @@
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.3, Constant=0}"
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.75,Constant=0}" />
                 </RelativeLayout>
-                <Button x:Name="SaveButton" Text="Save" Clicked="SaveButton_OnClicked" />
+                <Button x:Name="SaveButton" Text="Save" />
             </StackLayout>
             <Label FontSize="Large"></Label>
             <Button x:Name="InviteButton" Text="Invite Chris" Clicked="StartGroup" />
