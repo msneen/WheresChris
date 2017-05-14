@@ -110,14 +110,14 @@ namespace WheresChris.iOS
             var count = 0;
             while (count < 3)
             {
-                var phonePermissionGranted = PermissionHelper.HasPhonePermission();
-                var locationPermissionGranted = PermissionHelper.HasLocationPermission();
-                var contactPermissionGranted = PermissionHelper.HasContactPermission();
+                var phonePermissionGranted = await PermissionHelper.HasPhonePermission();
+                var locationPermissionGranted = await PermissionHelper.HasLocationPermission();
+                var contactPermissionGranted = await PermissionHelper.HasContactPermission();
 
                 if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
                 {
-                    await InitializeBackgroundLocation();
                     LoadApplication(new App());
+                    await InitializeBackgroundLocation();
                     return;
                 }
                 if (!locationPermissionGranted)
