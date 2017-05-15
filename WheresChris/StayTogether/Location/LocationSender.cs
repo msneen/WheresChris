@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Android.Drm;
 using Microsoft.AspNet.SignalR.Client;
 using Microsoft.Azure.Mobile.Analytics;
 using Plugin.Geolocator;
