@@ -4,6 +4,7 @@ using Plugin.Geolocator.Abstractions;
 using Plugin.Settings;
 using StayTogether.Classes;
 using StayTogether.Location;
+using WheresChris.Helpers;
 
 namespace StayTogether.Group
 {
@@ -33,8 +34,8 @@ namespace StayTogether.Group
 
         public static GroupVm InitializeGroupVm(List<GroupMemberVm> contactList, Position position, string phoneNumber, int expireInHours)
         {
-            var adminMember = CreateAdminMember(position, phoneNumber,
-                CrossSettings.Current.GetValueOrDefault<string>("nickname"));//Todo: handle phoneNumber and nickname the same way
+            var nickname = SettingsHelper.GetNickname();
+            var adminMember = CreateAdminMember(position, phoneNumber, nickname);
 
             contactList.Insert(0, adminMember);
 

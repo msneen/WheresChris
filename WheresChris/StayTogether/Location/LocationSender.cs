@@ -10,6 +10,7 @@ using Plugin.Settings;
 using StayTogether.Classes;
 using StayTogether.Helpers;
 using StayTogether.Models;
+using WheresChris.Helpers;
 using Xamarin.Forms;
 
 namespace StayTogether
@@ -24,6 +25,7 @@ namespace StayTogether
 	    public static async Task<LocationSender> GetInstance()
 	    {
 	        if (_instance != null) return _instance;
+
 	        _instance = new LocationSender();
 	        await _instance.InitializeSignalRAsync();
 	        return _instance;
@@ -351,8 +353,7 @@ Debugger.Break();
         {
             try
             {
-                // TODO: consider cleaning phoneNumber
-                if (phoneNumber == _phoneNumber) return;//don't invite myself to a group
+                if (phoneNumber.CleanPhoneNumber() == _phoneNumber.CleanPhoneNumber()) return;//don't invite myself to a group
 
                 OnGroupInvitationReceived?.Invoke(this, new InvitedEventArgs
                 {
@@ -716,8 +717,7 @@ Debugger.Break();
         {
             try
             {
-                var phoneNumber = CrossSettings.Current.GetValueOrDefault<string>("phonenumber");
-                _phoneNumber = ContactsHelper.CleanPhoneNumber(phoneNumber);
+                _phoneNumber = SettingsHelper.GetPhoneNumber();
                 if (string.IsNullOrWhiteSpace(_phoneNumber))
                 {
                     //Todo:  figure out a way to do this

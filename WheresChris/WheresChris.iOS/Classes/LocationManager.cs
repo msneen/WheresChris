@@ -66,9 +66,9 @@ namespace WheresChris.iOS.Classes
                     await SendPositionUpdate();
                 };
 
-                ClLocationManager?.StartUpdatingLocation();
-
                 _locationSender = await LocationSender.GetInstance();
+
+                ClLocationManager?.StartUpdatingLocation();
             }
         }
 
