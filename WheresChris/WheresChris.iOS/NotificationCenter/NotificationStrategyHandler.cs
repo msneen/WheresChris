@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.Azure.Mobile.Analytics;
 using UIKit;
+using WheresChris.iOS.NotificationCenter;
 
 
 namespace StayTogether.iOS.NotificationCenter
@@ -34,6 +35,9 @@ namespace StayTogether.iOS.NotificationCenter
                     break;
                 case 10104:
                     notificationActions = InAnotherGroupNotification.OnNotify(notification);
+                    break;
+                case 10105:
+                    notificationActions = PhoneNumberMissingNotification.OnNotify(notification);
                     break;
                 default:
                     notificationActions.Add(UIAlertAction.Create("OK", UIAlertActionStyle.Default, null));

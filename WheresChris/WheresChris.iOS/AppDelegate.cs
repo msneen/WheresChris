@@ -13,6 +13,7 @@ using UIKit;
 using UserNotifications;
 using WheresChris.Helpers;
 using WheresChris.iOS.Classes;
+using WheresChris.iOS.NotificationCenter;
 using XLabs.Forms;
 
 namespace WheresChris.iOS
@@ -140,6 +141,11 @@ namespace WheresChris.iOS
         {
 
             if (manager?.LocationSender == null || _eventsInitialized) return;
+
+	        manager.LocationSender.OnPhoneNumberMissing += (sender, args) =>
+	        {
+                PhoneNumberMissingNotification.DisplayGroupInvitationNotification();
+	        };
 
             manager.LocationSender.OnSomeoneIsLost += (sender, args) =>
             {

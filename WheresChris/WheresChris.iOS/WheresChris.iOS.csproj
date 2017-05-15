@@ -324,6 +324,7 @@
     <Compile Include="NotificationCenter\NotificationBase.cs" />
     <Compile Include="NotificationCenter\NotificationManager.cs" />
     <Compile Include="NotificationCenter\NotificationStrategyHandler.cs" />
+    <Compile Include="NotificationCenter\PhoneNumberMissingNotification.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\profile_generic.png" />

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Android.Drm;
 using Microsoft.AspNet.SignalR.Client;
 using Microsoft.Azure.Mobile.Analytics;
 using Plugin.Geolocator;
@@ -24,14 +25,28 @@ namespace StayTogether
 
 	    public static async Task<LocationSender> GetInstance()
 	    {
-	        if (_instance != null) return _instance;
+            //Make m new instance if null when requested
+	        if (_instance == null)
+	        {
+	            _instance = new LocationSender();
+	        }
 
-	        _instance = new LocationSender();
-	        await _instance.InitializeSignalRAsync();
+            //if the instance is initialized, return it
+	        if (_instance.IsInitialized) return _instance;
+
+            //if instance not initialized, but we have a valid number now, initialize it
+            //on ios, when app is first run, there will not be a phone number.  Once user enters it
+            //we can start sending messages
+            var phoneNumber = SettingsHelper.GetPhoneNumber();
+            if (phoneNumber.IsValidPhoneNumber())
+	        {
+	            await _instance.InitializeSignalRAsync();
+	        }
+
 	        return _instance;
 	    }
 
-
+	    public event EventHandler OnPhoneNumberMissing;
 	    public event EventHandler<LostEventArgs> OnSomeoneIsLost;
         public event EventHandler<InvitedEventArgs> OnGroupInvitationReceived;
         public event EventHandler OnGroupJoined;
@@ -109,7 +124,7 @@ Debugger.Break();
                 _chatHubProxy.On<string, string>("MemberAlreadyInGroup", OnMemberAlreadyInGroup);
                 _chatHubProxy.On<List<GroupMemberSimpleVm>>("GroupPositionUpdate", OnGroupPositionUpdate);
                 _chatHubProxy.On<string>("RequestMemberLocations", async s => await RequestMemberPositions(s));
-
+                
                 // Start the connection
                 await _hubConnection.Start();
 
@@ -129,6 +144,31 @@ Debugger.Break();
                 });
             }
         }
+
+	    private async Task InvokeChatHubProxy(string method, params object[] args)
+	    {
+	        if (CanSend())
+	        {
+	            await _chatHubProxy.Invoke(method, args);
+	        }
+	    }
+
+        public async Task<T> InvokeChatHubProxy<T>(string method, params object[] args) where T:new()
+        {
+            if (CanSend())
+            {
+                return await _chatHubProxy.Invoke<T>(method, args);
+            }
+            return new T();
+        }
+
+        private bool CanSend()
+	    {
+	        if (_phoneNumber.IsValidPhoneNumber() && this.IsInitialized) return true;
+
+	        OnPhoneNumberMissing?.Invoke(this, new EventArgs());
+	        return false;
+	    }
 
 	    private async Task RequestMemberPositions(string leaderPhoneNumber)
 	    {
@@ -487,12 +527,12 @@ Debugger.Break();
                 });
             }
         }
-
-	    public async Task StartGroup(GroupVm groupVm)
+        
+        public async Task StartGroup(GroupVm groupVm)
 	    {
             try
             {
-                await _chatHubProxy.Invoke("CreateGroup", groupVm);
+                await InvokeChatHubProxy("CreateGroup", groupVm);
                 GroupLeader = true;
                 InAGroup = true;
                 _groupId = _phoneNumber;
@@ -515,7 +555,7 @@ Debugger.Break();
 	    {
             try
             {
-                await _chatHubProxy.Invoke("AddToGroup", groupVm);
+                await InvokeChatHubProxy("AddToGroup", groupVm);
                 MessagingCenter.Send<LocationSender>(this, SomeoneAddedToGroupMsg);
             }
             catch (Exception ex)
@@ -537,7 +577,7 @@ Debugger.Break();
             {
                 if (InAGroup && GroupLeader)
                 {
-                    await _chatHubProxy.Invoke("EndGroup", _phoneNumber);
+                    await InvokeChatHubProxy("EndGroup", _phoneNumber);
                     InAGroup = false;
                     GroupLeader = false;
                     _groupId = "";
@@ -564,7 +604,7 @@ Debugger.Break();
             {
                 if (InAGroup && !GroupLeader)
                 {
-                    await _chatHubProxy.Invoke("LeaveGroup", _groupId, _phoneNumber);
+                    await InvokeChatHubProxy("LeaveGroup", _groupId, _phoneNumber);
                     InAGroup = false;
                     GroupLeader = false;
                     _groupId = "";
@@ -619,7 +659,7 @@ Debugger.Break();
                     Longitude = currentPosition.Value.Longitude,
                     InvitationConfirmed = true
                 };
-                await _chatHubProxy.Invoke("confirmGroupInvitation", groupMemberVm);
+                await InvokeChatHubProxy("confirmGroupInvitation", groupMemberVm);
                 GroupMembers = new List<GroupMemberSimpleVm>();
                 await SendUpdatePosition();//Send out my current position so group member's maps will update
                 MessagingCenter.Send<LocationSender>(this, GroupJoinedMsg);
@@ -650,11 +690,9 @@ Debugger.Break();
                 {
                     groupMemberVm.InvitationConfirmed = true;
                 }
-                await _chatHubProxy.Invoke("updatePosition", groupMemberVm);
-                //Device.BeginInvokeOnMainThread(() =>
-                //{
+                await InvokeChatHubProxy("updatePosition", groupMemberVm);
+
                 MessagingCenter.Send(this, LocationSentMsg);
-                //});
 
             }
             catch (Exception ex)
@@ -676,7 +714,7 @@ Debugger.Break();
             {
                 if (InAGroup)
                 {
-                    return await _chatHubProxy.Invoke<List<GroupMemberVm>>("GetGroupMembers", groupMemberVm);
+                    return await InvokeChatHubProxy<List<GroupMemberVm>>("GetGroupMembers", groupMemberVm);
                 }
             }
             catch (Exception ex)
