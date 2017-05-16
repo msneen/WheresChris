@@ -5962,8 +5962,8 @@ namespace WheresChris.Droid
 			// aapt resource value: 0x7f0200cb
 			public const int mr_ic_play_light = 2130837707;
 			
-			// aapt resource value: 0x7f0200d3
-			public const int notification_template_icon_bg = 2130837715;
+			// aapt resource value: 0x7f0200d4
+			public const int notification_template_icon_bg = 2130837716;
 			
 			// aapt resource value: 0x7f0200cc
 			public const int places_ic_clear = 2130837708;
@@ -5985,6 +5985,9 @@ namespace WheresChris.Droid
 			
 			// aapt resource value: 0x7f0200d2
 			public const int slideout = 2130837714;
+			
+			// aapt resource value: 0x7f0200d3
+			public const int WheresChris = 2130837715;
 			
 			static Drawable()
 			{
@@ -8244,6 +8247,9 @@ namespace WheresChris.Droid
 			
 			// aapt resource value: 0x7f0b0016
 			public const int Widget_MediaRouter_MediaRouteButton = 2131427350;
+			
+			// aapt resource value: 0x7f0b0179
+			public const int splashscreen = 2131427705;
 			
 			static Style()
 			{

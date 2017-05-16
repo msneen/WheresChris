@@ -3,6 +3,7 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Android.Preferences;
 using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
@@ -18,7 +19,7 @@ using Permission = Android.Content.PM.Permission;
 
 namespace WheresChris.Droid
 {
-    [Activity(Label = "WheresChris.Android", Theme = "@style/MyTheme", MainLauncher = true, LaunchMode = LaunchMode.SingleTop, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "WheresChris.Android", Theme = "@style/splashscreen", MainLauncher = true, LaunchMode = LaunchMode.SingleTop, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         public LocationSenderBinder Binder;
@@ -35,8 +36,8 @@ namespace WheresChris.Droid
 
         protected override async void OnCreate(Bundle bundle)
         {
-            base.OnCreate(bundle);
-           
+
+
             MobileCenter.LogLevel = LogLevel.Verbose;
             MobileCenter.Start("14162ca6-0c56-4822-9d95-f265b524bd98", typeof(Analytics), typeof(Crashes), typeof(Distribute));
 
@@ -48,8 +49,10 @@ namespace WheresChris.Droid
             Xamarin.FormsMaps.Init(this, bundle);
             ToastNotification.Init(this);
 
-            await TryToStartLocationService();
+            SetTheme(Resource.Style.MyTheme);
+            base.OnCreate(bundle);
 
+            await TryToStartLocationService();
         }
 
         private async Task TryToStartLocationService()
