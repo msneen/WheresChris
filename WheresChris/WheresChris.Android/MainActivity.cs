@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -64,7 +65,7 @@ namespace WheresChris.Droid
             if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
             {
                 LoadApplication(new App());
-                await App.InitializeContacts();
+                //await App.InitializeContacts();
                 Task.Run(()=>StartLocationService()).Wait();
                 
             }

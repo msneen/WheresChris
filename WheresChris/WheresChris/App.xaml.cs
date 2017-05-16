@@ -1,9 +1,11 @@
 ﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
 using Microsoft.Azure.Mobile.Distribute;
+using StayTogether.Helpers;
 using WheresChris.Helpers;
 using WheresChris.Views;
 using Xamarin.Forms;
@@ -22,8 +24,9 @@ namespace WheresChris
             InitializeComponent();
 
             SetMainPage().Wait();     
-        }       
+        }
 
+        private static readonly Interval Interval = new Interval();
         public static async Task SetMainPage()
         {
             _mainTabbedPage = new TabbedPage();
@@ -39,6 +42,8 @@ namespace WheresChris
             }
             AddPage(new AboutPage(), "About");           
             Current.MainPage = _mainTabbedPage;
+
+            Interval.SetInterval(InitializeContacts, 5000);
         }
 
         private static void AddPage(Page page, string title)
@@ -52,11 +57,13 @@ namespace WheresChris
         }
 
         //Call this from AppDelegate or android service
-        public static async Task InitializeContacts()
+        public static void InitializeContacts()
         {
-            var inviteNavigationPage = (NavigationPage)GetPage("Invite");
-            var invitePage = (InvitePage)inviteNavigationPage.CurrentPage;
-            await invitePage.InitializeContactsAsync();
+            Device.BeginInvokeOnMainThread(async ()=>{
+                var inviteNavigationPage = (NavigationPage)GetPage("Invite");
+                var invitePage = (InvitePage)inviteNavigationPage.CurrentPage;
+                await invitePage.InitializeContactsAsync();
+            });
         }
 
         public static Page GetCurrentTab()

@@ -14,6 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ContactsHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\Distance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\GroupHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\Interval.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\PositionHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\SettingsHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\TimeGate.cs" />
