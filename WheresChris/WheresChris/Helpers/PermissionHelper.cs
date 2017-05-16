@@ -56,7 +56,10 @@ namespace WheresChris.Helpers
         {
             if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
             {
-                Plugin.LocalNotifications.CrossLocalNotifications.Current.Show(title, body);
+                Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                {
+                    Plugin.LocalNotifications.CrossLocalNotifications.Current.Show(title, body);
+                });
             }
             var permissionStatus = await CrossPermissions.Current.RequestPermissionsAsync(new[] {permission});
             return permissionStatus[permission];
