@@ -33,7 +33,7 @@ namespace WheresChris.iOS
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
 			global::Xamarin.Forms.Forms.Init();
-			LoadApplication(new App());
+
 
             MobileCenter.Start("2cd11ff1-c5b1-47d8-ac96-9fa5b74a47bd", typeof(Analytics), typeof(Crashes), typeof(Distribute));
             Xamarin.FormsMaps.Init();
@@ -41,11 +41,12 @@ namespace WheresChris.iOS
             ToastNotification.Init();
             InitializeToastPlugin(app);
 
-            //Task.Run(TryToStartLocationService).Wait();
+            Task.Run(TryToStartLocationService).Wait();
 
-            //NotificationManager.RegisterNotifications(app);
-            //NotificationManager.InitializeNotifications(options, UIApplication.SharedApplication.KeyWindow);
+            NotificationManager.RegisterNotifications(app);
+            NotificationManager.InitializeNotifications(options, UIApplication.SharedApplication.KeyWindow);
 
+            LoadApplication(new App());
             return base.FinishedLaunching(app, options);
 		}
 
@@ -117,7 +118,7 @@ namespace WheresChris.iOS
 
                 if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
                 {
-                    LoadApplication(new App());
+                    //LoadApplication(new App());
                     await InitializeBackgroundLocation();
                     return;
                 }
