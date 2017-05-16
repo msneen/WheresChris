@@ -27,7 +27,7 @@ namespace WheresChris.Helpers
             if (!selectedGroupMemberVms.Any()) return;
             if (string.IsNullOrWhiteSpace(userPhoneNumber)) return;
 
-            var locationSender = await LocationSender.GetInstance();
+            var locationSender = await LocationSender.GetInstanceAsync();
             var userMapPosition = await PositionHelper.GetMapPosition();
             var userPosition = PositionConverter.Convert(userMapPosition.Value);
             var groupVm = GroupHelper.InitializeGroupVm(selectedGroupMemberVms, userPosition, userPhoneNumber, expirationHours);

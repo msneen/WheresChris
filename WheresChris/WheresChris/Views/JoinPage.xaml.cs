@@ -52,7 +52,7 @@ namespace WheresChris.Views
             var selectedItem = e.SelectedItem as ContactDisplayItemVm;
             if (selectedItem != null)
             {
-                var locationSender = await LocationSender.GetInstance();
+                var locationSender = await LocationSender.GetInstanceAsync();
                 await locationSender.ConfirmGroupInvitation(selectedItem.Invitation.PhoneNumber, selectedItem.Invitation.Name);
             }
             //Deselect Item

@@ -52,7 +52,7 @@ namespace WheresChris.Droid.Services
 
         private void InitializeLocationSender()
         {
-            Task.Run(async () => { _locationSender = await LocationSender.GetInstance(); }).Wait();
+            Task.Run(async () => { _locationSender = await LocationSender.GetInstanceAsync(); }).Wait();
 
             _locationSender.OnSomeoneIsLost += (sender, args) =>
             {

@@ -42,7 +42,7 @@ namespace StayTogether.Droid.NotificationCenter
 
             var name = intent.GetStringExtra("name");
             var phoneNumber = intent.GetStringExtra("phonenumber");
-            var locationSender = await LocationSender.GetInstance();
+            var locationSender = await LocationSender.GetInstanceAsync();
             await locationSender.ConfirmGroupInvitation(phoneNumber, name);
         }
     }

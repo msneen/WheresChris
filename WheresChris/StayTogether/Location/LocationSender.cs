@@ -22,7 +22,7 @@ namespace StayTogether
 	{
 	    private static LocationSender _instance;
 
-	    public static async Task<LocationSender> GetInstance()
+	    public static async Task<LocationSender> GetInstanceAsync()
 	    {
             //Make m new instance if null when requested
 	        if (_instance == null)
@@ -44,6 +44,29 @@ namespace StayTogether
 
 	        return _instance;
 	    }
+
+	    public static LocationSender GetInstance()
+	    {
+            //Make m new instance if null when requested
+            if (_instance == null)
+            {
+                _instance = new LocationSender();
+            }
+
+            //if the instance is initialized, return it
+            if (_instance.IsInitialized) return _instance;
+
+            //if instance not initialized, but we have a valid number now, initialize it
+            //on ios, when app is first run, there will not be a phone number.  Once user enters it
+            //we can start sending messages
+            var phoneNumber = SettingsHelper.GetPhoneNumber();
+            if (phoneNumber.IsValidPhoneNumber())
+            {
+                _instance.InitializeSignalRAsync().Wait();
+            }
+
+            return _instance;
+        }
 
 	    public event EventHandler OnPhoneNumberMissing;
 	    public event EventHandler<LostEventArgs> OnSomeoneIsLost;

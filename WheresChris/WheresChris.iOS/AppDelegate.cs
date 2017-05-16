@@ -41,7 +41,7 @@ namespace WheresChris.iOS
             ToastNotification.Init();
             InitializeToastPlugin(app);
 
-            Task.Run(TryToStartLocationService).Wait();
+            TryToStartLocationService();
 
             NotificationManager.RegisterNotifications(app);
             NotificationManager.InitializeNotifications(options, UIApplication.SharedApplication.KeyWindow);
@@ -88,7 +88,7 @@ namespace WheresChris.iOS
 	        }
 	    }
 
-	    private async Task InitializeBackgroundLocation()
+	    private void InitializeBackgroundLocation()
 	    {
 	        var phoneNumber = SettingsHelper.GetPhoneNumber();
 
@@ -97,7 +97,7 @@ namespace WheresChris.iOS
             {
                 LocationManager.UserPhoneNumber = phoneNumber;
             }
-            await LocationManager.StartLocationUpdates();
+            LocationManager.StartLocationUpdates();
             InitializeEvents(LocationManager);
         }
 
@@ -107,32 +107,32 @@ namespace WheresChris.iOS
             NotificationStrategyHandler.ReceiveNotification(notification, UIApplication.SharedApplication.KeyWindow);
         }
 
-	    private async Task TryToStartLocationService()
+	    private void TryToStartLocationService()
 	    {
             var count = 0;
             while (count < 3)
             {
-                var phonePermissionGranted = await PermissionHelper.HasPhonePermission();
-                var locationPermissionGranted = await PermissionHelper.HasLocationPermission();
-                var contactPermissionGranted = await PermissionHelper.HasContactPermission();
+                var phonePermissionGranted = PermissionHelper.HasPhonePermission().Result;
+                var locationPermissionGranted = PermissionHelper.HasLocationPermission().Result;
+                var contactPermissionGranted = PermissionHelper.HasContactPermission().Result;
 
                 if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
                 {
                     //LoadApplication(new App());
-                    await InitializeBackgroundLocation();
+                    InitializeBackgroundLocation();
                     return;
                 }
                 if (!locationPermissionGranted)
                 {
-                    await PermissionHelper.RequestLocationPermission();
+                    PermissionHelper.RequestLocationPermission().Wait();
                 }
                 else if (!phonePermissionGranted)
                 {
-                    await PermissionHelper.RequestPhonePermission();
+                    PermissionHelper.RequestPhonePermission().Wait();
                 }
                 else
                 {
-                    await PermissionHelper.RequestContactPermission();
+                    PermissionHelper.RequestContactPermission().Wait();
                 }
                 count++;
             }

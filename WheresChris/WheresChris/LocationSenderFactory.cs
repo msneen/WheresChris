@@ -7,7 +7,7 @@ namespace WheresChris
     {
         public static async Task<LocationSender> GetLocationSender()
         {
-            return await LocationSender.GetInstance();
+            return await LocationSender.GetInstanceAsync();
         }
     }
 }

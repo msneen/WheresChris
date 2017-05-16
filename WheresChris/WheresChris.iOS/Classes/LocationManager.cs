@@ -46,7 +46,7 @@ namespace WheresChris.iOS.Classes
 
         }
 
-        public async Task StartLocationUpdates()
+        public void StartLocationUpdates()
         {
             if (CLLocationManager.LocationServicesEnabled)
             {
@@ -66,7 +66,7 @@ namespace WheresChris.iOS.Classes
                     await SendPositionUpdate();
                 };
 
-                _locationSender = await LocationSender.GetInstance();
+                _locationSender = LocationSender.GetInstance();
 
                 ClLocationManager?.StartUpdatingLocation();
             }

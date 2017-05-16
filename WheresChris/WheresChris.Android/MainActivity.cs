@@ -106,7 +106,7 @@ namespace WheresChris.Droid
 
         public async Task CleanupGroupsForExit()
         {
-            var locationSender = await LocationSender.GetInstance();
+            var locationSender = await LocationSender.GetInstanceAsync();
             await locationSender.LeaveGroup();
             await locationSender.EndGroup();
         }
