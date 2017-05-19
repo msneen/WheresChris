@@ -41,7 +41,7 @@ namespace WheresChris.iOS
             ToastNotification.Init();
             InitializeToastPlugin(app);
 
-            TryToStartLocationService();
+            //TryToStartLocationService();
 
             NotificationManager.RegisterNotifications(app);
             NotificationManager.InitializeNotifications(options, UIApplication.SharedApplication.KeyWindow);
