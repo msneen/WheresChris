@@ -63,7 +63,7 @@ namespace WheresChris.iOS.Classes
                 var medianLongitude = locationList.OrderBy(l => l.Coordinate.Longitude).ToArray()[count / 2].Coordinate.Longitude;
 
                 _lastLocation = new CLLocation(medianLatitude, medianLongitude);
-                //await SendPositionUpdate();//Turn me back on
+                await SendPositionUpdate();
             };
 
             _locationSender = LocationSender.GetInstance();
@@ -75,6 +75,7 @@ namespace WheresChris.iOS.Classes
         {
             var position = await GetPosition();
             UserPhoneNumber = SettingsHelper.GetPhoneNumber();
+            var nickname = SettingsHelper.GetNickname();
             //                                                if more than x seconds or x feet from last location, send update to server
             if (string.IsNullOrWhiteSpace(UserPhoneNumber) || !_sendMeter.CanSend(position)) return;
 
@@ -82,16 +83,14 @@ namespace WheresChris.iOS.Classes
             var groupMemberVm = new GroupMemberVm
             {
                 //Get Group Member Properties
-                Name = "iPhoneTester",
+                Name = nickname,
                 PhoneNumber = UserPhoneNumber,
-                Latitude = _lastLocation.Coordinate.Latitude,
-                Longitude = _lastLocation.Coordinate.Longitude
+                Latitude = position.Latitude,
+                Longitude = position.Longitude
             };
 
             //Send position update
-            var sendUpdatePosition = _locationSender?.SendUpdatePosition(groupMemberVm);
-            if (sendUpdatePosition != null)
-                await sendUpdatePosition;
+            await _locationSender.SendUpdatePosition(groupMemberVm);            
         }
 
         public async Task<Position> GetPosition()
