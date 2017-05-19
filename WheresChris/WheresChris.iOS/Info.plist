@@ -21,7 +21,7 @@
 		<integer>1</integer>
 		<integer>2</integer>
 	</array>
-		<key>UILaunchStoryboardName</key>
+	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
@@ -30,8 +30,8 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
@@ -43,25 +43,25 @@
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/AppIcon.appiconset</string>
 	<key>NSContactsUsageDescription</key>
-		<string>Getting list of contacts to add to the group</string>
+	<string>Getting list of contacts to add to the group</string>
 	<key>UIBackgroundModes</key>
-		  <array>
-			<string>location</string>
-		  </array>
+	<array>
+		<string>location</string>
+	</array>
 	<key>NSLocationAlwaysUsageDescription</key>
-		<string>Can we use your location</string>
+	<string>Can we use your location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-		<string>We are using your location</string>
+	<string>We are using your location</string>
 	<key>NSCalendarsUsageDescription</key>
-		<string>We are using the Calendar</string>
-		<key>CFBundleURLTypes</key>
-    <array>
-	    <dict>
-			  <key>CFBundleURLSchemes</key>
-			  <array>
-				  <string>mobilecenter-2cd11ff1-c5b1-47d8-ac96-9fa5b74a47bd</string>
-			  </array>
-	    </dict>
-    </array>
+	<string>We are using the Calendar</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>mobilecenter-2cd11ff1-c5b1-47d8-ac96-9fa5b74a47bd</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

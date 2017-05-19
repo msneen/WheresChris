@@ -1,10 +1,8 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Android.Preferences;
 using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
@@ -20,7 +18,9 @@ using Permission = Android.Content.PM.Permission;
 
 namespace WheresChris.Droid
 {
-    [Activity(Label = "WheresChris.Android", Theme = "@style/splashscreen", MainLauncher = true, LaunchMode = LaunchMode.SingleTop, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "WheresChris.Android", Theme = "@style/splashscreen", MainLauncher = true, 
+        LaunchMode = LaunchMode.SingleTop, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation,
+        ScreenOrientation = ScreenOrientation.Portrait)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         public LocationSenderBinder Binder;
@@ -37,8 +37,6 @@ namespace WheresChris.Droid
 
         protected override async void OnCreate(Bundle bundle)
         {
-
-
             MobileCenter.LogLevel = LogLevel.Verbose;
             MobileCenter.Start("14162ca6-0c56-4822-9d95-f265b524bd98", typeof(Analytics), typeof(Crashes), typeof(Distribute));
 
