@@ -89,10 +89,10 @@ namespace WheresChris.iOS
 	    }
 
 	    private void InitializeBackgroundLocation()
-	    {
-	        var phoneNumber = SettingsHelper.GetPhoneNumber();
-
+	    {	        
 	        LocationManager = new LocationManager();
+
+            var phoneNumber = SettingsHelper.GetPhoneNumber();
             if (!string.IsNullOrWhiteSpace(phoneNumber))
             {
                 LocationManager.UserPhoneNumber = phoneNumber;
@@ -119,7 +119,7 @@ namespace WheresChris.iOS
                 if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
                 {
                     //LoadApplication(new App());
-                    InitializeBackgroundLocation();
+                    //InitializeBackgroundLocation();
                     return;
                 }
                 if (!locationPermissionGranted)
