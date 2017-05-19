@@ -97,7 +97,7 @@ namespace WheresChris.iOS
             {
                 LocationManager.UserPhoneNumber = phoneNumber;
             }
-            LocationManager.StartLocationUpdates();
+            //LocationManager.StartLocationUpdates();//Turn me back on
             InitializeEvents(LocationManager);
         }
 
@@ -119,7 +119,7 @@ namespace WheresChris.iOS
                 if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
                 {
                     //LoadApplication(new App());
-                    //InitializeBackgroundLocation();
+                    InitializeBackgroundLocation();
                     return;
                 }
                 if (!locationPermissionGranted)
