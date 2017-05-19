@@ -48,28 +48,27 @@ namespace WheresChris.iOS.Classes
 
         public void StartLocationUpdates()
         {
-            if (CLLocationManager.LocationServicesEnabled)
+            if (!CLLocationManager.LocationServicesEnabled) return;
+
+            //set the desired accuracy, in meters
+            ClLocationManager.DesiredAccuracy = 1;
+            ClLocationManager.LocationsUpdated += async (sender, e) =>
             {
-                //set the desired accuracy, in meters
-                ClLocationManager.DesiredAccuracy = 1;
-                ClLocationManager.LocationsUpdated += async (sender, e) =>
-                {
-                    // fire our custom Location Updated event
-                    if (e.Locations == null || e.Locations.Length <= -1) return;
+                // fire our custom Location Updated event
+                if (e.Locations == null || e.Locations.Length <= -1) return;
 
-                    var locationList = e.Locations.ToList();
-                    var count = locationList.Count;
-                    var medianLatitude = locationList.OrderBy(l => l.Coordinate.Latitude).ToArray()[count / 2].Coordinate.Latitude;
-                    var medianLongitude = locationList.OrderBy(l => l.Coordinate.Longitude).ToArray()[count / 2].Coordinate.Longitude;
+                var locationList = e.Locations.ToList();
+                var count = locationList.Count;
+                var medianLatitude = locationList.OrderBy(l => l.Coordinate.Latitude).ToArray()[count / 2].Coordinate.Latitude;
+                var medianLongitude = locationList.OrderBy(l => l.Coordinate.Longitude).ToArray()[count / 2].Coordinate.Longitude;
 
-                    _lastLocation = new CLLocation(medianLatitude, medianLongitude); 
-                    await SendPositionUpdate();
-                };
+                _lastLocation = new CLLocation(medianLatitude, medianLongitude);
+                //await SendPositionUpdate();//Turn me back on
+            };
 
-                _locationSender = LocationSender.GetInstance();
+            //_locationSender = LocationSender.GetInstance();//Turn me back on
 
-                ClLocationManager?.StartUpdatingLocation();
-            }
+            ClLocationManager?.StartUpdatingLocation();
         }
 
         private async Task SendPositionUpdate()

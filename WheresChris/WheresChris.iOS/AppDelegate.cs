@@ -97,7 +97,7 @@ namespace WheresChris.iOS
             {
                 LocationManager.UserPhoneNumber = phoneNumber;
             }
-            //LocationManager.StartLocationUpdates();//Turn me back on
+            LocationManager.StartLocationUpdates();
             InitializeEvents(LocationManager);
         }
 
