@@ -1,7 +1,4 @@
-﻿
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Foundation;
+﻿using Foundation;
 using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
@@ -41,7 +38,7 @@ namespace WheresChris.iOS
             ToastNotification.Init();
             InitializeToastPlugin(app);
 
-            //TryToStartLocationService();
+            TryToStartLocationService();
 
             NotificationManager.RegisterNotifications(app);
             NotificationManager.InitializeNotifications(options, UIApplication.SharedApplication.KeyWindow);
