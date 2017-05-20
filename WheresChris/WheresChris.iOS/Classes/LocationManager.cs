@@ -54,7 +54,6 @@ namespace WheresChris.iOS.Classes
             ClLocationManager.DesiredAccuracy = 1;
             ClLocationManager.LocationsUpdated += async (sender, e) =>
             {
-                return;//Turn me back on
                 // fire our custom Location Updated event
                 if (e.Locations == null || e.Locations.Length <= -1) return;
 
