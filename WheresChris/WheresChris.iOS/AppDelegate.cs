@@ -116,7 +116,7 @@ namespace WheresChris.iOS
                 if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
                 {
                     //LoadApplication(new App());
-                    //InitializeBackgroundLocation();
+                    InitializeBackgroundLocation();
                     return;
                 }
                 if (!locationPermissionGranted)
