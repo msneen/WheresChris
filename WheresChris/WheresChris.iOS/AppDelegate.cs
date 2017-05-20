@@ -1,4 +1,5 @@
-﻿using Foundation;
+﻿using System.Collections.Generic;
+using Foundation;
 using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
@@ -44,8 +45,14 @@ namespace WheresChris.iOS
             NotificationManager.RegisterNotifications(app);
             NotificationManager.InitializeNotifications(options, UIApplication.SharedApplication.KeyWindow);
 
+            Analytics.TrackEvent("AppDelegate_InitializingTimer");
             _interval = new Interval();
-            _interval.SetInterval(TryToStartLocationService, 10000);
+            _interval.SetInterval(()=>
+            {
+                Analytics.TrackEvent("AppDelegate_BackgroundStarting");
+                TryToStartLocationService();
+            }
+		, 10000);
             
 
             return base.FinishedLaunching(app, options);
