@@ -4,6 +4,7 @@ using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
 using Microsoft.Azure.Mobile.Distribute;
 using Plugin.Toasts;
+using StayTogether.Helpers;
 using StayTogether.iOS.NotificationCenter;
 using TK.CustomMap.iOSUnified;
 using UIKit;
@@ -20,8 +21,9 @@ namespace WheresChris.iOS
     {
 	    public static LocationManager LocationManager = null;
         private bool _eventsInitialized;
+	    private Interval _interval;
 
-        public override UIWindow Window
+	    public override UIWindow Window
         {
             get;
             set;
@@ -42,7 +44,9 @@ namespace WheresChris.iOS
             NotificationManager.RegisterNotifications(app);
             NotificationManager.InitializeNotifications(options, UIApplication.SharedApplication.KeyWindow);
 
-            TryToStartLocationService();
+            _interval = new Interval();
+            _interval.SetInterval(TryToStartLocationService, 10000);
+            
 
             return base.FinishedLaunching(app, options);
 		}
