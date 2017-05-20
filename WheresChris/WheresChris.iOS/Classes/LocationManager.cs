@@ -90,6 +90,7 @@ namespace WheresChris.iOS.Classes
             };
 
             //Send position update
+            _locationSender = LocationSender.GetInstance();
             await _locationSender.SendUpdatePosition(groupMemberVm);            
         }
 

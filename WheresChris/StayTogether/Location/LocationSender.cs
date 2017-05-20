@@ -62,7 +62,7 @@ namespace StayTogether
             var phoneNumber = SettingsHelper.GetPhoneNumber();
             if (phoneNumber.IsValidPhoneNumber())
             {
-                _instance.InitializeSignalRAsync().Wait();
+                _instance.Initialize();
             }
 
             return _instance;
@@ -122,6 +122,19 @@ Debugger.Break();
                 });
             }
         }
+
+	    public async Task InitializeAsync()
+	    {
+            if (!IsInitialized)
+            {
+                await InitializeSignalRAsync();
+            }
+        }
+
+	    public void Initialize()
+	    {
+	        InitializeAsync().Wait();
+	    }
 
 	    public async Task InitializeSignalRAsync()
         {
