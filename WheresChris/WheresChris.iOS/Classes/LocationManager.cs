@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreLocation;
+using Microsoft.Azure.Mobile.Analytics;
 using Plugin.Geolocator.Abstractions;
 using StayTogether;
 using StayTogether.Classes;
@@ -54,6 +55,11 @@ namespace WheresChris.iOS.Classes
             ClLocationManager.DesiredAccuracy = 1;
             ClLocationManager.LocationsUpdated += async (sender, e) =>
             {
+                Analytics.TrackEvent("LocationManager_LocationsUpdated", new Dictionary<string, string>
+                {
+                    {"Latitude", e.Locations[0].Coordinate.Latitude.ToString()},
+                    {"Longitude", e.Locations[0].Coordinate.Longitude.ToString()},
+                });
                 // fire our custom Location Updated event
                 if (e.Locations == null || e.Locations.Length <= -1) return;
 
@@ -61,6 +67,12 @@ namespace WheresChris.iOS.Classes
                 var count = locationList.Count;
                 var medianLatitude = locationList.OrderBy(l => l.Coordinate.Latitude).ToArray()[count / 2].Coordinate.Latitude;
                 var medianLongitude = locationList.OrderBy(l => l.Coordinate.Longitude).ToArray()[count / 2].Coordinate.Longitude;
+
+                Analytics.TrackEvent("LocationManager_LocationsUpdated_MedianCalculated", new Dictionary<string, string>
+                {
+                    {"Latitude", medianLatitude.ToString()},
+                    {"Longitude", medianLongitude.ToString()},
+                });
 
                 _lastLocation = new CLLocation(medianLatitude, medianLongitude);
                 await SendPositionUpdate();
@@ -76,6 +88,12 @@ namespace WheresChris.iOS.Classes
             var position = await GetPosition();
             UserPhoneNumber = SettingsHelper.GetPhoneNumber();
             var nickname = SettingsHelper.GetNickname();
+
+            Analytics.TrackEvent("LocationManager_SendPositionUpdate_Start", new Dictionary<string, string>
+            {
+                { "UserPhoneNumber",  UserPhoneNumber},
+            });
+
             //                                                if more than x seconds or x feet from last location, send update to server
             if (string.IsNullOrWhiteSpace(UserPhoneNumber) || !_sendMeter.CanSend(position)) return;
 
@@ -90,8 +108,13 @@ namespace WheresChris.iOS.Classes
             };
 
             //Send position update
-            _locationSender = LocationSender.GetInstance();
-            await _locationSender.SendUpdatePosition(groupMemberVm);            
+            _locationSender = await LocationSender.GetInstanceAsync();
+            await _locationSender.SendUpdatePosition(groupMemberVm);
+
+            Analytics.TrackEvent("Sent", new Dictionary<string, string>
+            {
+                { "LocationSenderInitialized",  _locationSender.IsInitialized.ToString()},
+            });
         }
 
         public async Task<Position> GetPosition()

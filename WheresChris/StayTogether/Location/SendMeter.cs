@@ -34,8 +34,10 @@ namespace StayTogether.Location
             //get the time since last position update
             var intervalSinceLastUpdate = DateTime.Now - _lastUpDateTime;
 
+            var distanceIsGreaterThanMin = distanceInFeet > _distanceChangeInFeet;
+            var timeIsGreaterThanMin = intervalSinceLastUpdate > _timeChange;
 
-            if (!(distanceInFeet > _distanceChangeInFeet) && intervalSinceLastUpdate <= _timeChange) return false;
+            if (distanceIsGreaterThanMin == false && timeIsGreaterThanMin == false) return false;
             
             //and set the current time and position as the last position for future comparison
             UpdateLastLocationAndTime(currentLocation);
