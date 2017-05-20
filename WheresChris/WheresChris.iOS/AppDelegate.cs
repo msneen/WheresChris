@@ -45,14 +45,14 @@ namespace WheresChris.iOS
             NotificationManager.RegisterNotifications(app);
             NotificationManager.InitializeNotifications(options, UIApplication.SharedApplication.KeyWindow);
 
-            Analytics.TrackEvent("AppDelegate_InitializingTimer");
+            //Analytics.TrackEvent("AppDelegate_InitializingTimer");
             _interval = new Interval();
             _interval.SetInterval(()=>
             {
-                Analytics.TrackEvent("AppDelegate_BackgroundStarting");
+                //Analytics.TrackEvent("AppDelegate_BackgroundStarting");
                 TryToStartLocationService();
             }
-		, 10000);
+		    , 10000);
             
 
             return base.FinishedLaunching(app, options);
@@ -96,17 +96,22 @@ namespace WheresChris.iOS
 	        }
 	    }
 
-	    private void InitializeBackgroundLocation()
-	    {	        
-	        LocationManager = new LocationManager();
+        private void InitializeBackgroundLocation()
+        {
+            LocationManager = new LocationManager();
 
             var phoneNumber = SettingsHelper.GetPhoneNumber();
             if (!string.IsNullOrWhiteSpace(phoneNumber))
             {
                 LocationManager.UserPhoneNumber = phoneNumber;
             }
+            Analytics.TrackEvent("AppDelegate_InitializeBackgroundLocation_StartLocationUpdates");
             LocationManager.StartLocationUpdates();
+
+            Analytics.TrackEvent("AppDelegate_InitializeBackgroundLocation_InitializeEvents");
             InitializeEvents(LocationManager);
+
+            Analytics.TrackEvent("AppDelegate_InitializeBackgroundLocation_Finished");
         }
 
 	    public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
@@ -120,13 +125,21 @@ namespace WheresChris.iOS
             var count = 0;
             while (count < 3)
             {
+                Analytics.TrackEvent("AppDelegate_TryToStartLocationService_StartingWhile");
+
                 var phonePermissionGranted = PermissionHelper.HasPhonePermission().Result;
                 var locationPermissionGranted = PermissionHelper.HasLocationPermission().Result;
                 var contactPermissionGranted = PermissionHelper.HasContactPermission().Result;
 
+                Analytics.TrackEvent("AppDelegate_TryToStartLocationService", new Dictionary<string, string>
+                {
+                    {"phonePermissionGranted", phonePermissionGranted.ToString()},
+                    {"locationPermissionGranted", locationPermissionGranted.ToString()},
+                    {"contactPermissionGranted", contactPermissionGranted.ToString()},
+                });
                 if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
                 {
-                    //LoadApplication(new App());
+                    Analytics.TrackEvent("AppDelegate_TryToStartLocationService_Calling_InitializeBackgroundLocation");
                     InitializeBackgroundLocation();
                     return;
                 }

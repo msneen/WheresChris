@@ -49,19 +49,22 @@ namespace WheresChris.iOS.Classes
 
         public void StartLocationUpdates()
         {
+            Analytics.TrackEvent("LocationManager_StartLocationUpdates_Start");
             if (!CLLocationManager.LocationServicesEnabled) return;
 
             //set the desired accuracy, in meters
             ClLocationManager.DesiredAccuracy = 1;
             ClLocationManager.LocationsUpdated += async (sender, e) =>
             {
+                Analytics.TrackEvent("LocationManager_LocationsUpdated_started");
+                // fire our custom Location Updated event
+                if (e.Locations == null || e.Locations.Length <= -1) return;
+
                 Analytics.TrackEvent("LocationManager_LocationsUpdated", new Dictionary<string, string>
                 {
                     {"Latitude", e.Locations[0].Coordinate.Latitude.ToString()},
                     {"Longitude", e.Locations[0].Coordinate.Longitude.ToString()},
                 });
-                // fire our custom Location Updated event
-                if (e.Locations == null || e.Locations.Length <= -1) return;
 
                 var locationList = e.Locations.ToList();
                 var count = locationList.Count;
@@ -76,11 +79,18 @@ namespace WheresChris.iOS.Classes
 
                 _lastLocation = new CLLocation(medianLatitude, medianLongitude);
                 await SendPositionUpdate();
+                Analytics.TrackEvent("LocationManager_LocationsUpdated_SendPositionUpdate_Sent");
             };
 
             _locationSender = LocationSender.GetInstance();
+            Analytics.TrackEvent("LocationManager_LocationSender_GotInstance", new Dictionary<string, string>
+                {
+                    {"IsInitialized", _locationSender.IsInitialized.ToString()},
+                });
+
 
             ClLocationManager.StartUpdatingLocation();
+            Analytics.TrackEvent("LocationManager_ClLocationManager_StartUpdatingLocation");
         }
 
         private async Task SendPositionUpdate()
