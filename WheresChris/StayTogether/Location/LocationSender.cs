@@ -228,9 +228,12 @@ Debugger.Break();
             {
                 _geoLocator = CrossGeolocator.Current;
 
-                _geoLocator.DesiredAccuracy = 1; //100 is new default
+                _geoLocator.DesiredAccuracy = 100; //100 is new default
 
                 if (!_geoLocator.IsGeolocationEnabled || !_geoLocator.IsGeolocationAvailable) return;
+
+                //Instructions for geoolocator say we need to do this before setting the listener
+                var position = await _geoLocator.GetPositionAsync(new TimeSpan(0,0,10));
 
                 await _geoLocator.StartListeningAsync(TimeSpan.FromSeconds(5), 10, false, new Plugin.Geolocator.Abstractions.ListenerSettings
                 {

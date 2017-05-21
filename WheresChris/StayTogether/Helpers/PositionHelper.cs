@@ -97,12 +97,12 @@ namespace StayTogether.Helpers
         public static async Task<Xamarin.Forms.Maps.Position?> GetMapPosition()
         {
             var positionList = new List<Plugin.Geolocator.Abstractions.Position>();
-            CrossGeolocator.Current.DesiredAccuracy = 1;
+            CrossGeolocator.Current.DesiredAccuracy = 100;
             for (var i = 0; i < 3; i++)
             {
                 var position = await CrossGeolocator.Current.GetPositionAsync(new TimeSpan(0, 0, 10));
                 positionList.Add(position);
-                await Task.Delay(2000);
+                await Task.Delay(10000);
             }
 
             var userPosition = GetMedianPosition(positionList);
