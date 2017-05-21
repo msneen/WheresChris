@@ -115,8 +115,7 @@ namespace StayTogether
 #if (DEBUG)
 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_LocationSender", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -172,8 +171,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_InitializeSignalRAsync", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -216,8 +214,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_RequestMemberPositions", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -254,8 +251,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_SetUpLocationEvents", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -274,8 +270,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_LocatorOnPositionChanged", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -314,8 +309,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_SendUpdatePosition", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -339,8 +333,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_OnGroupPositionUpdate", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -364,8 +357,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_OnMemberAlreadyInGroup", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -389,8 +381,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_OnMemberLeftGroup", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -415,8 +406,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_GroupDisbanded", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -451,8 +441,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_OnGroupInvitation", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -471,8 +460,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_GetInvitations", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -493,8 +481,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_UpdateGroupId", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -528,8 +515,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_SomeoneIsLost", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -557,8 +543,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_StartOrAddToGroup", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -580,8 +565,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_StartGroup", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -600,8 +584,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_AddToGroup", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -627,8 +610,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_EndGroup", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -654,8 +636,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_LeaveGroup", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -707,8 +688,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_ConfirmGroupInvitation", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -737,8 +717,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_SendUpdatePosition", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -759,8 +738,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_GetMembers", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -780,8 +758,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_GetNickname", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
@@ -804,8 +781,7 @@ Debugger.Break();
 #if (DEBUG)
                 Debugger.Break();
 #endif
-                var methodName = new StackTrace(ex).GetFrame(0).GetMethod().Name;
-                Analytics.TrackEvent($"LocationSender_{methodName}", new Dictionary<string, string>
+                Analytics.TrackEvent($"LocationSender_GetPhoneNumber", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
                 });
