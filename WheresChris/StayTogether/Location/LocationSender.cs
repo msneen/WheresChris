@@ -232,14 +232,14 @@ Debugger.Break();
 
                 if (!_geoLocator.IsGeolocationEnabled || !_geoLocator.IsGeolocationAvailable) return;
 
-                await _geoLocator.StartListeningAsync(TimeSpan.FromSeconds(30), 15, false, new Plugin.Geolocator.Abstractions.ListenerSettings
+                await _geoLocator.StartListeningAsync(TimeSpan.FromSeconds(5), 10, false, new Plugin.Geolocator.Abstractions.ListenerSettings
                 {
                     ActivityType = ActivityType.Fitness,
                     AllowBackgroundUpdates = true,
-                    DeferLocationUpdates = true,
+                    DeferLocationUpdates = false,
                     DeferralDistanceMeters = 1,
                     DeferralTime = TimeSpan.FromSeconds(1),
-                    ListenForSignificantChanges = true,
+                    ListenForSignificantChanges = false,
                     PauseLocationUpdatesAutomatically = false
                 });
 
