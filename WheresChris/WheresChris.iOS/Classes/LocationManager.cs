@@ -49,7 +49,7 @@ namespace WheresChris.iOS.Classes
 
         public void StartLocationUpdates()
         {
-            Analytics.TrackEvent("LocationManager_StartLocationUpdates_Start");
+            //Analytics.TrackEvent("LocationManager_StartLocationUpdates_Start");
             if (!CLLocationManager.LocationServicesEnabled) return;
 
             //set the desired accuracy, in meters
@@ -83,14 +83,14 @@ namespace WheresChris.iOS.Classes
             };
 
             _locationSender = LocationSender.GetInstance();
-            Analytics.TrackEvent("LocationManager_LocationSender_GotInstance", new Dictionary<string, string>
-                {
-                    {"IsInitialized", _locationSender.IsInitialized.ToString()},
-                });
+            //Analytics.TrackEvent("LocationManager_LocationSender_GotInstance", new Dictionary<string, string>
+            //    {
+            //        {"IsInitialized", _locationSender.IsInitialized.ToString()},
+            //    });
 
 
             ClLocationManager.StartUpdatingLocation();
-            Analytics.TrackEvent("LocationManager_ClLocationManager_StartUpdatingLocation");
+            //Analytics.TrackEvent("LocationManager_ClLocationManager_StartUpdatingLocation");
         }
 
         private async Task SendPositionUpdate()

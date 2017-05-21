@@ -235,7 +235,7 @@ Debugger.Break();
 
                 if (!_geoLocator.IsGeolocationEnabled || !_geoLocator.IsGeolocationAvailable) return;
 
-                await _geoLocator.StartListeningAsync(TimeSpan.FromSeconds(5), 1, false, new Plugin.Geolocator.Abstractions.ListenerSettings
+                await _geoLocator.StartListeningAsync(TimeSpan.FromSeconds(30), 15, false, new Plugin.Geolocator.Abstractions.ListenerSettings
                 {
                     ActivityType = ActivityType.Fitness,
                     AllowBackgroundUpdates = true,
@@ -266,6 +266,7 @@ Debugger.Break();
         {
             try
             {
+                Analytics.TrackEvent($"LocationSender_LocatorOnPositionChanged");
                 await SendUpdatePosition();
             }
             catch (Exception ex)
@@ -305,6 +306,7 @@ Debugger.Break();
                     Name = _nickName
                 };
 
+                Analytics.TrackEvent("LocationSender_SendUpdatePosition");
                 await SendUpdatePosition(groupMemberVm);
             }
             catch (Exception ex)
@@ -728,7 +730,7 @@ Debugger.Break();
                 await InvokeChatHubProxy("updatePosition", groupMemberVm);
 
                 MessagingCenter.Send(this, LocationSentMsg);
-
+                Analytics.TrackEvent("LocationSender_SendUpdatePosition_groupMemberVm");
             }
             catch (Exception ex)
             {

@@ -105,13 +105,13 @@ namespace WheresChris.iOS
             {
                 LocationManager.UserPhoneNumber = phoneNumber;
             }
-            Analytics.TrackEvent("AppDelegate_InitializeBackgroundLocation_StartLocationUpdates");
+            //Analytics.TrackEvent("AppDelegate_InitializeBackgroundLocation_StartLocationUpdates");
             LocationManager.StartLocationUpdates();
 
-            Analytics.TrackEvent("AppDelegate_InitializeBackgroundLocation_InitializeEvents");
+            //Analytics.TrackEvent("AppDelegate_InitializeBackgroundLocation_InitializeEvents");
             InitializeEvents(LocationManager);
 
-            Analytics.TrackEvent("AppDelegate_InitializeBackgroundLocation_Finished");
+            //Analytics.TrackEvent("AppDelegate_InitializeBackgroundLocation_Finished");
         }
 
 	    public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
@@ -125,21 +125,21 @@ namespace WheresChris.iOS
             var count = 0;
             while (count < 3)
             {
-                Analytics.TrackEvent("AppDelegate_TryToStartLocationService_StartingWhile");
+                //Analytics.TrackEvent("AppDelegate_TryToStartLocationService_StartingWhile");
 
                 var phonePermissionGranted = PermissionHelper.HasPhonePermission().Result;
                 var locationPermissionGranted = PermissionHelper.HasLocationPermission().Result;
                 var contactPermissionGranted = PermissionHelper.HasContactPermission().Result;
 
-                Analytics.TrackEvent("AppDelegate_TryToStartLocationService", new Dictionary<string, string>
-                {
-                    {"phonePermissionGranted", phonePermissionGranted.ToString()},
-                    {"locationPermissionGranted", locationPermissionGranted.ToString()},
-                    {"contactPermissionGranted", contactPermissionGranted.ToString()},
-                });
+                //Analytics.TrackEvent("AppDelegate_TryToStartLocationService", new Dictionary<string, string>
+                //{
+                //    {"phonePermissionGranted", phonePermissionGranted.ToString()},
+                //    {"locationPermissionGranted", locationPermissionGranted.ToString()},
+                //    {"contactPermissionGranted", contactPermissionGranted.ToString()},
+                //});
                 if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
                 {
-                    Analytics.TrackEvent("AppDelegate_TryToStartLocationService_Calling_InitializeBackgroundLocation");
+                    //Analytics.TrackEvent("AppDelegate_TryToStartLocationService_Calling_InitializeBackgroundLocation");
                     InitializeBackgroundLocation();
                     return;
                 }
