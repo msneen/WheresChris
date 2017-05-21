@@ -18,129 +18,164 @@ using Permission = Android.Content.PM.Permission;
 
 namespace WheresChris.Droid
 {
-    [Activity(Label = "WheresChris.Android", Theme = "@style/splashscreen", MainLauncher = true, 
-        LaunchMode = LaunchMode.SingleTop, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation,
-        ScreenOrientation = ScreenOrientation.Portrait)]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
-    {
-        public LocationSenderBinder Binder;
-        public bool IsBound;
-        private LocationSenderServiceConnection _locationSenderServiceConnection;
+	[Activity(Label = "WheresChris.Android", Theme = "@style/splashscreen", MainLauncher = true,
+		LaunchMode = LaunchMode.SingleTop, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation,
+		ScreenOrientation = ScreenOrientation.Portrait)]
+	public class MainActivity : Xamarin.Forms.Platform.Android.FormsAppCompatActivity
+	{
+		public LocationSenderBinder Binder;
+		public bool IsBound;
+		private LocationSenderServiceConnection _locationSenderServiceConnection;
 
-        public const int SdkVersionMarshmallow = 23;
+		public const int SdkVersionMarshmallow = 23;
 
-        protected override void OnNewIntent(Intent intent)
-        {
-            base.OnNewIntent(intent);
-            NotificationStrategyController.GetNotificationHandler(intent)?.OnNotify(intent);
-        }
+		protected override void OnNewIntent(Intent intent)
+		{
+			base.OnNewIntent(intent);
+			NotificationStrategyController.GetNotificationHandler(intent)?.OnNotify(intent);
+		}
 
-        protected override async void OnCreate(Bundle bundle)
-        {
-            MobileCenter.LogLevel = LogLevel.Verbose;
-            MobileCenter.Start("14162ca6-0c56-4822-9d95-f265b524bd98", typeof(Analytics), typeof(Crashes), typeof(Distribute));
+		protected override async void OnCreate(Bundle bundle)
+		{
+			MobileCenter.LogLevel = LogLevel.Verbose;
+			MobileCenter.Start("14162ca6-0c56-4822-9d95-f265b524bd98", typeof(Analytics), typeof(Crashes), typeof(Distribute));
 
-            NotificationStrategyController.GetNotificationHandler(Intent)?.OnNotify(Intent);
+			NotificationStrategyController.GetNotificationHandler(Intent)?.OnNotify(Intent);
 
-            TabLayoutResource = Resource.Layout.Tabbar;
-            ToolbarResource = Resource.Layout.Toolbar;
-            global::Xamarin.Forms.Forms.Init(this, bundle);
-            Xamarin.FormsMaps.Init(this, bundle);
-            ToastNotification.Init(this);
+			TabLayoutResource = Resource.Layout.Tabbar;
+			ToolbarResource = Resource.Layout.Toolbar;
+			Xamarin.Forms.Forms.Init(this, bundle);
+			Xamarin.FormsMaps.Init(this, bundle);
+			ToastNotification.Init(this);
 
-            SetTheme(Resource.Style.MyTheme);
-            base.OnCreate(bundle);
+			SetTheme(Resource.Style.MyTheme);
+			base.OnCreate(bundle);
 
-            await TryToStartLocationService();
-        }
+			await TryToStartLocationService();
 
-        private async Task TryToStartLocationService()
-        {
-            var phonePermissionGranted = await PermissionHelper.HasPhonePermission();
-            var locationPermissionGranted = await PermissionHelper.HasLocationPermission();
-            var contactPermissionGranted = await PermissionHelper.HasContactPermission();
+		}
 
-            if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
-            {
-                LoadApplication(new App());
-                //await App.InitializeContacts();
-                Task.Run(()=>StartLocationService()).Wait();
-                
-            }
-            else if (!locationPermissionGranted)
-            {
-                await PermissionHelper.RequestLocationPermission();
-            }
-            else if (!phonePermissionGranted)
-            {
-                await PermissionHelper.RequestPhonePermission();
-            }
-            else
-            {
-                await PermissionHelper.RequestContactPermission();
-            }
-        }
+		private async Task TryToStartLocationService()
+		{
+			var phonePermissionGranted = await PermissionHelper.HasPhonePermission();
+			var contactPermissionGranted = await PermissionHelper.HasContactPermission();
+			var locationPermissionGranted = await PermissionHelper.HasLocationPermission();
+			if (locationPermissionGranted)
+			{
+				TryStartGps();
+			}
 
-        private bool _locationServiceStarted = false;
-        private void StartLocationService()
-        {
-            if (_locationServiceStarted) return;
+			if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
+			{
+				LoadApplication(new App());
+				StartLocationService();
+			}
+			else if (!locationPermissionGranted)
+			{
+				await PermissionHelper.RequestLocationPermission();
+			}
+			else if (!phonePermissionGranted)
+			{
+				await PermissionHelper.RequestPhonePermission();
+			}
+			else
+			{
+				await PermissionHelper.RequestContactPermission();
+			}
 
-            StartService(new Intent(this, typeof(LocationSenderService)));
-            
-            _locationServiceStarted = true;
-        }
+		}
 
-        protected void BindToService()
-        {
-            _locationSenderServiceConnection = new LocationSenderServiceConnection(this);
+		private void TryStartGps()
+		{
+			var isGpsEnabled = GpsService.IsGpsEnabled();
+			if (!isGpsEnabled)
+			{
+				isGpsEnabled = GpsService.EnableGps();
+				if (!isGpsEnabled)
+				{
+					ShowAlert(); // Prompt user to turn on GPS
+				}
+			}
+		}
 
-            BindService(new Intent(this, typeof(LocationSenderService)), _locationSenderServiceConnection, Bind.AutoCreate);
-            IsBound = true;
-        }
+		private bool _locationServiceStarted = false;
+		private void StartLocationService()
+		{
+			if (_locationServiceStarted) return;
 
-        protected void UnbindFromService()
-        {
-            if (!IsBound) return;
-            UnbindService(_locationSenderServiceConnection);
-            IsBound = false;
-        }
+			StartService(new Intent(this, typeof(LocationSenderService)));
 
-        public async Task CleanupGroupsForExit()
-        {
-            var locationSender = await LocationSender.GetInstanceAsync();
-            await locationSender.LeaveGroup();
-            await locationSender.EndGroup();
-        }
+			_locationServiceStarted = true;
+		}
 
-        protected override void OnPause()
-        {
-            base.OnPause();
-            Binder?.GetLocationSenderService()?.StartForeground();
-            UnbindFromService();
-        }
+		protected void BindToService()
+		{
+			_locationSenderServiceConnection = new LocationSenderServiceConnection(this);
 
-        protected override void OnResume()
-        {
-            base.OnResume();
-            Binder?.GetLocationSenderService()?.StopForeground();
-            BindToService();
-        }
+			BindService(new Intent(this, typeof(LocationSenderService)), _locationSenderServiceConnection, Bind.AutoCreate);
+			IsBound = true;
+		}
 
-        protected override async void OnDestroy()
-        {
-            base.OnDestroy();
-            await CleanupGroupsForExit();
-            Binder?.GetLocationSenderService()?.StopSelf();
-            Process.KillProcess(Process.MyPid());
-            System.Environment.Exit(0);
-        }
+		protected void UnbindFromService()
+		{
+			if (!IsBound) return;
+			UnbindService(_locationSenderServiceConnection);
+			IsBound = false;
+		}
 
-        public override async void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
-        {
-            PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+		public async Task CleanupGroupsForExit()
+		{
+			var locationSender = await LocationSender.GetInstanceAsync();
+			await locationSender.LeaveGroup();
+			await locationSender.EndGroup();
+		}
 
-            await TryToStartLocationService();
-        }
-    }
+		protected override void OnPause()
+		{
+			base.OnPause();
+			Binder?.GetLocationSenderService()?.StartForeground();
+			UnbindFromService();
+		}
+
+		protected override void OnResume()
+		{
+			base.OnResume();
+			Binder?.GetLocationSenderService()?.StopForeground();
+			BindToService();
+		}
+
+		protected override async void OnDestroy()
+		{
+			base.OnDestroy();
+			await CleanupGroupsForExit();
+			Binder?.GetLocationSenderService()?.StopSelf();
+			Process.KillProcess(Process.MyPid());
+			System.Environment.Exit(0);
+		}
+
+		public void ShowAlert()
+		{
+			var alertDialogBuilder =	InitializeAlertDialog();
+			RunOnUiThread(() => alertDialogBuilder.Show());
+		}
+
+		private AlertDialog.Builder InitializeAlertDialog()
+		{
+			const string message = "You must enable GPS Location Services in your device settings in order to use this application.";
+			const string title = "Notice";
+			const string buttonText = "OK";
+			var alertDialogBuilder = new AlertDialog.Builder(this)
+				.SetTitle(title)
+				.SetMessage(message)
+				.SetPositiveButton(buttonText, (s2, e2) => { });
+			return alertDialogBuilder;
+		}
+
+		public override async void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
+		{
+			PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+
+			await TryToStartLocationService();
+		}
+	}
 }
