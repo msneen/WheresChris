@@ -104,7 +104,7 @@ namespace StayTogether.Helpers
         {
             var positionList = new List<Plugin.Geolocator.Abstractions.Position>();
             CrossGeolocator.Current.DesiredAccuracy = 100;
-            for (var i = 0; i < 20; i++)
+            for (var i = 0; i < 10; i++)
             {
                 var position = await CrossGeolocator.Current.GetPositionAsync(new TimeSpan(0, 0, 10));
                 AddToMinMaxAgg(position);
@@ -136,8 +136,9 @@ namespace StayTogether.Helpers
 
         private static  Position GetMedianPosition(List<Position> positionListAll)
         {
+            //.Accuracy is in meters
             //I'm taking about 20 location readings, then sorting from most to least accurate, and taking the top 3 most accurate.
-            var positionList = positionListAll.OrderByDescending(p => p.Accuracy).Skip(0).Take(3).ToList();
+            var positionList = positionListAll.OrderBy(p => p.Accuracy).Skip(0).Take(3).ToList();
             var medianLatitude = positionList.OrderBy(l => l.Latitude).ToArray()[1].Latitude;
             var medianLongitude = positionList.OrderBy(l => l.Longitude).ToArray()[1].Longitude;
             var userPosition = new Plugin.Geolocator.Abstractions.Position
