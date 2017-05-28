@@ -12,6 +12,12 @@ namespace StayTogether.Helpers
 {
     public class PositionHelper
     {
+        public static double MinAccuracy { get; set; }
+        public static double MaxAccuracy { get; set; }
+        public static double AvgAccuracy { get; set; }
+
+        public static event EventHandler OnAccuracyChanged;
+
         public static Plugin.Geolocator.Abstractions.Position GetCentralGeoCoordinate(List<Plugin.Geolocator.Abstractions.Position> geoCoordinates)
         {
             if (geoCoordinates.Count == 1)
@@ -98,11 +104,12 @@ namespace StayTogether.Helpers
         {
             var positionList = new List<Plugin.Geolocator.Abstractions.Position>();
             CrossGeolocator.Current.DesiredAccuracy = 100;
-            for (var i = 0; i < 3; i++)
+            for (var i = 0; i < 20; i++)
             {
                 var position = await CrossGeolocator.Current.GetPositionAsync(new TimeSpan(0, 0, 10));
+                AddToMinMaxAgg(position);
                 positionList.Add(position);
-                await Task.Delay(10000);
+                await Task.Delay(1000);
             }
 
             var userPosition = GetMedianPosition(positionList);
@@ -111,8 +118,26 @@ namespace StayTogether.Helpers
             return mapPosition;
         }
 
-        private static Position GetMedianPosition(List<Position> positionList)
+        private static void AddToMinMaxAgg(Position position)
         {
+            if (position.Accuracy < MinAccuracy)
+            {
+                MinAccuracy = position.Accuracy;
+            }
+            if (position.Accuracy > MaxAccuracy)
+            {
+                MaxAccuracy = position.Accuracy;
+            }
+
+            var lastAvg = (AvgAccuracy + position.Accuracy)/2;
+            AvgAccuracy = lastAvg;
+            OnAccuracyChanged?.Invoke(null, new EventArgs());
+        }
+
+        private static  Position GetMedianPosition(List<Position> positionListAll)
+        {
+            //I'm taking about 20 location readings, then sorting from most to least accurate, and taking the top 3 most accurate.
+            var positionList = positionListAll.OrderByDescending(p => p.Accuracy).Skip(0).Take(3).ToList();
             var medianLatitude = positionList.OrderBy(l => l.Latitude).ToArray()[1].Latitude;
             var medianLongitude = positionList.OrderBy(l => l.Longitude).ToArray()[1].Longitude;
             var userPosition = new Plugin.Geolocator.Abstractions.Position

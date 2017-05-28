@@ -24,7 +24,8 @@
                 <Span Text="Where's Chris" FontAttributes="Bold" FontSize="22"/>
                 <Span Text=" "/>
                 <Span x:Name="VersionSpan" Text="" ForegroundColor="{StaticResource LightTextColor}"/>
-              </FormattedString.Spans>
+                <Span x:Name="LocationSpan" Text="" ForegroundColor="{StaticResource LightTextColor}"/>
+            </FormattedString.Spans>
             </FormattedString>
           </Label.FormattedText>
         </Label>
