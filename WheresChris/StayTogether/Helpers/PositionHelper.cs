@@ -103,7 +103,7 @@ namespace StayTogether.Helpers
         public static async Task<Xamarin.Forms.Maps.Position?> GetMapPosition()
         {
             var positionList = new List<Plugin.Geolocator.Abstractions.Position>();
-            CrossGeolocator.Current.DesiredAccuracy = 100;
+            CrossGeolocator.Current.DesiredAccuracy = 30;
             for (var i = 0; i < 10; i++)
             {
                 var position = await CrossGeolocator.Current.GetPositionAsync(new TimeSpan(0, 0, 10));
@@ -113,6 +113,7 @@ namespace StayTogether.Helpers
             }
 
             var userPosition = GetMedianPosition(positionList);
+            if (userPosition == null) return null;
             if (!LocationValid(userPosition)) return null;
             var mapPosition = PositionConverter.Convert(userPosition);
             return mapPosition;
@@ -138,7 +139,9 @@ namespace StayTogether.Helpers
         {
             //.Accuracy is in meters
             //I'm taking about 20 location readings, then sorting from most to least accurate, and taking the top 3 most accurate.
-            var positionList = positionListAll.OrderBy(p => p.Accuracy).Skip(0).Take(3).ToList();
+            var positionList = positionListAll.Where(x=>x.Accuracy < 100.0).OrderBy(p => p.Accuracy).Skip(0).Take(3).ToList();
+            if  (!positionList.Any()) return null;
+
             var medianLatitude = positionList.OrderBy(l => l.Latitude).ToArray()[1].Latitude;
             var medianLongitude = positionList.OrderBy(l => l.Longitude).ToArray()[1].Longitude;
             var userPosition = new Plugin.Geolocator.Abstractions.Position
