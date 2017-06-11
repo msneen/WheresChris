@@ -42,7 +42,7 @@ namespace WheresChris.Droid
 			MobileCenter.Start("14162ca6-0c56-4822-9d95-f265b524bd98", typeof(Analytics), typeof(Crashes), typeof(Distribute));
 
 #pragma warning disable 618
-            MobileAds.Initialize(ApplicationContext, "ca-app-pub-5660348862902976~5206709443");
+            MobileAds.Initialize(ApplicationContext, "ca-app-pub-5660348862902976~9593604641");
 #pragma warning restore 618
 
             NotificationStrategyController.GetNotificationHandler(Intent)?.OnNotify(Intent);

@@ -26,9 +26,27 @@ namespace WheresChris.Droid
 
             adView.LayoutParameters = adParams;
 
-            adView.LoadAd(new AdRequest
-                            .Builder()
-                            .Build());
+            var adMobListener = new AdMobListener();
+            adMobListener.AdLoaded += () =>
+            {
+                Toast.MakeText(this.Context, "Ad Loaded", ToastLength.Long).Show();
+            };
+            adMobListener.AdFailedLoading += code =>
+            {
+                Toast.MakeText(this.Context, $"Ad Loading Failed {code}", ToastLength.Long).Show();
+            };
+            adView.AdListener = adMobListener;
+
+            var builder = new AdRequest
+                .Builder();
+
+#if DEBUG
+            // Google requires the usage of test ads while debugging
+            builder.AddTestDevice(AdRequest.DeviceIdEmulator);
+#endif
+            var adRequest = builder.Build();
+
+            adView.LoadAd(adRequest);
             return adView;
         }
 

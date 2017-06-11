@@ -296,6 +296,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdListener.cs" />
     <Compile Include="AdViewRenderer.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MainApplication.cs" />

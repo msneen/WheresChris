@@ -17,7 +17,9 @@
     <ContentPage.Content>
         
         <RelativeLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-            <controls:AdView x:Name="AdView"/>
+            <controls:AdView x:Name="AdView"
+                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1.0, Constant=0}"
+                RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.4, Constant=0}"/>
             
             <Label x:Name="MessageLabel"  FontSize="Large" TextColor="Red"
                 RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.2, Constant=0}"
