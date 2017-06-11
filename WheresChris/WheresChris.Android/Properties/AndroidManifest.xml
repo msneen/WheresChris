@@ -8,6 +8,10 @@
 		<!--Debug Key-->
 		<!--<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyBIRMJINtz4ZamDLnLLk7zx8xuKwC2BstM" />-->
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+    <activity
+            android:name="com.google.android.gms.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:theme="@android:style/Theme.Translucent" />
 	</application>
 	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="WheresChris.Views.MainPage"             
              xmlns:vm="clr-namespace:WheresChris.ViewModels;"
+             xmlns:controls="clr-namespace:WheresChris.Controls;assembly=WheresChris"
              Title="{Binding Title}">
     <ContentPage.BindingContext>
         <vm:MainViewModel />
@@ -14,8 +15,10 @@
                     WinPhone="20, 20, 20, 20" />
     </ContentPage.Padding>
     <ContentPage.Content>
+        
         <RelativeLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-
+            <controls:AdView x:Name="AdView"/>
+            
             <Label x:Name="MessageLabel"  FontSize="Large" TextColor="Red"
                 RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.2, Constant=0}"
                 RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.1, Constant=0}" />

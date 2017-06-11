@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\AdView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\GroupActionsHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\PermissionHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LocationSenderFactory.cs" />
