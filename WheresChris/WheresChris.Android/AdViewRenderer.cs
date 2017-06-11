@@ -29,7 +29,7 @@ namespace WheresChris.Droid
             var adMobListener = new AdMobListener();
             adMobListener.AdLoaded += () =>
             {
-                Toast.MakeText(this.Context, "Ad Loaded", ToastLength.Long).Show();
+               // Toast.MakeText(this.Context, "Ad Loaded", ToastLength.Long).Show();
             };
             adMobListener.AdFailedLoading += code =>
             {
