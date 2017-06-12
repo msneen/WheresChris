@@ -39,7 +39,6 @@ namespace WheresChris.iOS
 
             MobileCenter.Start("2cd11ff1-c5b1-47d8-ac96-9fa5b74a47bd", typeof(Analytics), typeof(Crashes), typeof(Distribute));
 
-            MobileAds.Configure("ca-app-pub-5660348862902976~4046598647");
             Xamarin.FormsMaps.Init();
             TKCustomMapRenderer.InitMapRenderer();
             ToastNotification.Init();
@@ -145,23 +144,21 @@ namespace WheresChris.iOS
                 if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
                 {
                     //Analytics.TrackEvent("AppDelegate_TryToStartLocationService_Calling_InitializeBackgroundLocation");
+                    MobileAds.Configure("ca-app-pub-5660348862902976~4046598647");
                     InitializeBackgroundLocation();
                     return;
                 }
                 if (!locationPermissionGranted)
                 {
                     PermissionHelper.RequestLocationPermission().Wait();
-                    Task.Delay(4000);
                 }
                 else if (!phonePermissionGranted)
                 {
                     PermissionHelper.RequestPhonePermission().Wait();
-                    Task.Delay(4000);
                 }
                 else
                 {
                     PermissionHelper.RequestContactPermission().Wait();
-                    Task.Delay(4000);
                 }
                 count++;
             }
