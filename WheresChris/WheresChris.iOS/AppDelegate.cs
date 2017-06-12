@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Foundation;
+using Google.MobileAds;
 using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
@@ -35,6 +36,8 @@ namespace WheresChris.iOS
 			global::Xamarin.Forms.Forms.Init();
 
             MobileCenter.Start("2cd11ff1-c5b1-47d8-ac96-9fa5b74a47bd", typeof(Analytics), typeof(Crashes), typeof(Distribute));
+
+            MobileAds.Configure("ca-app-pub-5660348862902976~4046598647");
             Xamarin.FormsMaps.Init();
             TKCustomMapRenderer.InitMapRenderer();
             ToastNotification.Init();
