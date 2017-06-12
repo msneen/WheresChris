@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="WheresChris.Views.MainPage"             
              xmlns:vm="clr-namespace:WheresChris.ViewModels;"
-             xmlns:controls="clr-namespace:WheresChris.Controls;assembly=WheresChris"
+             xmlns:controls="clr-namespace:WheresChris.Controls;"
              Title="{Binding Title}">
+
     <ContentPage.BindingContext>
         <vm:MainViewModel />
     </ContentPage.BindingContext>
