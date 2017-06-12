@@ -393,9 +393,6 @@
   <ItemGroup>
     <BundleResource Include="Images\RadioButton\unchecked%402x.png" />
   </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="GoogleService-Info.plist" />
-  </ItemGroup>
   <Import Project="..\WheresChris\WheresChris.projitems" Label="Shared" Condition="Exists('..\WheresChris\WheresChris.projitems')" />
   <Import Project="..\StayTogether\StayTogether.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
