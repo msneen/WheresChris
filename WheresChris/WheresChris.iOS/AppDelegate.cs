@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using Foundation;
 using Google.MobileAds;
 using Microsoft.Azure.Mobile;
@@ -149,14 +151,17 @@ namespace WheresChris.iOS
                 if (!locationPermissionGranted)
                 {
                     PermissionHelper.RequestLocationPermission().Wait();
+                    Task.Delay(4000);
                 }
                 else if (!phonePermissionGranted)
                 {
                     PermissionHelper.RequestPhonePermission().Wait();
+                    Task.Delay(4000);
                 }
                 else
                 {
                     PermissionHelper.RequestContactPermission().Wait();
+                    Task.Delay(4000);
                 }
                 count++;
             }
