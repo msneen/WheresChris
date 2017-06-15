@@ -10,9 +10,9 @@ namespace WheresChris.Droid
     {
 
         string adUnitId = string.Empty;
-        AdSize adSize = AdSize.SmartBanner;
+        AdSize adSize = AdSize.Banner;
         AdView adView;
-        AdView CreateNativeControl()
+        protected override AdView CreateNativeControl()
         {
             if (adView != null)
                 return adView;
@@ -21,20 +21,22 @@ namespace WheresChris.Droid
             adView = new AdView(Forms.Context);
             adView.AdSize = adSize;
             adView.AdUnitId = adUnitId;
+            //adView.SetBackgroundColor(Android.Graphics.Color.Yellow);
 
             var adParams = new LinearLayout.LayoutParams(LayoutParams.WrapContent, LayoutParams.WrapContent);
 
             adView.LayoutParameters = adParams;
 
             var adMobListener = new AdMobListener();
-            adMobListener.AdLoaded += () =>
-            {
-               // Toast.MakeText(this.Context, "Ad Loaded", ToastLength.Long).Show();
-            };
-            adMobListener.AdFailedLoading += code =>
-            {
-                Toast.MakeText(this.Context, $"Ad Loading Failed {code}", ToastLength.Long).Show();
-            };
+            //adMobListener.AdLoaded += () =>
+            //{
+            //   //Toast.MakeText(this.Context, "Ad Loaded", ToastLength.Long).Show();
+                
+            //};
+            //adMobListener.AdFailedLoading += code =>
+            //{
+            //    //Toast.MakeText(this.Context, $"Ad Loading Failed {code}", ToastLength.Long).Show();
+            //};
             adView.AdListener = adMobListener;
 
             var builder = new AdRequest
@@ -42,6 +44,8 @@ namespace WheresChris.Droid
 
 #if DEBUG
             // Google requires the usage of test ads while debugging
+            builder.AddTestDevice("212388ABD8ECDEB3BE3B4FF54CA2ED1B");
+            builder.AddTestDevice("B76D7531DD702469C4DD628F6D07935A");
             builder.AddTestDevice(AdRequest.DeviceIdEmulator);
 #endif
             var adRequest = builder.Build();
