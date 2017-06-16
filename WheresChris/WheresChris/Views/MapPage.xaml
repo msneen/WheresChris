@@ -4,26 +4,30 @@
              xmlns:maps="clr-namespace:Xamarin.Forms.Maps;assembly=Xamarin.Forms.Maps"
              xmlns:tmaps="clr-namespace:TK;assembly=TK.CustomMap"
              xmlns:customMap="clr-namespace:TK.CustomMap;assembly=TK.CustomMap"
+             xmlns:controls="clr-namespace:WheresChris.Controls;"
              x:Class="WheresChris.Views.MapPage">
-    <RelativeLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-        <customMap:TKCustomMap x:Name="GroupMap" MapType="Hybrid"
-                RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height,Factor=0.84,Constant=0}"
-                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=0}"
-                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=1.0,Constant=0}"/>
+    <StackLayout>
+        <controls:AdView x:Name="AdView"/>
+        <RelativeLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+            <customMap:TKCustomMap x:Name="GroupMap" MapType="Hybrid"
+                    RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height,Factor=0.84,Constant=0}"
+                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=0}"
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=1.0,Constant=0}"/>
 
-        <RelativeLayout Padding="5,0,0,0"
-                RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.84, Constant=0}">
-            
-            <Button x:Name="AddMembersButton" Text="Add" Clicked="AddMembersButton_OnClicked"  
-                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
-                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}"/>
-            <Button x:Name="ViewMembersButton" Text="Members" Clicked="ViewMembersButton_OnClicked"    
-                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=0}"
-                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}"/>
-            <Button x:Name="LeaveGroupButton" Text="Leave" Clicked="LeaveGroupButton_OnClicked"
-                RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0, Constant=40}"
-                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.3, Constant=0}"
-                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.4,Constant=0}" />
+            <RelativeLayout Padding="5,0,0,0"
+                    RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.84, Constant=0}">
+
+                <Button x:Name="AddMembersButton" Text="Add" Clicked="AddMembersButton_OnClicked"  
+                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}"/>
+                <Button x:Name="ViewMembersButton" Text="Members" Clicked="ViewMembersButton_OnClicked"    
+                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=0}"
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}"/>
+                <Button x:Name="LeaveGroupButton" Text="Leave" Clicked="LeaveGroupButton_OnClicked"
+                    RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0, Constant=40}"
+                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.3, Constant=0}"
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.4,Constant=0}" />
+            </RelativeLayout>
         </RelativeLayout>
-    </RelativeLayout>
+    </StackLayout>
 </ContentPage>
