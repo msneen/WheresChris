@@ -2,11 +2,10 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="WheresChris.Views.InvitePage"
-             xmlns:controls="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
              Title="{Binding Title}">
 
-    <StackLayout>
-        <RelativeLayout Padding="5,0,0,0">
+    <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+        <RelativeLayout Padding="5,0,0,0" VerticalOptions="Start">
             <Entry x:Name="SearchEntry"
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.7,Constant=0}"/>
@@ -18,7 +17,9 @@
             x:Name="ContactsListView"
             HasUnevenRows="true"  
             IsPullToRefreshEnabled="false"          
-            CachingStrategy="RecycleElement">
+            CachingStrategy="RecycleElement"
+            HorizontalOptions="FillAndExpand"
+            VerticalOptions="FillAndExpand">
             <ListView.Header>
                 <StackLayout Padding="10" 
                        Orientation="Horizontal"
@@ -49,7 +50,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <RelativeLayout Padding="5,0,0,0">
+        <RelativeLayout Padding="5,0,0,0" VerticalOptions="End" HorizontalOptions="FillAndExpand">
             <Picker x:Name="ExpirationPicker"
                 RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.25,Constant=0}"/>
