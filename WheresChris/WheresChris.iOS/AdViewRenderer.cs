@@ -1,5 +1,6 @@
 ﻿using Google.MobileAds;
 using System;
+using StayTogether.Helpers;
 using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
@@ -9,6 +10,7 @@ namespace WheresChris.iOS
 {
     public class AdViewRenderer : ViewRenderer<WheresChris.Controls.AdView, BannerView>
     {
+        private static readonly Interval Interval = new Interval();
         string bannerId = "ca-app-pub-5660348862902976/5523331842";
         BannerView adView;
         BannerView CreateNativeControl()
@@ -24,15 +26,23 @@ namespace WheresChris.iOS
                 RootViewController = GetVisibleViewController()
             };
 
-            // Wire AdReceived event to know when the Ad is ready to be displayed
-            adView.AdReceived += (object sender, EventArgs e) =>
-            {
-                //ad has come in
-            };
+            //// Wire AdReceived event to know when the Ad is ready to be displayed
+            //adView.AdReceived += (object sender, EventArgs e) =>
+            //{
+            //    //ad has come in
+            //};
 
+            Interval.SetInterval(LoadAdd, 30000);//adView.LoadRequest(GetRequest());
 
-            adView.LoadRequest(GetRequest());
             return adView;
+        }
+
+        //Call this from AppDelegate or android service
+        public void LoadAdd()
+        {
+            Device.BeginInvokeOnMainThread(() => {
+                adView.LoadRequest(GetRequest());
+            });
         }
 
         Request GetRequest()
