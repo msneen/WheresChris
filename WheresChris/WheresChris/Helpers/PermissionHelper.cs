@@ -38,18 +38,18 @@ namespace WheresChris.Helpers
             return phonePermission == PermissionStatus.Granted;
         }
 
-        public static async Task RequestPhonePermission()
+        public static async Task<PermissionStatus> RequestPhonePermission()
         {
-            await RequestPermission(Permission.Phone, "Phone Permission", "We need permission to access your phone");
+            return await RequestPermission(Permission.Phone, "Phone Permission", "We need permission to access your phone");
         }
-        public static async Task RequestLocationPermission()
+        public static async Task<PermissionStatus> RequestLocationPermission()
         {
-            await RequestPermission(Permission.Location, "Location Permission", "We need permission to access your location");
+            return await RequestPermission(Permission.Location, "Location Permission", "We need permission to access your location");
         }
 
-        public static async Task RequestContactPermission()
+        public static async Task<PermissionStatus> RequestContactPermission()
         {
-            await RequestPermission(Permission.Contacts, "Contacts Permission", "We need permission to access your contacts");
+            return await RequestPermission(Permission.Contacts, "Contacts Permission", "We need permission to access your contacts");
         }
 
         private static async Task<PermissionStatus> RequestPermission(Permission permission, string title, string body)

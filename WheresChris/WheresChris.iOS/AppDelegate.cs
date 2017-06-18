@@ -54,7 +54,7 @@ namespace WheresChris.iOS
 
             //Analytics.TrackEvent("AppDelegate_InitializingTimer");
             _interval = new Interval();
-            _interval.SetInterval(TryToStartLocationService().Wait , 10000);
+            _interval.SetInterval(TryToStartLocationService , 10000);
 
             return base.FinishedLaunching(app, options);
 		}
@@ -121,7 +121,7 @@ namespace WheresChris.iOS
             NotificationStrategyHandler.ReceiveNotification(notification, UIApplication.SharedApplication.KeyWindow);
         }
 
-	    private async Task TryToStartLocationService()
+	    private void TryToStartLocationService()
 	    {
 	        try
 	        {
@@ -129,15 +129,15 @@ namespace WheresChris.iOS
                 //while (count < 3)
                 //{
 
-                    var phonePermissionGranted = await PermissionHelper.HasPhonePermission();
-                    var locationPermissionGranted = await PermissionHelper.HasLocationPermission();
-                    var contactPermissionGranted = await PermissionHelper.HasContactPermission();
+                    //var phonePermissionGranted = await PermissionHelper.HasPhonePermission();
+                    //var locationPermissionGranted = await PermissionHelper.HasLocationPermission();
+                    //var contactPermissionGranted = await PermissionHelper.HasContactPermission();
 
-                    if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
-                    {
-                        InitializeBackgroundLocation();
+                    //if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
+                    //{
+                InitializeBackgroundLocation();
                         //return;
-                    }
+                    //}
                     //if (!locationPermissionGranted)
                     //{
                     //    PermissionHelper.RequestLocationPermission().Wait();

@@ -5,6 +5,7 @@ using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
 using Microsoft.Azure.Mobile.Distribute;
+using Plugin.Permissions.Abstractions;
 using StayTogether.Helpers;
 using WheresChris.Helpers;
 using WheresChris.Views;
@@ -67,9 +68,15 @@ namespace WheresChris
         public static void InitializeContacts()
         {
             Device.BeginInvokeOnMainThread(async ()=>{
-                var inviteNavigationPage = (NavigationPage)GetPage("Invite");
-                var invitePage = (InvitePage)inviteNavigationPage.CurrentPage;
-                await invitePage.InitializeContactsAsync();
+                var permissionStatus = await PermissionHelper.RequestContactPermission();
+                if (permissionStatus == PermissionStatus.Granted)
+                {
+                    var inviteNavigationPage = (NavigationPage)GetPage("Invite");
+                    if (inviteNavigationPage == null) return;
+                    var invitePage = (InvitePage)inviteNavigationPage.CurrentPage;
+                    if (invitePage == null) return;
+                    await invitePage.InitializeContactsAsync();
+                }
             });
         }
 

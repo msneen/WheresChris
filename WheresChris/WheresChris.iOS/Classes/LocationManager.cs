@@ -49,7 +49,10 @@ namespace WheresChris.iOS.Classes
 
         public void StartLocationUpdates()
         {
-            //Analytics.TrackEvent("LocationManager_StartLocationUpdates_Start");
+            var locationPermissionGranted = PermissionHelper.HasLocationPermission().Result;
+            if (!locationPermissionGranted) return;
+
+
             if (!CLLocationManager.LocationServicesEnabled) return;
 
             //set the desired accuracy, in meters
