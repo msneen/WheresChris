@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Plugin.Geolocator;
 using Plugin.Toasts;
+using StayTogether.Helpers;
 using WheresChris.Helpers;
 using WheresChris.Messaging;
 using Xamarin.Forms;
@@ -15,6 +16,7 @@ namespace WheresChris.Views
     public partial class MainPage : ContentPage
     {
         public LocationSentEvent LocationSentEvent;
+        private static readonly Interval PermissionRequest = new Interval();
 
         public MainPage()
         {
@@ -68,10 +70,18 @@ namespace WheresChris.Views
 
         private void CheckLocationServicesEnabled()
         {
-            if (!(CrossGeolocator.Current.IsGeolocationAvailable && CrossGeolocator.Current.IsGeolocationEnabled))
+            Device.BeginInvokeOnMainThread(() =>
             {
-                MessageLabel.Text = "Please enable your Location in phone settings!";
-            }
+                if (!(CrossGeolocator.Current.IsGeolocationAvailable && CrossGeolocator.Current.IsGeolocationEnabled))
+                {
+                    MessageLabel.Text = "Please enable your Location in phone settings!";
+                    PermissionRequest.SetInterval(CheckLocationServicesEnabled, 10000);
+                }
+                else
+                {
+                    MessageLabel.Text = "";
+                }
+            });
         }
 
         public void StartGroup(object sender, EventArgs e)

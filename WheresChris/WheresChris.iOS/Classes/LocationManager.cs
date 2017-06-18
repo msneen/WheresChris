@@ -49,7 +49,7 @@ namespace WheresChris.iOS.Classes
 
         public void StartLocationUpdates()
         {
-            var locationPermissionGranted = PermissionHelper.HasLocationPermission().Result;
+            var locationPermissionGranted = PermissionHelper.HasOrRequestLocationPermission().Result;
             if (!locationPermissionGranted) return;
 
 

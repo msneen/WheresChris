@@ -129,9 +129,9 @@ namespace WheresChris.iOS
                 //while (count < 3)
                 //{
 
-                    //var phonePermissionGranted = await PermissionHelper.HasPhonePermission();
-                    //var locationPermissionGranted = await PermissionHelper.HasLocationPermission();
-                    //var contactPermissionGranted = await PermissionHelper.HasContactPermission();
+                    //var phonePermissionGranted = await PermissionHelper.HasOrRequestPhonePermission();
+                    //var locationPermissionGranted = await PermissionHelper.HasOrRequestLocationPermission();
+                    //var contactPermissionGranted = await PermissionHelper.HasOrRequestContactPermission();
 
                     //if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
                     //{

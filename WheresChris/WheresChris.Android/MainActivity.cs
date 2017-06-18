@@ -62,9 +62,9 @@ namespace WheresChris.Droid
 
 		private async Task TryToStartLocationService()
 		{
-			var phonePermissionGranted = await PermissionHelper.HasPhonePermission();
-			var contactPermissionGranted = await PermissionHelper.HasContactPermission();
-			var locationPermissionGranted = await PermissionHelper.HasLocationPermission();
+			var phonePermissionGranted = await PermissionHelper.HasOrRequestPhonePermission();
+			var contactPermissionGranted = await PermissionHelper.HasOrRequestContactPermission();
+			var locationPermissionGranted = await PermissionHelper.HasOrRequestLocationPermission();
 			if (locationPermissionGranted)
 			{
 				TryStartGps();

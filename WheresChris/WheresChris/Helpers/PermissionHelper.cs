@@ -8,36 +8,56 @@ namespace WheresChris.Helpers
 {
     public class PermissionHelper
     {
+        public static async Task<bool> HasNecessaryPermissionsWithRequest()
+        {
+            //var phonePermissionGranted = await HasOrRequestPhonePermission();
+            var locationPermissionGranted = await HasOrRequestLocationPermission();
+            var contactPermissionGranted = await HasOrRequestContactPermission();
+            return /*phonePermissionGranted &&*/ locationPermissionGranted && contactPermissionGranted;
+        }
+
         public static async Task<bool> HasNecessaryPermissions()
         {
-            var phonePermissionGranted = await HasPhonePermission();
-            var locationPermissionGranted = await HasLocationPermission();
-            var contactPermissionGranted = await HasContactPermission();
-            return phonePermissionGranted && locationPermissionGranted && contactPermissionGranted;
+            var locationPermissionsGranted = await HasLocationPermission();
+            var contactsPermissionsGranted = await HastContactPermission();
+            return locationPermissionsGranted && contactsPermissionsGranted;
         }
 
 
-        public static async Task<bool> HasPhonePermission()
+        public static async Task<bool> HasOrRequestPhonePermission()
         {
             var phonePermissionStatus = await RequestPhonePermission();
             return phonePermissionStatus == PermissionStatus.Granted;
         }
-        public static async Task<bool> HasLocationPermission()
+        public static async Task<bool> HasOrRequestLocationPermission()
         {
             var locationPermissionStatus = await RequestLocationPermission();
             return locationPermissionStatus == PermissionStatus.Granted;
         }
 
-        public static async Task<bool> HasContactPermission()
+        public static async Task<bool> HasOrRequestContactPermission()
         {
             var contactPermissionStatus =  await RequestContactPermission();
             return contactPermissionStatus == PermissionStatus.Granted;
         }
 
-        private static async Task<bool> HasPermission(Permission permission)
+        public static async Task<bool> HasPhonePermission()
         {
-            var phonePermission =
-                await CrossPermissions.Current.CheckPermissionStatusAsync(permission);
+            return await HasPermission(Permission.Phone);
+        }
+        public static async Task<bool> HasLocationPermission()
+        {
+            return await HasPermission(Permission.Location);
+        }
+
+        public static async Task<bool> HastContactPermission()
+        {
+            return await HasPermission(Permission.Contacts);
+        }
+
+        private static async Task<bool> HasPermission(Permission permission)
+        {            
+            var phonePermission = await CrossPermissions.Current.CheckPermissionStatusAsync(permission);
             return phonePermission == PermissionStatus.Granted;
         }
 

@@ -27,7 +27,13 @@ namespace WheresChris
             SetMainPage().Wait();     
         }
 
-        private static readonly Interval Interval = new Interval();
+        private static readonly Interval InitialContactInterval = new Interval();
+        private static readonly Interval PermissionRequest = new Interval();
+        private static readonly Interval AddPagesInterval = new Interval();
+        private static int _permisionRequestIntervalTime = 5000;
+        private static int _addPagesIntervalTime = 15000;
+        private static int _initializeContactsIntervalTime = 5000;
+
         public static async Task SetMainPage()
         {
             try
@@ -36,17 +42,18 @@ namespace WheresChris
 
                 AddPage(new MainPage(), "Main");
 
-                var hasPermissions = await PermissionHelper.HasNecessaryPermissions();
-                if (hasPermissions)
+                var alreadyHasPermissions = await PermissionHelper.HasNecessaryPermissions();
+                if (alreadyHasPermissions)
                 {
-                    AddPage(new InvitePage(), "Invite");
-                    AddPage(new JoinPage(), "Join");
-                    AddPage(new MapPage(), "Map");
+                    _permisionRequestIntervalTime = 500;
+                    _addPagesIntervalTime = 500;
                 }
+
+                PermissionRequest.SetInterval(InsertPagesNeedingPermissions().Wait, _permisionRequestIntervalTime);
+                //await InsertPagesNeedingPermissions();
+
                 AddPage(new AboutPage(), "About");
                 Current.MainPage = _mainTabbedPage;
-
-                Interval.SetInterval(InitializeContacts, 5000);
             }
             catch (System.Exception ex)
             {
@@ -54,14 +61,57 @@ namespace WheresChris
             }
         }
 
+        private static async Task InsertPagesNeedingPermissions()
+        {
+            var hasPermissions = await PermissionHelper.HasNecessaryPermissionsWithRequest();
+            if (hasPermissions)
+            {
+                AddPagesInterval.SetInterval(InsertPages, _addPagesIntervalTime);
+
+            }
+            else
+            {
+                PermissionRequest.SetInterval(InsertPagesNeedingPermissions().Wait, _permisionRequestIntervalTime);
+            }
+        }
+
+        private static void InsertPages()
+        {
+            InsertPageBeforeAbout(new InvitePage(), "Invite");
+            InsertPageBeforeAbout(new JoinPage(), "Join");
+            InsertPageBeforeAbout(new MapPage(), "Map");
+
+            InitialContactInterval.SetInterval(InitializeContacts, _initializeContactsIntervalTime);
+        }
+
         private static void AddPage(Page page, string title)
         {
+            var existingNavigationPage = GetPage(title) as NavigationPage;
+            if (existingNavigationPage != null) return;
+
             var navigationPage = new NavigationPage(page)
             {
                 Title = title,
                 Icon = Device.OnPlatform("tab_feed.png", null, null),
             };
             _mainTabbedPage.Children.Add(navigationPage);
+        }
+
+        private static void InsertPageBeforeAbout(Page page, string title)
+        {
+            Device.BeginInvokeOnMainThread(() => {
+                var existingNavigationPage = GetPage(title) as NavigationPage;
+                if (existingNavigationPage != null) return;
+
+                var navigationPage = new NavigationPage(page)
+                {
+                    Title = title,
+                    Icon = Device.OnPlatform("tab_feed.png", null, null),
+                };
+                var lastIndex = _mainTabbedPage.Children.Count - 1;
+
+                _mainTabbedPage.Children.Insert(lastIndex, navigationPage);
+            });
         }
 
         //Call this from AppDelegate or android service
