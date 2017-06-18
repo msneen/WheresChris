@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using Foundation;
 using Google.MobileAds;
@@ -37,13 +38,14 @@ namespace WheresChris.iOS
 		{
 			global::Xamarin.Forms.Forms.Init();
 
-            MobileCenter.Start("2cd11ff1-c5b1-47d8-ac96-9fa5b74a47bd", typeof(Analytics), typeof(Crashes), typeof(Distribute));
-            MobileAds.Configure("ca-app-pub-5660348862902976~4046598647");
+            MobileCenter.Start("2cd11ff1-c5b1-47d8-ac96-9fa5b74a47bd", typeof(Analytics), typeof(Crashes)/*, typeof(Distribute)*/);
+            
 
             Xamarin.FormsMaps.Init();
             TKCustomMapRenderer.InitMapRenderer();
             ToastNotification.Init();
             InitializeToastPlugin(app);
+            MobileAds.Configure("ca-app-pub-5660348862902976~4046598647");
 
             LoadApplication(new App());
 
@@ -52,13 +54,7 @@ namespace WheresChris.iOS
 
             //Analytics.TrackEvent("AppDelegate_InitializingTimer");
             _interval = new Interval();
-            _interval.SetInterval(()=>
-            {
-                //Analytics.TrackEvent("AppDelegate_BackgroundStarting");
-                TryToStartLocationService();
-            }
-		    , 10000);
-
+            _interval.SetInterval(TryToStartLocationService , 10000);
 
             return base.FinishedLaunching(app, options);
 		}
@@ -160,6 +156,7 @@ namespace WheresChris.iOS
                 {
                     PermissionHelper.RequestContactPermission().Wait();
                 }
+                Task.Delay(10000);
                 count++;
             }
         }
