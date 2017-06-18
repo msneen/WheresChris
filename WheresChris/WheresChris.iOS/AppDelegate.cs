@@ -38,6 +38,7 @@ namespace WheresChris.iOS
 			global::Xamarin.Forms.Forms.Init();
 
             MobileCenter.Start("2cd11ff1-c5b1-47d8-ac96-9fa5b74a47bd", typeof(Analytics), typeof(Crashes), typeof(Distribute));
+            MobileAds.Configure("ca-app-pub-5660348862902976~4046598647");
 
             Xamarin.FormsMaps.Init();
             TKCustomMapRenderer.InitMapRenderer();
@@ -57,7 +58,7 @@ namespace WheresChris.iOS
                 TryToStartLocationService();
             }
 		    , 10000);
-            
+
 
             return base.FinishedLaunching(app, options);
 		}
@@ -144,7 +145,6 @@ namespace WheresChris.iOS
                 if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
                 {
                     //Analytics.TrackEvent("AppDelegate_TryToStartLocationService_Calling_InitializeBackgroundLocation");
-                    MobileAds.Configure("ca-app-pub-5660348862902976~4046598647");
                     InitializeBackgroundLocation();
                     return;
                 }

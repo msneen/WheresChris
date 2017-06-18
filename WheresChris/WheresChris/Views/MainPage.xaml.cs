@@ -47,7 +47,7 @@ namespace WheresChris.Views
 
         private static void DisableIfValid(Entry textbox)
         {
-            if (string.IsNullOrWhiteSpace(textbox.Text.Trim())) return;
+            if (string.IsNullOrWhiteSpace(textbox?.Text)) return;
             textbox.IsEnabled = false;
         }
 

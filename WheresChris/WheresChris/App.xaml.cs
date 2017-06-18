@@ -29,21 +29,28 @@ namespace WheresChris
         private static readonly Interval Interval = new Interval();
         public static async Task SetMainPage()
         {
-            _mainTabbedPage = new TabbedPage();
-
-            AddPage(new MainPage(), "Main");
-
-            var hasPermissions = await PermissionHelper.HasNecessaryPermissions();
-            if (hasPermissions)
+            try
             {
-                AddPage(new InvitePage(), "Invite");
-                AddPage(new JoinPage(), "Join");
-                AddPage(new MapPage(), "Map");
-            }
-            AddPage(new AboutPage(), "About");           
-            Current.MainPage = _mainTabbedPage;
+                _mainTabbedPage = new TabbedPage();
 
-            Interval.SetInterval(InitializeContacts, 5000);
+                AddPage(new MainPage(), "Main");
+
+                var hasPermissions = await PermissionHelper.HasNecessaryPermissions();
+                if (hasPermissions)
+                {
+                    AddPage(new InvitePage(), "Invite");
+                    AddPage(new JoinPage(), "Join");
+                    AddPage(new MapPage(), "Map");
+                }
+                AddPage(new AboutPage(), "About");
+                Current.MainPage = _mainTabbedPage;
+
+                Interval.SetInterval(InitializeContacts, 5000);
+            }
+            catch (System.Exception ex)
+            {
+                
+            }
         }
 
         private static void AddPage(Page page, string title)

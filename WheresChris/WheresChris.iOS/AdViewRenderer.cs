@@ -1,15 +1,13 @@
-﻿using CoreGraphics;
-using Google.MobileAds;
+﻿using Google.MobileAds;
 using System;
 using UIKit;
-using WheresChris.Controls;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
 
 [assembly: ExportRenderer(typeof(WheresChris.Controls.AdView), typeof(WheresChris.iOS.AdViewRenderer))]
 namespace WheresChris.iOS
 {
-    public class AdViewRenderer : ViewRenderer<Controls.AdView, BannerView>
+    public class AdViewRenderer : ViewRenderer<WheresChris.Controls.AdView, BannerView>
     {
         string bannerId = "ca-app-pub-5660348862902976/5523331842";
         BannerView adView;
@@ -20,8 +18,7 @@ namespace WheresChris.iOS
 
 
             // Setup your BannerView, review AdSizeCons class for more Ad sizes. 
-            adView = new BannerView(size: AdSizeCons.SmartBannerPortrait,
-                                           origin: new CGPoint(0, UIScreen.MainScreen.Bounds.Size.Height - AdSizeCons.Banner.Size.Height))
+            adView = new BannerView(size: AdSizeCons.Banner)
             {
                 AdUnitID = bannerId,
                 RootViewController = GetVisibleViewController()
@@ -72,7 +69,7 @@ namespace WheresChris.iOS
             return rootController.PresentedViewController;
         }
 
-        protected override void OnElementChanged(ElementChangedEventArgs<AdView> elementChangedEventArgs)
+        protected void OnElementChanged(ElementChangedEventArgs<WheresChris.Controls.AdView> elementChangedEventArgs)
         {
             base.OnElementChanged(elementChangedEventArgs);
             if (Control == null)

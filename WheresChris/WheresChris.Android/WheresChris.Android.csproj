@@ -337,8 +337,8 @@
   <ItemGroup>
     <AndroidResource Include="Resources\values\strings.xml" />
   </ItemGroup>
-  <Import Project="..\WheresChris\WheresChris.projitems" Label="Shared" Condition="Exists('..\WheresChris\WheresChris.projitems')" />
   <Import Project="..\StayTogether\StayTogether.projitems" Label="Shared" />
+  <Import Project="..\WheresChris\WheresChris.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
