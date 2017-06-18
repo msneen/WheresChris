@@ -19,16 +19,19 @@ namespace WheresChris.Helpers
 
         public static async Task<bool> HasPhonePermission()
         {
-            return await HasPermission(Permission.Phone);
+            var phonePermissionStatus = await RequestPhonePermission();
+            return phonePermissionStatus == PermissionStatus.Granted;
         }
         public static async Task<bool> HasLocationPermission()
         {
-            return await HasPermission(Permission.Location);
+            var locationPermissionStatus = await RequestLocationPermission();
+            return locationPermissionStatus == PermissionStatus.Granted;
         }
 
         public static async Task<bool> HasContactPermission()
         {
-            return await HasPermission(Permission.Contacts);
+            var contactPermissionStatus =  await RequestContactPermission();
+            return contactPermissionStatus == PermissionStatus.Granted;
         }
 
         private static async Task<bool> HasPermission(Permission permission)
