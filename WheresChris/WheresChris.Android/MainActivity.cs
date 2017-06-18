@@ -19,7 +19,7 @@ using Permission = Android.Content.PM.Permission;
 
 namespace WheresChris.Droid
 {
-	[Activity(Label = "WheresChris.Android", Theme = "@style/splashscreen", MainLauncher = true,
+	[Activity(Label = "WheresChris", Theme = "@style/splashscreen", MainLauncher = true,
 		LaunchMode = LaunchMode.SingleTop, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation,
 		ScreenOrientation = ScreenOrientation.Portrait)]
 	public class MainActivity : Xamarin.Forms.Platform.Android.FormsAppCompatActivity
