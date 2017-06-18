@@ -54,7 +54,7 @@ namespace WheresChris.iOS
 
             //Analytics.TrackEvent("AppDelegate_InitializingTimer");
             _interval = new Interval();
-            _interval.SetInterval(TryToStartLocationService , 10000);
+            _interval.SetInterval(TryToStartLocationService().Wait , 10000);
 
             return base.FinishedLaunching(app, options);
 		}
@@ -121,43 +121,45 @@ namespace WheresChris.iOS
             NotificationStrategyHandler.ReceiveNotification(notification, UIApplication.SharedApplication.KeyWindow);
         }
 
-	    private void TryToStartLocationService()
+	    private async Task TryToStartLocationService()
 	    {
-            var count = 0;
-            while (count < 3)
-            {
-                //Analytics.TrackEvent("AppDelegate_TryToStartLocationService_StartingWhile");
-
-                var phonePermissionGranted = PermissionHelper.HasPhonePermission().Result;
-                var locationPermissionGranted = PermissionHelper.HasLocationPermission().Result;
-                var contactPermissionGranted = PermissionHelper.HasContactPermission().Result;
-
-                //Analytics.TrackEvent("AppDelegate_TryToStartLocationService", new Dictionary<string, string>
+	        try
+	        {
+                //var count = 0;
+                //while (count < 3)
                 //{
-                //    {"phonePermissionGranted", phonePermissionGranted.ToString()},
-                //    {"locationPermissionGranted", locationPermissionGranted.ToString()},
-                //    {"contactPermissionGranted", contactPermissionGranted.ToString()},
-                //});
-                if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
+
+                    var phonePermissionGranted = await PermissionHelper.HasPhonePermission();
+                    var locationPermissionGranted = await PermissionHelper.HasLocationPermission();
+                    var contactPermissionGranted = await PermissionHelper.HasContactPermission();
+
+                    if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
+                    {
+                        InitializeBackgroundLocation();
+                        //return;
+                    }
+                    //if (!locationPermissionGranted)
+                    //{
+                    //    PermissionHelper.RequestLocationPermission().Wait();
+                    //}
+                    //if (!phonePermissionGranted)
+                    //{
+                    //    PermissionHelper.RequestPhonePermission().Wait();
+                    //}
+                    //else
+                    //{
+                    //    PermissionHelper.RequestContactPermission().Wait();
+                    //}
+                    //Task.Delay(10000);
+                    //count++;
+               // }
+            }
+            catch (System.Exception ex)
+            {
+                Analytics.TrackEvent("TryToStartLocationService", new Dictionary<string, string>
                 {
-                    //Analytics.TrackEvent("AppDelegate_TryToStartLocationService_Calling_InitializeBackgroundLocation");
-                    InitializeBackgroundLocation();
-                    return;
-                }
-                if (!locationPermissionGranted)
-                {
-                    PermissionHelper.RequestLocationPermission().Wait();
-                }
-                else if (!phonePermissionGranted)
-                {
-                    PermissionHelper.RequestPhonePermission().Wait();
-                }
-                else
-                {
-                    PermissionHelper.RequestContactPermission().Wait();
-                }
-                Task.Delay(10000);
-                count++;
+                    { "Error",  ex.Message}
+                });
             }
         }
 

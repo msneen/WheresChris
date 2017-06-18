@@ -54,6 +54,10 @@ namespace WheresChris.Helpers
 
         private static async Task<PermissionStatus> RequestPermission(Permission permission, string title, string body)
         {
+            var existingPermission = await CrossPermissions.Current.CheckPermissionStatusAsync(permission);
+            if (existingPermission == PermissionStatus.Granted) return existingPermission;
+
+
             if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
             {
                 Plugin.LocalNotifications.CrossLocalNotifications.Current.Show(title, body);
