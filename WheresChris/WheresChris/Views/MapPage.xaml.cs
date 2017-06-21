@@ -19,6 +19,7 @@ namespace WheresChris.Views
 	public partial class MapPage : ContentPage
 	{
         private bool _mapInitialized = false;
+        private Interval _positionInitializationInterval = new Interval();
 
         public GroupPositionChangedEvent GroupPositionChangedEvent;
         public GroupLeftEvent GroupLeftEvent;
@@ -40,15 +41,15 @@ namespace WheresChris.Views
 	    }
 
 
-	    protected override async void OnAppearing()
+	    protected override void OnAppearing()
 	    {
 	        if (_mapInitialized) return;
-	        await Task.Delay(3000).ContinueWith(async t =>
-	        {
-	            await InitializeMap();
-	        });
-	        _mapInitialized = true;
-	    }
+            _positionInitializationInterval.SetInterval(InitializeMap().Wait, 3000);
+            //await Task.Delay(3000).ContinueWith(async t =>
+            //{
+            //       _mapInitialized = await InitializeMap();
+            //});
+        }
 
         /// <summary>
         /// This event is fired when a group position update is received from the server
@@ -87,7 +88,14 @@ namespace WheresChris.Views
         private async Task InitializeMap()
         {
             var justMeList = await GetMyPositionList();
+            if (justMeList == null)
+            {
+                _mapInitialized = false;
+                _positionInitializationInterval.SetInterval(InitializeMap().Wait, 3000);
+                return;
+            };
             UpdateMap(justMeList);
+            _mapInitialized = true;
         }
 
 	    private static async Task<List<GroupMemberSimpleVm>> GetMyPositionList()
