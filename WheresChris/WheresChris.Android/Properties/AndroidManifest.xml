@@ -1,17 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.whereschris.WheresChris" android:versionCode="1" android:versionName="1.0.1" android:installLocation="auto">
 	<uses-sdk android:minSdkVersion="19" android:targetSdkVersion="23" />
-	<application android:label="WheresChris" android:name="WheresChris">
+	<application android:label="WheresChris" android:name="WheresChris" android:icon="@drawable/ic_launcher">
 		<!--release key-->
 		<!---->
 		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyAXVq9MOAJCJ9nBYscWnxYzXywOJfYDbeY" />
 		<!--Debug Key-->
 		<!--<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyBIRMJINtz4ZamDLnLLk7zx8xuKwC2BstM" />-->
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
-    <activity
-            android:name="com.google.android.gms.ads.AdActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-            android:theme="@android:style/Theme.Translucent" />
+		<activity android:name="com.google.android.gms.ads.AdActivity" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" android:theme="@android:style/Theme.Translucent" />
 	</application>
 	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
