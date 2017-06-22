@@ -292,9 +292,6 @@
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-Small-40@2x.png">
       <InProject>false</InProject>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-Small-40@3x.png">
-      <InProject>false</InProject>
-    </ImageAsset>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-Small.png">
       <InProject>false</InProject>
     </ImageAsset>
