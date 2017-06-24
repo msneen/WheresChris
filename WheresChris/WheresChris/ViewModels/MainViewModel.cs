@@ -5,6 +5,7 @@
         public MainViewModel()
         {
             Title = "Where's Chris - Main";
+            Name = "Main";
         }
     }
 }

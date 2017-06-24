@@ -66,7 +66,7 @@ namespace WheresChris.Droid
                 LoadApplication(new App());
 
 
-                //await TryToStartLocationService();
+                await TryToStartLocationService();
             }
 		    catch (Exception ex)
 		    {
@@ -79,7 +79,7 @@ namespace WheresChris.Droid
 
 		private async Task TryToStartLocationService()
 		{
-             _backgroundServiceInterval.SetInterval(StartLocationService, 120000);
+             _backgroundServiceInterval.SetInterval(StartLocationService, 60000);
 		}
 
 		private void TryStartGps()

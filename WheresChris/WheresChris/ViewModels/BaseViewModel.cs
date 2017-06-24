@@ -31,6 +31,14 @@ namespace WheresChris.ViewModels
 			get { return title; }
 			set { SetProperty(ref title, value); }
 		}
+
+	    string name = string.Empty;
+
+	    public string Name
+	    {
+            get { return name; }
+            set { SetProperty(ref name, value); }
+	    }
 	}
 }
 

@@ -53,10 +53,10 @@ namespace WheresChris.Droid.Services
 
         private async Task InitializeLocationSender()
         {
-            var locationPermissionGranted = await PermissionHelper.HasOrRequestLocationPermission();
+            var locationPermissionGranted = await PermissionHelper.HasLocationPermission();
             if (!locationPermissionGranted) return;
 
-            var phonePermissionGranted = await PermissionHelper.HasOrRequestPhonePermission();
+            var phonePermissionGranted = await PermissionHelper.HasPhonePermission();
             if (!phonePermissionGranted) return;
 
             _locationSender = await LocationSender.GetInstanceAsync();

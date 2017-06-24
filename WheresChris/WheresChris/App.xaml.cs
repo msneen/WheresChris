@@ -123,9 +123,9 @@ namespace WheresChris
 
         public static Page GetPage(string title)
         {
-            if (GetMainTab()?.Children.Count > 0) return null;
+            if (GetMainTab()?.Children.Count <= 0) return null;
 
-            var requestedPage = GetMainTab()?.Children.FirstOrDefault(x => x.Title == title);
+            var requestedPage = GetMainTab()?.Children.FirstOrDefault(x => x.Title.EndsWith(title));
             if (requestedPage == null) return null;
 
             var index = GetMainTab().Children.IndexOf(requestedPage);

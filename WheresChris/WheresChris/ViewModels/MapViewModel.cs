@@ -5,6 +5,7 @@
         public MapViewModel()
         {
             Title = "Where's Chris - Map";
+            Name = "Map";
         }
     }
 }

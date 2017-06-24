@@ -11,6 +11,7 @@ namespace WheresChris.Views
     public class InvitePageViewModel : INotifyPropertyChanged
     {
         public string Title { get; set; }
+        public string Name { get; set; }
         public ObservableCollection<ContactDisplayItemVm> Items { get; set; }
 
         public object ExpirationInHoursIndex { get; set; }
@@ -18,6 +19,7 @@ namespace WheresChris.Views
         public InvitePageViewModel()
         {
             Title = "Where's Chris - Invite";
+            Name = "Invite";
             RefreshDataCommand = new Command(
                 async () => await RefreshData());
         }
