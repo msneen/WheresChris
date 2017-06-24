@@ -1,5 +1,7 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using StayTogether.Helpers;
+using WheresChris.Helpers;
 using Xamarin.Forms;
 
 namespace WheresChris.Views
@@ -36,6 +38,11 @@ namespace WheresChris.Views
 	            $"\n\r\n\rmin={System.Math.Round(PositionHelper.MinAccuracy)}\n\rmax={System.Math.Round(PositionHelper.MaxAccuracy)}\n\ravg={System.Math.Round(PositionHelper.AvgAccuracy)}";
 
 	        LocationSpan.Text = locationAccuracy;
+	    }
+
+	    private void BtnReset_OnClicked(object sender, EventArgs e)
+	    {
+	        SettingsHelper.ResetData();
 	    }
 	}
 }

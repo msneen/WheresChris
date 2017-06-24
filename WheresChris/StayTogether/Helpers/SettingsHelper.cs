@@ -57,5 +57,11 @@ namespace WheresChris.Helpers
             CrossSettings.Current.AddOrUpdateValue("nickname", nickname.Trim());
             return nickname.Trim();
         }
+
+        public static void ResetData()
+        {
+            CrossSettings.Current.AddOrUpdateValue("phonenumber", string.Empty);
+            CrossSettings.Current.AddOrUpdateValue("nickname", string.Empty);
+        }
     }
 }
