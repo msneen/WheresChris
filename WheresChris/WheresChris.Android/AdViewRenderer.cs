@@ -21,7 +21,6 @@ namespace WheresChris.Droid
             adView = new AdView(Forms.Context);
             adView.AdSize = adSize;
             adView.AdUnitId = adUnitId;
-            //adView.SetBackgroundColor(Android.Graphics.Color.Yellow);
 
             var adParams = new LinearLayout.LayoutParams(LayoutParams.WrapContent, LayoutParams.WrapContent);
 

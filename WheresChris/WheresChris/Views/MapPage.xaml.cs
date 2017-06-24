@@ -27,7 +27,7 @@ namespace WheresChris.Views
 
         public MapPage ()
 		{
-            Title = "Map";
+            Title = "Where's Chris - Map";
             InitializeComponent ();
             InitializeMessagingCenterSubscriptions();
             SetFormEnabled(false);

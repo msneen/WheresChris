@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -18,7 +17,7 @@ namespace WheresChris.Views
 
         public InvitePageViewModel()
         {
-
+            Title = "Where's Chris - Invite";
             RefreshDataCommand = new Command(
                 async () => await RefreshData());
         }

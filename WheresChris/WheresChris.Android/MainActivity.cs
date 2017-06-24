@@ -17,7 +17,6 @@ using StayTogether.Droid.NotificationCenter;
 using StayTogether.Droid.Services;
 using StayTogether.Helpers;
 using WheresChris.Droid.Services;
-using WheresChris.Helpers;
 using Permission = Android.Content.PM.Permission;
 
 namespace WheresChris.Droid
@@ -41,7 +40,7 @@ namespace WheresChris.Droid
 			NotificationStrategyController.GetNotificationHandler(intent)?.OnNotify(intent);
 		}
 
-		protected override /* async */ void OnCreate(Bundle bundle)
+		protected override async void OnCreate(Bundle bundle)
 		{
 		    try
 		    {
@@ -80,15 +79,7 @@ namespace WheresChris.Droid
 
 		private async Task TryToStartLocationService()
 		{
-            
-            var locationPermissionGranted = await PermissionHelper.HasOrRequestLocationPermission();
-            var phonePermissionGranted = await PermissionHelper.HasOrRequestPhonePermission();
-
-			if (locationPermissionGranted && phonePermissionGranted)
-			{
-                _backgroundServiceInterval.SetInterval(StartLocationService, 120000);
-
-            }
+             _backgroundServiceInterval.SetInterval(StartLocationService, 120000);
 		}
 
 		private void TryStartGps()
@@ -177,11 +168,9 @@ namespace WheresChris.Droid
 			return alertDialogBuilder;
 		}
 
-		public override async void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
+		public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
 		{
 			PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-
-			await TryToStartLocationService();
 		}
 	}
 }

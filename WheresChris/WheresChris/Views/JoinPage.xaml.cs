@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using StayTogether;
 using WheresChris.Messaging;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using XLabs;
 
 namespace WheresChris.Views
 {
@@ -22,11 +16,11 @@ namespace WheresChris.Views
 
         public JoinPage()
         {
-            Title = "Join Group";
+            Title = "Where's Chris - Join Group";
             InitializeComponent();
             BindingContext = new JoinPageViewModel
             {
-                Title = "Join Group"
+                Title = "Where's Chris - Join Group"
             };
             InitializeMessagingCenterSubscriptions();
         }

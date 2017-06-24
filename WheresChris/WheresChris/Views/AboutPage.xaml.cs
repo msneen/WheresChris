@@ -1,14 +1,6 @@
-﻿
-using System.Reflection;
+﻿using System.Reflection;
 using StayTogether.Helpers;
-using WheresChris.Helpers;
 using Xamarin.Forms;
-#if __ANDROID__
-
-#endif
-#if __IOS__
-
-#endif
 
 namespace WheresChris.Views
 {
@@ -17,7 +9,7 @@ namespace WheresChris.Views
 		public AboutPage()
 		{
 			InitializeComponent();
-		    Title = "About Where's Chris";
+		    Title = "Where's Chris - About";
 		    DisplayVersionNumber();
 		    PositionHelper.OnAccuracyChanged += (sender, args) =>
 		    {
@@ -27,10 +19,10 @@ namespace WheresChris.Views
 
 	    private void DisplayVersionNumber()
 	    {
-	        var permissions = PermissionHelper.GetNecessaryPermissionInformation().Result;
+	        //var permissions = PermissionHelper.GetNecessaryPermissionInformation().Result;
 	        var version = Assembly.GetExecutingAssembly().GetName().Version;
 	        var versionNumber = $"{version.Major}.{version.Minor}.{version.Build}";
-	        VersionSpan.Text = versionNumber + permissions;
+	        VersionSpan.Text = versionNumber;
 	    }
 
 	    protected override void OnAppearing()
@@ -41,7 +33,7 @@ namespace WheresChris.Views
 	    private void GetAccuracy()
 	    {
 	        var locationAccuracy =
-	            $"\n\r\n\rmin={PositionHelper.MinAccuracy}\n\rmax={PositionHelper.MaxAccuracy}\n\ravg={PositionHelper.AvgAccuracy}";
+	            $"\n\r\n\rmin={System.Math.Round(PositionHelper.MinAccuracy)}\n\rmax={System.Math.Round(PositionHelper.MaxAccuracy)}\n\ravg={System.Math.Round(PositionHelper.AvgAccuracy)}";
 
 	        LocationSpan.Text = locationAccuracy;
 	    }

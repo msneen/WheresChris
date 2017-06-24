@@ -5,6 +5,7 @@ using Android.OS;
 using StayTogether;
 using StayTogether.Droid.NotificationCenter;
 using StayTogether.Droid.Services;
+using WheresChris.Helpers;
 
 namespace WheresChris.Droid.Services
 {
@@ -47,29 +48,29 @@ namespace WheresChris.Droid.Services
 
         private void StartLocationSender()
         {
-            InitializeLocationSender();
+            Task.Run(InitializeLocationSender).Wait();            
         }
 
-        private void InitializeLocationSender()
+        private async Task InitializeLocationSender()
         {
-            Task.Run(async () => { _locationSender = await LocationSender.GetInstanceAsync(); }).Wait();
+            var locationPermissionGranted = await PermissionHelper.HasOrRequestLocationPermission();
+            if (!locationPermissionGranted) return;
+
+            var phonePermissionGranted = await PermissionHelper.HasOrRequestPhonePermission();
+            if (!phonePermissionGranted) return;
+
+            _locationSender = await LocationSender.GetInstanceAsync();
+            if (_locationSender == null) return;
 
             _locationSender.OnSomeoneIsLost += (sender, args) =>
             {
-                LostNotification.DisplayLostNotification(args.GroupMember);//OnNotifySomeoneIsLost(args.GroupMember);
+                LostNotification.DisplayLostNotification(args.GroupMember);
             };
             _locationSender.OnGroupInvitationReceived += (sender, args) => 
             {
                 GroupInvitationNotification.DisplayGroupInvitationNotification(args.GroupId, args.Name);
             };
-            //_LocationSender.OnGroupJoined += (sender, args) =>
-            //{
 
-            //};
-            //_LocationSender.OnGroupDisbanded +=(sender, args) =>
-            //{
-
-            //};
             _locationSender.OnSomeoneLeft += (sender, args) =>
             {                
                 LeftGroupNotification.DisplayLostNotification(args.PhoneNumber, args.Name);

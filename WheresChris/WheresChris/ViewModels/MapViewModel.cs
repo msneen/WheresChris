@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace WheresChris.ViewModels
+﻿namespace WheresChris.ViewModels
 {
     public class MapViewModel : BaseViewModel
     {
         public MapViewModel()
         {
-            Title = "Map";
+            Title = "Where's Chris - Map";
         }
     }
 }

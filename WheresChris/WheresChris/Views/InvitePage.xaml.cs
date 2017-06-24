@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.Mobile.Analytics;
-using Plugin.Permissions;
-using Plugin.Permissions.Abstractions;
 using StayTogether.Helpers;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -19,16 +17,16 @@ namespace WheresChris.Views
     {
         public GroupLeftEvent GroupLeftEvent;
         public GroupJoinedEvent GroupJoinedEvent;
-        private Interval _contactInterval = new Interval();
+        private readonly Interval _contactInterval = new Interval();
 
         public InvitePage()
         {
-            Title = "Invite Chris";
+            Title = "Where's Chris - Invite";
             InitializeComponent ();
             InitializeMessagingCenterSubscriptions();
             BindingContext = new InvitePageViewModel
             {
-                Title = "Invite Chris"
+                Title = "Where's Chris - Invite"
             };
             InitializeExpirationPicker();
             _contactInterval.SetInterval(LoadContacts, 5000);                      
@@ -122,13 +120,7 @@ namespace WheresChris.Views
         {
             var hasPermissions = await PermissionHelper.HasOrRequestContactPermission();
 
-            // var status = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Contacts);
-            //if (status != PermissionStatus.Granted)
-            //{
-            //    var results = await CrossPermissions.Current.RequestPermissionsAsync(new[] {Permission.Contacts});
-            //    status = results[Permission.Contacts];
-            //}
-            if(hasPermissions)//if (status == PermissionStatus.Granted)
+            if(hasPermissions)
             {
                 try
                 {

@@ -86,7 +86,7 @@ namespace WheresChris.Helpers
                 Plugin.LocalNotifications.CrossLocalNotifications.Current.Show(title, body);
 
             }
-            var permissionStatus = await CrossPermissions.Current.RequestPermissionsAsync(new[] {permission});
+            var permissionStatus = await CrossPermissions.Current.RequestPermissionsAsync(permission);
 
             return permissionStatus.ContainsKey(permission) ? permissionStatus[permission] : PermissionStatus.Unknown;
         }
