@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -13,6 +15,7 @@ using Plugin.Toasts;
 using StayTogether;
 using StayTogether.Droid.NotificationCenter;
 using StayTogether.Droid.Services;
+using StayTogether.Helpers;
 using WheresChris.Droid.Services;
 using WheresChris.Helpers;
 using Permission = Android.Content.PM.Permission;
@@ -27,8 +30,10 @@ namespace WheresChris.Droid
 		public LocationSenderBinder Binder;
 		public bool IsBound;
 		private LocationSenderServiceConnection _locationSenderServiceConnection;
+        Interval _backgroundServiceInterval = new Interval();
+        Interval _backgroundStartupInterval = new Interval();
 
-		public const int SdkVersionMarshmallow = 23;
+        public const int SdkVersionMarshmallow = 23;
 
 		protected override void OnNewIntent(Intent intent)
 		{
@@ -36,58 +41,54 @@ namespace WheresChris.Droid
 			NotificationStrategyController.GetNotificationHandler(intent)?.OnNotify(intent);
 		}
 
-		protected override async void OnCreate(Bundle bundle)
+		protected override /* async */ void OnCreate(Bundle bundle)
 		{
-			MobileCenter.LogLevel = LogLevel.Verbose;
-			MobileCenter.Start("14162ca6-0c56-4822-9d95-f265b524bd98", typeof(Analytics), typeof(Crashes), typeof(Distribute));
+		    try
+		    {
+		        MobileCenter.LogLevel = LogLevel.Verbose;
+		        MobileCenter.Start("14162ca6-0c56-4822-9d95-f265b524bd98", typeof(Analytics), typeof(Crashes),
+		            typeof(Distribute));
 
 #pragma warning disable 618
-            MobileAds.Initialize(ApplicationContext, "ca-app-pub-5660348862902976~9593604641");
+		        MobileAds.Initialize(ApplicationContext, "ca-app-pub-5660348862902976~9593604641");
 #pragma warning restore 618
 
-            NotificationStrategyController.GetNotificationHandler(Intent)?.OnNotify(Intent);
+		        NotificationStrategyController.GetNotificationHandler(Intent)?.OnNotify(Intent);
 
-			TabLayoutResource = Resource.Layout.Tabbar;
-			ToolbarResource = Resource.Layout.Toolbar;
-			Xamarin.Forms.Forms.Init(this, bundle);
-			Xamarin.FormsMaps.Init(this, bundle);
-			ToastNotification.Init(this);
+		        TabLayoutResource = Resource.Layout.Tabbar;
+		        ToolbarResource = Resource.Layout.Toolbar;
+		        Xamarin.Forms.Forms.Init(this, bundle);
+		        Xamarin.FormsMaps.Init(this, bundle);
+		        ToastNotification.Init(this);
 
-			SetTheme(Resource.Style.MyTheme);
-			base.OnCreate(bundle);
+		        SetTheme(Resource.Style.MyTheme);
+		        base.OnCreate(bundle);
 
-			await TryToStartLocationService();
+                LoadApplication(new App());
 
+
+                //await TryToStartLocationService();
+            }
+		    catch (Exception ex)
+		    {
+                Analytics.TrackEvent("Permissions", new Dictionary<string, string>
+                {
+                    {"MainActivity.cs_OnCreate_Error" , ex.Message}
+                });
+            }
 		}
 
 		private async Task TryToStartLocationService()
 		{
-			var phonePermissionGranted = await PermissionHelper.HasOrRequestPhonePermission();
-			var contactPermissionGranted = await PermissionHelper.HasOrRequestContactPermission();
-			var locationPermissionGranted = await PermissionHelper.HasOrRequestLocationPermission();
-			if (locationPermissionGranted)
-			{
-				TryStartGps();
-			}
+            
+            var locationPermissionGranted = await PermissionHelper.HasOrRequestLocationPermission();
+            var phonePermissionGranted = await PermissionHelper.HasOrRequestPhonePermission();
 
-			if (locationPermissionGranted && phonePermissionGranted && contactPermissionGranted)
+			if (locationPermissionGranted && phonePermissionGranted)
 			{
-				LoadApplication(new App());
-				StartLocationService();
-			}
-			else if (!locationPermissionGranted)
-			{
-				await PermissionHelper.RequestLocationPermission();
-			}
-			else if (!phonePermissionGranted)
-			{
-				await PermissionHelper.RequestPhonePermission();
-			}
-			else
-			{
-				await PermissionHelper.RequestContactPermission();
-			}
+                _backgroundServiceInterval.SetInterval(StartLocationService, 120000);
 
+            }
 		}
 
 		private void TryStartGps()
@@ -108,7 +109,7 @@ namespace WheresChris.Droid
 		{
 			if (_locationServiceStarted) return;
 
-			StartService(new Intent(this, typeof(LocationSenderService)));
+            StartService(new Intent(this, typeof(LocationSenderService)));
 
 			_locationServiceStarted = true;
 		}

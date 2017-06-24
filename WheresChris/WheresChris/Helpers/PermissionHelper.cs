@@ -87,7 +87,8 @@ namespace WheresChris.Helpers
 
             }
             var permissionStatus = await CrossPermissions.Current.RequestPermissionsAsync(new[] {permission});
-            return permissionStatus[permission];    
+
+            return permissionStatus.ContainsKey(permission) ? permissionStatus[permission] : PermissionStatus.Unknown;
         }
 
         public static async Task<string> GetNecessaryPermissionInformation()

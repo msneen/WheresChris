@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Mobile.Analytics;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
+using StayTogether.Helpers;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using WheresChris.Helpers;
@@ -18,6 +19,7 @@ namespace WheresChris.Views
     {
         public GroupLeftEvent GroupLeftEvent;
         public GroupJoinedEvent GroupJoinedEvent;
+        private Interval _contactInterval = new Interval();
 
         public InvitePage()
         {
@@ -28,7 +30,20 @@ namespace WheresChris.Views
             {
                 Title = "Invite Chris"
             };
-            InitializeExpirationPicker();                      
+            InitializeExpirationPicker();
+            _contactInterval.SetInterval(LoadContacts, 5000);                      
+        }
+
+        private void LoadContacts()
+        {
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                var permissionStatus = await PermissionHelper.HasOrRequestContactPermission();
+                if (permissionStatus)
+                {
+                    await InitializeContactsAsync();
+                }
+            });
         }
 
         private void InitializeMessagingCenterSubscriptions()
@@ -104,14 +119,16 @@ namespace WheresChris.Views
         }
 
         public async Task InitializeContactsAsync()
-        { 
-            var status = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Contacts);
-            if (status != PermissionStatus.Granted)
-            {
-                var results = await CrossPermissions.Current.RequestPermissionsAsync(new[] {Permission.Contacts});
-                status = results[Permission.Contacts];
-            }
-            if (status == PermissionStatus.Granted)
+        {
+            var hasPermissions = await PermissionHelper.HasOrRequestContactPermission();
+
+            // var status = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Contacts);
+            //if (status != PermissionStatus.Granted)
+            //{
+            //    var results = await CrossPermissions.Current.RequestPermissionsAsync(new[] {Permission.Contacts});
+            //    status = results[Permission.Contacts];
+            //}
+            if(hasPermissions)//if (status == PermissionStatus.Granted)
             {
                 try
                 {
@@ -120,7 +137,7 @@ namespace WheresChris.Views
                 }
                 catch (Exception ex)
                 {
-                    Analytics.TrackEvent("InvitePage_InitializeContacts", new Dictionary<string, string>
+                    Analytics.TrackEvent("InvitePage_InitializeContacts_error", new Dictionary<string, string>
                     {
                         {"ErrorMessage", ex.Message.Substring(0, Math.Min(60, ex.Message.Length))}
                     });

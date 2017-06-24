@@ -1,4 +1,5 @@
-﻿using Plugin.Settings;
+﻿using System.Threading.Tasks;
+using Plugin.Settings;
 using StayTogether;
 #if __ANDROID__
 using Plugin.Permissions;
@@ -17,22 +18,20 @@ namespace WheresChris.Helpers
         {
             var existingNumber = CrossSettings.Current.GetValueOrDefault<string>("phonenumber");
             var cleanExistingPhone = ContactsHelper.CleanPhoneNumber(existingNumber);
-            if (!string.IsNullOrWhiteSpace(cleanExistingPhone))
-            {
-                return cleanExistingPhone;
-            }
+            return !string.IsNullOrWhiteSpace(cleanExistingPhone) ? cleanExistingPhone : string.Empty;
+        }
 
+        public static async Task<string> GetPhoneNumberFromService()
+        {
 #if __ANDROID__
-            var status = CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Phone).Result;
-            if(status == PermissionStatus.Granted) 
-            {
-                var info = (TelephonyManager)Application.Context.GetSystemService(Context.TelephonyService);
-                var phoneNumber = info.Line1Number;
-                var cleanPhone = ContactsHelper.CleanPhoneNumber(phoneNumber);
-                CrossSettings.Current.AddOrUpdateValue("phonenumber", cleanPhone);
-                return cleanPhone;
-            }
-            return string.Empty;
+            var phonePermission = await PermissionHelper.HasOrRequestPhonePermission();
+            if (!phonePermission) return string.Empty;
+
+            var info = (TelephonyManager)Application.Context.GetSystemService(Context.TelephonyService);
+            var phoneNumber = info.Line1Number;
+            var cleanPhone = ContactsHelper.CleanPhoneNumber(phoneNumber);
+            CrossSettings.Current.AddOrUpdateValue("phonenumber", cleanPhone);
+            return cleanPhone;
 #else
             return string.Empty;
 #endif

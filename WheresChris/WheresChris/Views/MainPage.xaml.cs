@@ -18,18 +18,29 @@ namespace WheresChris.Views
         public LocationSentEvent LocationSentEvent;
         private static readonly Interval PermissionRequest = new Interval();
 
+
         public MainPage()
         {
             InitializeComponent();
             SaveButton.Clicked += SaveButton_OnClicked;
             InitializeMessagingCenterSubscriptions();
-            CheckLocationServicesEnabled();
+            //CheckLocationServicesEnabled();
             InitializePhoneAndNickname();
         }
 
         private void InitializePhoneAndNickname()
         {
             PhoneNumber.Text = SettingsHelper.GetPhoneNumber();
+            if (string.IsNullOrWhiteSpace(PhoneNumber.Text))
+            {
+                Device.BeginInvokeOnMainThread(async ()=>
+                {
+                    var phoneNumber = await SettingsHelper.GetPhoneNumberFromService();
+                    PhoneNumber.Text = phoneNumber;
+                });
+            }
+            
+
             Nickname.Text = SettingsHelper.GetNickname();
 
             DisableIfValid(PhoneNumber);
@@ -68,21 +79,21 @@ namespace WheresChris.Views
         {
         }
 
-        private void CheckLocationServicesEnabled()
-        {
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                if (!(CrossGeolocator.Current.IsGeolocationAvailable && CrossGeolocator.Current.IsGeolocationEnabled))
-                {
-                    MessageLabel.Text = "Please enable your Location in phone settings!";
-                    PermissionRequest.SetInterval(CheckLocationServicesEnabled, 10000);
-                }
-                else
-                {
-                    MessageLabel.Text = "";
-                }
-            });
-        }
+        //private void CheckLocationServicesEnabled()
+        //{
+        //    Device.BeginInvokeOnMainThread(() =>
+        //    {
+        //        if (!(CrossGeolocator.Current.IsGeolocationAvailable && CrossGeolocator.Current.IsGeolocationEnabled))
+        //        {
+        //            MessageLabel.Text = "Please enable your Location in phone settings!";
+        //            PermissionRequest.SetInterval(CheckLocationServicesEnabled, 10000);
+        //        }
+        //        else
+        //        {
+        //            MessageLabel.Text = "";
+        //        }
+        //    });
+        //}
 
         public void StartGroup(object sender, EventArgs e)
         {

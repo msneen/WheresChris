@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Mobile;
@@ -42,59 +43,69 @@ namespace WheresChris
 
                 AddPage(new MainPage(), "Main");
 
-                var alreadyHasPermissions = await PermissionHelper.HasNecessaryPermissions();
-                if (alreadyHasPermissions)
-                {
-                    _permisionRequestIntervalTime = 500;
-                    _addPagesIntervalTime = 500;
-                }
+                //var alreadyHasPermissions = await PermissionHelper.HasNecessaryPermissions();
+                //if (alreadyHasPermissions)
+                //{
+                //    _permisionRequestIntervalTime = 250;
+                //    _addPagesIntervalTime = 250;
+                //}
 
-                PermissionRequest.SetInterval(InsertPagesNeedingPermissions().Wait, _permisionRequestIntervalTime);
-                //await InsertPagesNeedingPermissions();
+                PermissionRequest.SetInterval(InsertPagesNeedingPermissions, _permisionRequestIntervalTime);
 
                 AddPage(new AboutPage(), "About");
                 Current.MainPage = _mainTabbedPage;
             }
             catch (System.Exception ex)
             {
-                
+                Analytics.TrackEvent("Permissions", new Dictionary<string, string>
+                {
+                    {"App.xaml.cs_SetMainPage_Error" , ex.Message}
+                });
             }
         }
 
-        private static async Task InsertPagesNeedingPermissions()
+        private static void InsertPagesNeedingPermissions()
         {
-            var hasPermissions = await PermissionHelper.HasNecessaryPermissionsWithRequest();
-            if (hasPermissions)
+            //var hasPermissions = await PermissionHelper.HasNecessaryPermissionsWithRequest();
+            //if (hasPermissions)
+            //{
+            Device.BeginInvokeOnMainThread(() =>
             {
                 AddPagesInterval.SetInterval(InsertPages, _addPagesIntervalTime);
-
-            }
-            else
-            {
-                PermissionRequest.SetInterval(InsertPagesNeedingPermissions().Wait, _permisionRequestIntervalTime);
-            }
+            });
+            //}
+            //else
+            //{
+            //    Device.BeginInvokeOnMainThread(() =>
+            //    {
+            //        PermissionRequest.SetInterval(InsertPagesNeedingPermissions().Wait, _permisionRequestIntervalTime);
+            //    });
+            //}
         }
 
         private static void InsertPages()
         {
-            InsertPageBeforeAbout(new InvitePage(), "Invite");
-            InsertPageBeforeAbout(new JoinPage(), "Join");
-            InsertPageBeforeAbout(new MapPage(), "Map");
+            //InsertPageBeforeAbout(new InvitePage(), "Invite");
+            //InsertPageBeforeAbout(new JoinPage(), "Join");
+            //InsertPageBeforeAbout(new MapPage(), "Map");
 
-            InitialContactInterval.SetInterval(InitializeContacts, _initializeContactsIntervalTime);
+           // InitialContactInterval.SetInterval(InitializeContacts, _initializeContactsIntervalTime);
         }
 
         private static void AddPage(Page page, string title)
         {
-            var existingNavigationPage = GetPage(title) as NavigationPage;
-            if (existingNavigationPage != null) return;
-
-            var navigationPage = new NavigationPage(page)
+            Device.BeginInvokeOnMainThread(() =>
             {
-                Title = title,
-                Icon = Device.OnPlatform("tab_feed.png", null, null),
-            };
-            _mainTabbedPage.Children.Add(navigationPage);
+                var existingNavigationPage = GetPage(title) as NavigationPage;
+                if (existingNavigationPage != null) return;
+
+                var navigationPage = new NavigationPage(page)
+                {
+                    Title = title,
+                    Icon = Device.OnPlatform("tab_feed.png", null, null),
+                };
+                _mainTabbedPage.Children.Add(navigationPage);
+            });
         }
 
         private static void InsertPageBeforeAbout(Page page, string title)
@@ -114,21 +125,21 @@ namespace WheresChris
             });
         }
 
-        //Call this from AppDelegate or android service
-        public static void InitializeContacts()
-        {
-            Device.BeginInvokeOnMainThread(async ()=>{
-                var permissionStatus = await PermissionHelper.RequestContactPermission();
-                if (permissionStatus == PermissionStatus.Granted)
-                {
-                    var inviteNavigationPage = (NavigationPage)GetPage("Invite");
-                    if (inviteNavigationPage == null) return;
-                    var invitePage = (InvitePage)inviteNavigationPage.CurrentPage;
-                    if (invitePage == null) return;
-                    await invitePage.InitializeContactsAsync();
-                }
-            });
-        }
+        ////Call this from AppDelegate or android service
+        //public static void InitializeContacts()
+        //{
+        //    Device.BeginInvokeOnMainThread(async ()=>{
+        //        var permissionStatus = await PermissionHelper.RequestContactPermission();
+        //        if (permissionStatus == PermissionStatus.Granted)
+        //        {
+        //            var inviteNavigationPage = (NavigationPage)GetPage("Invite");
+        //            if (inviteNavigationPage == null) return;
+        //            var invitePage = (InvitePage)inviteNavigationPage.CurrentPage;
+        //            if (invitePage == null) return;
+        //            await invitePage.InitializeContactsAsync();
+        //        }
+        //    });
+        //}
 
         public static Page GetCurrentTab()
         {
@@ -148,6 +159,8 @@ namespace WheresChris
 
         public static Page GetPage(string title)
         {
+            if (GetMainTab()?.Children.Count > 0) return null;
+
             var requestedPage = GetMainTab()?.Children.FirstOrDefault(x => x.Title == title);
             if (requestedPage == null) return null;
 
