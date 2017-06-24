@@ -87,6 +87,10 @@ namespace WheresChris.Views
 
             var invitePageViewModel = BindingContext as InvitePageViewModel;
             if (invitePageViewModel == null) return;
+
+            if (invitePageViewModel.Items == null) return;
+            if (invitePageViewModel.Items.Count <= 0) return;
+
             var selectedGroupMemberVms = GroupActionsHelper.GetSelectedGroupMembers(invitePageViewModel.Items);
 
             var selectedExpirationHours = ExpirationPicker.SelectedItem as ExpirationPickerViewModel;
