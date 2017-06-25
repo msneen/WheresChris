@@ -26,11 +26,16 @@
                 <Setter Property="BackgroundColor" Value="#1744FF"></Setter>
                 <Setter Property="TextColor" Value="White" />
             </Style>
+            <Style x:Key="frameLayoutStyle" TargetType="Frame">
+                <Setter Property="Padding" Value="5"></Setter>
+                <Setter Property="OutlineColor" Value="#a00901" />
+                <Setter Property="HasShadow" Value="False"></Setter>
+            </Style>
             <Style x:Key="relativeLayoutStyle" TargetType="RelativeLayout">
-                <Setter Property="BackgroundColor" Value="#ff0d00"></Setter>
+                <!--<Setter Property="BackgroundColor" Value="#a00901"></Setter>-->
             </Style>
             <Style x:Key="labelStyle" TargetType="Label">
-                <Setter Property="BackgroundColor" Value="#ff0d00"></Setter>
+                <!--<Setter Property="BackgroundColor" Value="#a00901"></Setter>-->
                 <Setter Property="TextColor" Value="White" />
             </Style>
         </ResourceDictionary>

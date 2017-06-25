@@ -36,8 +36,10 @@ namespace WheresChris.Views
 	    {
 	        var locationAccuracy =
 	            $"\n\r\n\rmin={System.Math.Round(PositionHelper.MinAccuracy)}\n\rmax={System.Math.Round(PositionHelper.MaxAccuracy)}\n\ravg={System.Math.Round(PositionHelper.AvgAccuracy)}";
-
-	        LocationSpan.Text = locationAccuracy;
+	        Device.BeginInvokeOnMainThread(() =>
+	        {
+	            LocationSpan.Text = locationAccuracy;
+	        });
 	    }
 
 	    private void BtnReset_OnClicked(object sender, EventArgs e)

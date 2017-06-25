@@ -40,7 +40,6 @@
                             RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=0}"
                             RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}" />
                 </RelativeLayout>
-
                 <RelativeLayout Padding="5,0,0,0" Style="{StaticResource relativeLayoutStyle}"
                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.4, Constant=0}"
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.05, Constant=0}"
@@ -51,7 +50,8 @@
                     <Entry x:Name="Nickname" Text="" 
                             RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=0}"
                             RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}" />
-                </RelativeLayout>
+                </RelativeLayout>                    
+
 
                 <Button x:Name="SaveButton" Text="Save" Style="{StaticResource buttonStyle}"
                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.5, Constant=0}"
