@@ -100,7 +100,7 @@ namespace WheresChris.Views
 
 	    private static async Task<List<GroupMemberSimpleVm>> GetMyPositionList()
 	    {
-	        var hasLocationPermissions = await PermissionHelper.HasLocationPermission();
+	        var hasLocationPermissions = await PermissionHelper.HasOrRequestLocationPermission();
 	        if (!hasLocationPermissions) return null;
 
 	        var userPosition = await PositionHelper.GetMapPosition();

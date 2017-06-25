@@ -11,13 +11,13 @@
 
             <RelativeLayout Padding="5,0,0,0" VerticalOptions="End">
 
-                <Button x:Name="AddMembersButton" Text="Add" Clicked="AddMembersButton_OnClicked"  
+            <Button x:Name="AddMembersButton" Text="Add" Clicked="AddMembersButton_OnClicked" Style="{StaticResource buttonStyle}"
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}"/>
-                <Button x:Name="ViewMembersButton" Text="Members" Clicked="ViewMembersButton_OnClicked"    
+            <Button x:Name="ViewMembersButton" Text="Members" Clicked="ViewMembersButton_OnClicked" Style="{StaticResource buttonStyle}"    
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=0}"
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}"/>
-                <Button x:Name="LeaveGroupButton" Text="Leave" Clicked="LeaveGroupButton_OnClicked"
+            <Button x:Name="LeaveGroupButton" Text="Leave" Clicked="LeaveGroupButton_OnClicked" Style="{StaticResource buttonStyle}"
                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0, Constant=40}"
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.3, Constant=0}"
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.4,Constant=0}" />

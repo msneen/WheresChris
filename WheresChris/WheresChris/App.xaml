@@ -15,6 +15,24 @@
                 <Setter Property="BarBackgroundColor" Value="{StaticResource Primary}" />
                 <Setter Property="BarTextColor" Value="White" />
             </Style>
+            <Style x:Key="buttonStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="#1744FF"></Setter>
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="BorderColor" Value="#1744FF" />
+                <Setter Property="BorderWidth" Value="30" />
+                <Setter Property="BorderRadius" Value="30" />
+            </Style>
+            <Style x:Key="labelBannerStyle" TargetType="Label">
+                <Setter Property="BackgroundColor" Value="#1744FF"></Setter>
+                <Setter Property="TextColor" Value="White" />
+            </Style>
+            <Style x:Key="relativeLayoutStyle" TargetType="RelativeLayout">
+                <Setter Property="BackgroundColor" Value="#ff0d00"></Setter>
+            </Style>
+            <Style x:Key="labelStyle" TargetType="Label">
+                <Setter Property="BackgroundColor" Value="#ff0d00"></Setter>
+                <Setter Property="TextColor" Value="White" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

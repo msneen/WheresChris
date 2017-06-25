@@ -57,9 +57,7 @@
         </Label>-->
         <Button Margin="0,10,0,0" x:Name="BtnReset"
                 Text="Reset Stored Data" 
-                Clicked="BtnReset_OnClicked"
-                BackgroundColor="{StaticResource Primary}"
-                TextColor="White"/>
+                Clicked="BtnReset_OnClicked" Style="{StaticResource buttonStyle}"/>
       </StackLayout>
     </ScrollView>
   </Grid>

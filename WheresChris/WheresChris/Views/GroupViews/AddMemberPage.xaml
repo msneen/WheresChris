@@ -40,6 +40,6 @@
             </DataTemplate>
         </ListView.ItemTemplate>
     </ListView>
-        <Button x:Name="AddButton" Text="Add" Clicked="AddButton_OnClicked" />
+        <Button x:Name="AddButton" Text="Add" Clicked="AddButton_OnClicked" Style="{StaticResource buttonStyle}" />
     </StackLayout>
 </ContentPage>

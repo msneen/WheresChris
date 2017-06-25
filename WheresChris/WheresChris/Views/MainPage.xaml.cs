@@ -65,7 +65,7 @@ namespace WheresChris.Views
             LocationSentEvent.OnLocationSentMsg +=
             (sender, args) =>
             {
-                TitleLabel.TextColor = TitleLabel.TextColor == Color.Blue ? Color.Black : Color.Blue;
+                TitleLabel.TextColor = TitleLabel.TextColor == Color.White ? Color.Yellow : Color.White;
             };
         }
 

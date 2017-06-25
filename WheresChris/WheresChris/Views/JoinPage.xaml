@@ -19,7 +19,7 @@
                    HorizontalOptions="FillAndExpand"
                    TextColor="Black"
                    FontAttributes="Bold"/>
-        <Button x:Name="RefreshButton" Text="Refresh" Clicked="RefreshButton_OnClicked" />
+                <Button x:Name="RefreshButton" Text="Refresh" Clicked="RefreshButton_OnClicked" Style="{StaticResource buttonStyle}" />
         </StackLayout>
     </ListView.Header>
     <!--Built in Cells-->
