@@ -82,17 +82,20 @@ namespace StayTogether.Helpers
 
         public static double GetRadius(List<GroupMemberSimpleVm> groupMembers, Xamarin.Forms.Maps.Position mapCenterPosition)
         {
-            var radius = .1;
-            if (groupMembers.Count > 1)
+            lock (groupMembers)
             {
-                var minLatitude = groupMembers.Min(x => x.Latitude);
-                var minLongitude = groupMembers.Min(x => x.Longitude);
-                radius = DistanceCalculator.Distance.CalculateMiles(mapCenterPosition.Latitude,
-                    mapCenterPosition.Longitude, minLatitude, minLongitude);
+                var radius = .1;
+                if (groupMembers.Count > 1)
+                {
+                    var minLatitude = groupMembers.Min(x => x.Latitude);
+                    var minLongitude = groupMembers.Min(x => x.Longitude);
+                    radius = DistanceCalculator.Distance.CalculateMiles(mapCenterPosition.Latitude,
+                        mapCenterPosition.Longitude, minLatitude, minLongitude);
+                }
+                radius = radius < .03 ? .03 : radius;
+                radius = radius > 5 ? 5 : radius;
+                return radius;
             }
-            radius = radius < .03 ? .03 : radius;
-            radius = radius > 5 ? 5 : radius;
-            return radius;
         }
 
         public static Xamarin.Forms.Maps.Position GetMapCenter(List<GroupMemberSimpleVm> groupMembers)

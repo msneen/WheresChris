@@ -82,7 +82,9 @@ namespace WheresChris.Views
         }
 
         public async void StartGroup(object sender, EventArgs e)
-        {
+        {            
+            App.SetCurrentTab("Map");
+
             var userPhoneNumber = SettingsHelper.GetPhoneNumber();
 
             var invitePageViewModel = BindingContext as InvitePageViewModel;
@@ -99,17 +101,35 @@ namespace WheresChris.Views
             if (!selectedGroupMemberVms.Any()) return;
 
             await GroupActionsHelper.StartGroup(selectedGroupMemberVms, userPhoneNumber, expirationHours);
-            foreach (var groupMember in selectedGroupMemberVms)
+
+
+            //Todo:  this is supposed to be clearing the selection, but it doesn't seem to be working
+            //foreach (var item in ContactsListView.ItemsSource)
+            //{
+            //    var currentBackgroundColor = ((ContactDisplayItemVm) item).BackgroundColor;
+            //    if (currentBackgroundColor != ContactsListView.BackgroundColor)
+            //    {
+            //        ((ContactDisplayItemVm) item).Selected = false;
+            //        ((ContactDisplayItemVm) item).BackgroundColor = ContactsListView.BackgroundColor;
+            //    }
+            //}
+            lock (selectedGroupMemberVms)
             {
-                var contactDisplayItemVm = invitePageViewModel
-                    .Items
-                    .FirstOrDefault(x => x.PhoneNumber == groupMember.PhoneNumber);
-                if (contactDisplayItemVm != null)
-                    contactDisplayItemVm
-                        .Selected = false;
+                foreach (var groupMember in selectedGroupMemberVms)
+                {
+                    var contactDisplayItemVm = invitePageViewModel
+                        .Items
+                        .FirstOrDefault(x => x.PhoneNumber == groupMember.PhoneNumber);
+                    if (contactDisplayItemVm != null)
+                    {
+                        contactDisplayItemVm.Selected = false;
+                        contactDisplayItemVm.BackgroundColor = ContactsListView.BackgroundColor;
+                    }
+                }
             }
+            //ContactsListView.ItemsSource = null;
+            //await InitializeContactsAsync();
             SetFormEnabled(false);
-            App.SetCurrentTab("Map");
 
         }
 
@@ -129,7 +149,8 @@ namespace WheresChris.Views
                 try
                 {
                     await ((InvitePageViewModel)BindingContext).InitializeContactsAsync();
-                    ContactsListView.ItemsSource = ((InvitePageViewModel)BindingContext).Items;
+                    //ContactsListView.ItemsSource = ((InvitePageViewModel)BindingContext).Items; 
+                    ContactsListView.SetBinding(ListView.ItemsSourceProperty, "Items", BindingMode.TwoWay);                                  
                 }
                 catch (Exception ex)
                 {
@@ -143,17 +164,19 @@ namespace WheresChris.Views
 
         private void TapGestureRecognizer_OnTapped(object sender, EventArgs e)
         {
-
-            var selectedColor = Color.LightSkyBlue;
-            object themeColor;
-            if (Application.Current.Resources.TryGetValue("ListViewSelectedColor", out themeColor))
+            if (ContactsListView.IsEnabled)
             {
-                selectedColor = (Color)themeColor;
+                var selectedColor = Color.LightSkyBlue;
+                object themeColor;
+                if (Application.Current.Resources.TryGetValue("ListViewSelectedColor", out themeColor))
+                {
+                    selectedColor = (Color) themeColor;
+                }
+                var contactDisplayItemVm = (ContactDisplayItemVm) ((RelativeLayout) sender).BindingContext;
+                contactDisplayItemVm.Selected = !contactDisplayItemVm.Selected;
+                var color = contactDisplayItemVm.Selected ? selectedColor : ContactsListView.BackgroundColor;
+                ((RelativeLayout) sender).BackgroundColor = color;
             }
-            var contactDisplayItemVm = (ContactDisplayItemVm)((RelativeLayout) sender).BindingContext;
-            contactDisplayItemVm.Selected = !contactDisplayItemVm.Selected;
-            var color = contactDisplayItemVm.Selected ? selectedColor : ContactsListView.BackgroundColor;
-            ((RelativeLayout) sender).BackgroundColor = color;
         }
 
         private void SearchButton_OnClicked(object sender, EventArgs e)
