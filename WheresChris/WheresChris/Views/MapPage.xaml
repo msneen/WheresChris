@@ -8,7 +8,7 @@
         <controls:AdView x:Name="AdView" VerticalOptions="Start"/>
         <!--<RelativeLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">-->
             <customMap:TKCustomMap x:Name="GroupMap" IsVisible="False" MapType="Hybrid" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"/>
-            <ActivityIndicator x:Name="Spinner" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Color="#9E0800" ></ActivityIndicator>
+            <ActivityIndicator x:Name="Spinner" IsRunning="True" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Color="#9E0800" ></ActivityIndicator>
         
             <RelativeLayout Padding="5,0,0,0" VerticalOptions="End">
 

@@ -91,8 +91,9 @@ namespace WheresChris.Views
                 _positionInitializationInterval.SetInterval(InitializeMap().Wait, 3000);
                 return;
             };
-            UpdateMap(justMeList);
             HideSpinnerShowMap();
+            UpdateMap(justMeList);
+            _mapInitialized = true;
         }
 
 	    private static async Task<List<GroupMemberSimpleVm>> GetMyPositionList()
@@ -175,10 +176,9 @@ namespace WheresChris.Views
 
         private void HideSpinnerShowMap()
         {
-            _mapInitialized = true;
             Spinner.IsRunning = false;
-            Spinner.IsEnabled = false;
             Spinner.IsVisible = false;
+            Spinner.IsEnabled = false;
             GroupMap.IsVisible = true;
         }
     }
