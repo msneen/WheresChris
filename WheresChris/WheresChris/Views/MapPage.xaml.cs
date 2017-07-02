@@ -29,6 +29,7 @@ namespace WheresChris.Views
 		{
             Title = "Where's Chris - Map";
             InitializeComponent ();
+            GroupMap.MapType = MapType.Hybrid;            
             InitializeMessagingCenterSubscriptions();
             SetFormEnabled(false);
 		}
@@ -43,12 +44,8 @@ namespace WheresChris.Views
 
 	    protected override void OnAppearing()
 	    {
-	        if (_mapInitialized) return;
-            _positionInitializationInterval.SetInterval(InitializeMap().Wait, 3000);
-            //await Task.Delay(3000).ContinueWith(async t =>
-            //{
-            //       _mapInitialized = await InitializeMap();
-            //});
+	        if (_mapInitialized) return;           
+            _positionInitializationInterval.SetInterval(InitializeMap().Wait, 500);
         }
 
         /// <summary>
@@ -95,7 +92,7 @@ namespace WheresChris.Views
                 return;
             };
             UpdateMap(justMeList);
-            _mapInitialized = true;
+            HideSpinnerShowMap();
         }
 
 	    private static async Task<List<GroupMemberSimpleVm>> GetMyPositionList()
@@ -175,5 +172,14 @@ namespace WheresChris.Views
 	        await locationSender.EndGroup();
             MessagingCenter.Send<LocationSender>(locationSender, LocationSender.ThisUserLeftGroupMsg);
         }
-	}
+
+        private void HideSpinnerShowMap()
+        {
+            _mapInitialized = true;
+            Spinner.IsRunning = false;
+            Spinner.IsEnabled = false;
+            Spinner.IsVisible = false;
+            GroupMap.IsVisible = true;
+        }
+    }
 }
