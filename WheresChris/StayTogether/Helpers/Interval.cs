@@ -19,9 +19,16 @@ namespace StayTogether.Helpers
 
         private void OnInterval(object state)
         {
-            _timer.Dispose();
-            var action = (Action) state;
-            action();
+            try
+            {
+                _timer.Dispose();
+                var action = (Action) state;
+                action();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
     }

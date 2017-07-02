@@ -58,6 +58,7 @@ namespace WheresChris.Views
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
+                    if (!GroupMap.IsVisible) return;
                     AddMembersButton.TextColor = AddMembersButton.TextColor == Color.Blue ? Color.Black : Color.Blue;
                     SetFormEnabled(true);
                     UpdateMap(args.GroupMembers);
@@ -91,8 +92,9 @@ namespace WheresChris.Views
                 _positionInitializationInterval.SetInterval(InitializeMap().Wait, 3000);
                 return;
             };
-            HideSpinnerShowMap();
-            UpdateMap(justMeList);
+                         
+             UpdateMap(justMeList);
+             HideSpinnerShowMap();
             _mapInitialized = true;
         }
 
@@ -144,13 +146,14 @@ namespace WheresChris.Views
 
 	        var radius = PositionHelper.GetRadius(groupMembers, mapCenterPosition);
 
-	        Device.BeginInvokeOnMainThread(() =>
-	        {
-	            GroupMap.MapType= MapType.Hybrid; //This doesn't seem to work on android
-	            GroupMap.MapCenter = mapCenterPosition;
-	            GroupMap.MapRegion = MapSpan.FromCenterAndRadius(mapCenterPosition, Distance.FromMiles(radius));
-	            GroupMap.CustomPins = customPins;
-	        });
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                GroupMap.MapType = MapType.Hybrid; //This doesn't seem to work on android
+                GroupMap.MapCenter = mapCenterPosition;
+                GroupMap.MapRegion = MapSpan.FromCenterAndRadius(mapCenterPosition, Distance.FromMiles(radius));
+                GroupMap.CustomPins = customPins;
+            });
+            return;
 	    }
 
 	    private async void AddMembersButton_OnClicked(object sender, EventArgs e)
@@ -178,8 +181,6 @@ namespace WheresChris.Views
         {
             Spinner.IsRunning = false;
             Spinner.IsVisible = false;
-            Spinner.IsEnabled = false;
-            GroupMap.IsVisible = true;
         }
     }
 }
