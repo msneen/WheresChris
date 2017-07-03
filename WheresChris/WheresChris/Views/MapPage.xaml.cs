@@ -179,8 +179,8 @@ namespace WheresChris.Views
 
         private void HideSpinnerShowMap()
         {
-            Spinner.IsRunning = false;
-            Spinner.IsVisible = false;
+            //Spinner.IsRunning = false;
+            //Spinner.IsVisible = false;
         }
     }
 }
