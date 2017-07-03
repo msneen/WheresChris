@@ -140,13 +140,17 @@ namespace StayTogether.Helpers
 
         private static  Position GetMedianPosition(List<Position> positionListAll)
         {
+            if (positionListAll == null) return null;
+            if (positionListAll.Count < 1) return null;
             //.Accuracy is in meters
             //I'm taking about 20 location readings, then sorting from most to least accurate, and taking the top 3 most accurate.
             var positionList = positionListAll.Where(x=>x.Accuracy < 100.0).OrderBy(p => p.Accuracy).Skip(0).Take(3).ToList();
             if  (!positionList.Any()) return null;
 
-            var medianLatitude = positionList.OrderBy(l => l.Latitude).ToArray()[1].Latitude;
-            var medianLongitude = positionList.OrderBy(l => l.Longitude).ToArray()[1].Longitude;
+            var middlePosition = (positionList.Count < 3) ? 0 : 1;//mws:should I be taking the top one always(ie 0), since I'm sorting by accuracy?
+            
+            var medianLatitude = positionList.OrderBy(l => l.Latitude).ToArray()[middlePosition].Latitude;
+            var medianLongitude = positionList.OrderBy(l => l.Longitude).ToArray()[middlePosition].Longitude;
             var userPosition = new Plugin.Geolocator.Abstractions.Position
             {
                 Latitude = medianLatitude,
