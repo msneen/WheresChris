@@ -110,7 +110,8 @@ namespace StayTogether
 
         public static Phone FirstOrDefaultMobilePhone(this List<Phone> phones)
         {
-            return phones.FirstOrDefault(x => x.Type == PhoneType.Mobile);
+            var phone = phones.FirstOrDefault(x => x.Type == PhoneType.Mobile) ?? phones.FirstOrDefault();
+            return phone;
         }
 
         public static string FirstOrDefaultMobileNumber(this List<Phone> phones)
