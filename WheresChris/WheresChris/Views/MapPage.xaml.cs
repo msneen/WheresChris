@@ -29,10 +29,26 @@ namespace WheresChris.Views
 		{
             Title = "Where's Chris - Map";
             InitializeComponent ();
-            GroupMap.MapType = MapType.Hybrid;            
+            GroupMap.MapType = MapType.Hybrid;
+            SetMapInitialPosition();           
             InitializeMessagingCenterSubscriptions();
             SetFormEnabled(false);
 		}
+
+	    private void SetMapInitialPosition()
+	    {
+	        var rollerCoasterPosition = new List<GroupMemberSimpleVm>
+            {
+                new GroupMemberSimpleVm
+                {
+                    Latitude = 32.7714,
+                    Longitude = 117.2517,
+                    PhoneNumber = "",
+                    Name = ""
+                }
+            };
+            UpdateMap(rollerCoasterPosition);
+        }
 
 	    private void SetFormEnabled(bool isSelected)
 	    {
@@ -84,7 +100,7 @@ namespace WheresChris.Views
         }
 
         private async Task InitializeMap()
-        {
+        {        
             var justMeList = await GetMyPositionList();
             if (justMeList == null)
             {

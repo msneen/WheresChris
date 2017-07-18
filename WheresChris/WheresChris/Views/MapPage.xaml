@@ -29,7 +29,7 @@
             <ActivityIndicator x:Name="Spinner" IsRunning="True" HorizontalOptions="Center" VerticalOptions="Center" Color="#9E0800"
                 RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.3, Constant=0}"
                 RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=0}"
-                RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height,Factor=0.2,Constant=0}"/>
+                RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height,Factor=0.4,Constant=0}"/>
         </RelativeLayout>
     </StackLayout>
 </ContentPage>
