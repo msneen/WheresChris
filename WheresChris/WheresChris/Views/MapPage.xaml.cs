@@ -30,7 +30,7 @@ namespace WheresChris.Views
             Title = "Where's Chris - Map";
             InitializeComponent ();
             GroupMap.MapType = MapType.Hybrid;
-            SetMapInitialPosition();           
+                     
             InitializeMessagingCenterSubscriptions();
             SetFormEnabled(false);
 		}
@@ -60,7 +60,8 @@ namespace WheresChris.Views
 
 	    protected override void OnAppearing()
 	    {
-	        if (_mapInitialized) return;           
+	        if (_mapInitialized) return;
+            SetMapInitialPosition();
             _positionInitializationInterval.SetInterval(InitializeMap().Wait, 500);
         }
 
