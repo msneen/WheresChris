@@ -42,7 +42,7 @@ namespace WheresChris.Views
                 new GroupMemberSimpleVm
                 {
                     Latitude = 32.7714,
-                    Longitude = 117.2517,
+                    Longitude = -117.2517,
                     PhoneNumber = "",
                     Name = ""
                 }
