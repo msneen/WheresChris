@@ -146,6 +146,7 @@ Debugger.Break();
 
                 // Create a proxy to the 'ChatHub' SignalR Hub
                 _chatHubProxy = _hubConnection.CreateHubProxy("StayTogetherHub");
+
                 //I think this string will be the name of Jeff's main class
 
                 // Wire up a handler for the 'UpdateChatMessage' for the server
@@ -158,6 +159,8 @@ Debugger.Break();
                 _chatHubProxy.On<string, string>("MemberAlreadyInGroup", OnMemberAlreadyInGroup);
                 _chatHubProxy.On<List<GroupMemberSimpleVm>>("GroupPositionUpdate", OnGroupPositionUpdate);
                 _chatHubProxy.On<string>("RequestMemberLocations", async s => await RequestMemberPositions(s));
+
+                
                 
                 // Start the connection
                 await _hubConnection.Start();
@@ -221,11 +224,13 @@ Debugger.Break();
             }
         }
 
+        private bool _geolocatorInitialized = false;
 	    public async Task SetUpLocationEvents()
         {
 
             try
             {
+                if (_geolocatorInitialized) return;
                 _geoLocator = CrossGeolocator.Current;
 
                 _geoLocator.DesiredAccuracy = 100; //100 is new default
@@ -248,6 +253,8 @@ Debugger.Break();
 
                 _geoLocator.PositionChanged +=
                     async delegate (object o, PositionEventArgs args) { await LocatorOnPositionChanged(o, args); };
+
+                _geolocatorInitialized = true;
             }
             catch (Exception ex)
             {
@@ -749,6 +756,27 @@ Debugger.Break();
 
             return new List<GroupMemberVm>();
 	    }
+
+	    public async Task SendChatMessage(GroupMemberVm groupMemberVm, string message)
+	    {
+            try
+            {
+                if (InAGroup)
+                {
+                    await InvokeChatHubProxy("SendToGroup", groupMemberVm, message);
+                }
+            }
+            catch (Exception ex)
+            {
+#if (DEBUG)
+                Debugger.Break();
+#endif
+                Analytics.TrackEvent($"LocationSender_SendToGroup", new Dictionary<string, string>
+                {
+                    { "Message", ex.Message}
+                });
+            }
+        }
 
         private void GetNickname()
         {

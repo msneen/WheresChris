@@ -44,7 +44,7 @@ namespace WheresChris
                 }
 
                 PermissionRequest.SetInterval(InsertPagesNeedingPermissions, _permisionRequestIntervalTime);
-
+               
                 AddPage(new AboutPage(), "About");
                 Current.MainPage = _mainTabbedPage;
             }
@@ -70,6 +70,7 @@ namespace WheresChris
             InsertPageBeforeAbout(new InvitePage(), "Invite");
             InsertPageBeforeAbout(new JoinPage(), "Join");
             InsertPageBeforeAbout(new MapPage(), "Map");
+            InsertPageBeforeAbout(new ChatPage(), "Chat");
         }
 
         private static void AddPage(Page page, string title)
