@@ -75,6 +75,7 @@ namespace StayTogether
         public event EventHandler OnGroupDisbanded;
         public event EventHandler<MemberMinimalEventArgs> OnSomeoneLeft;
         public event EventHandler<MemberMinimalEventArgs> OnSomeoneAlreadyInAnotherGroup;
+        public event EventHandler<ChatMessageEventArgs> OnChatMessageReceived;
 
         public const string MemberAlreadyInGroupMsg = "MEMBERINGROUP";
 	    public const string SomeoneIsLostMsg = "SOMEONEISLOST";
@@ -160,8 +161,8 @@ Debugger.Break();
                 _chatHubProxy.On<List<GroupMemberSimpleVm>>("GroupPositionUpdate", OnGroupPositionUpdate);
                 _chatHubProxy.On<string>("RequestMemberLocations", async s => await RequestMemberPositions(s));
 
-                
-                
+                _chatHubProxy.On<GroupMemberVm, string>("GroupMessage", ChatMessageReceived);
+          
                 // Start the connection
                 await _hubConnection.Start();
 
@@ -180,6 +181,15 @@ Debugger.Break();
                 });
             }
         }
+
+	    private void ChatMessageReceived(GroupMemberVm groupMember, string message)
+	    {
+            OnChatMessageReceived?.Invoke(this, new ChatMessageEventArgs
+            {
+                Message = message,
+                GroupMember = groupMember
+            });
+	    }
 
 	    private async Task InvokeChatHubProxy(string method, params object[] args)
 	    {
@@ -763,6 +773,7 @@ Debugger.Break();
             {
                 if (InAGroup)
                 {
+                    groupMemberVm.GroupId = _groupId;
                     await InvokeChatHubProxy("SendToGroup", groupMemberVm, message);
                 }
             }
@@ -821,9 +832,13 @@ Debugger.Break();
 
 	}
 
-    public class LostEventArgs : EventArgs
+    public class MemberEventArgs : EventArgs
     {
         public GroupMemberVm GroupMember { get; set; }
+    }
+
+    public class LostEventArgs : MemberEventArgs
+    {
     }
 
     public class InvitedEventArgs: EventArgs
@@ -835,6 +850,11 @@ Debugger.Break();
     {
         public string Name { get; set; }
         public string PhoneNumber { get; set; }
+    }
+
+    public class ChatMessageEventArgs : MemberEventArgs
+    {
+        public string Message { get; set; }
     }
 }
 
