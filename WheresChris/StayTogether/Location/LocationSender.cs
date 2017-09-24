@@ -8,12 +8,10 @@ using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Settings;
 using StayTogether.Classes;
-using StayTogether.Droid.NotificationCenter;
 using StayTogether.Helpers;
 using StayTogether.Models;
 using WheresChris.Helpers;
 using WheresChris.ViewModels;
-using WheresChris.Views;
 using Xamarin.Forms;
 using ChatMessageVm = StayTogether.Models.ChatMessageVm;
 
@@ -553,17 +551,6 @@ Debugger.Break();
                 if (lostMemberVm.LostDistance > 5280 * 60) return;
                 if (string.IsNullOrWhiteSpace(_groupId)) return;
 
-                //OnSomeoneIsLost?.Invoke(this, new LostEventArgs
-                //{
-                //    GroupMember = new GroupMemberVm
-                //    {
-                //        PhoneNumber = lostMemberVm.PhoneNumber,
-                //        Name = lostMemberVm.Name,
-                //        Latitude = Convert.ToDouble(lostMemberVm.Latitude),
-                //        Longitude = Convert.ToDouble(lostMemberVm.Longitude),
-                //        LostDistance = lostMemberVm.LostDistance
-                //    }
-                //});
                 var groupMember = new GroupMemberVm
                 {
                     PhoneNumber = lostMemberVm.PhoneNumber,
