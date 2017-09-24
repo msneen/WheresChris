@@ -129,47 +129,30 @@ Debugger.Break();
 
 	    private void InitializeMessageCenter()
 	    {
-	        MessagingCenter.Subscribe<MessagingCenterSender, GroupMemberSimpleVm>(this, ConfirmGroupInvitationMsg, (sender, groupMemberSimpleVm) =>
-	            {
-                    Device.BeginInvokeOnMainThread(async () =>
-                    {
-                        await ConfirmGroupInvitation(groupMemberSimpleVm.PhoneNumber, groupMemberSimpleVm.Name);
-                    });                    
-                });
-            MessagingCenter.Subscribe<MessagingCenterSender, GroupVm>(this, StartOrAddGroupMsg, (sender, groupVm) =>
-            {
-                Device.BeginInvokeOnMainThread(async () =>
-                {
-                    await StartOrAddToGroup(groupVm);
-                });
+	        MessagingCenter.Subscribe<MessagingCenterSender, GroupMemberSimpleVm>(this, ConfirmGroupInvitationMsg, async (sender, groupMemberSimpleVm) =>
+	        {
+                await ConfirmGroupInvitation(groupMemberSimpleVm.PhoneNumber, groupMemberSimpleVm.Name);                  
             });
-            MessagingCenter.Subscribe<MessagingCenterSender>(this, LeaveGroupMsg, (sender) =>
+            MessagingCenter.Subscribe<object, GroupVm>(this, StartOrAddGroupMsg, async (sender, groupVm) =>
             {
-                Device.BeginInvokeOnMainThread(async () =>
-                {
-                    await LeaveGroup();
-                });
+                await StartOrAddToGroup(groupVm);
             });
-            MessagingCenter.Subscribe<MessagingCenterSender>(this, EndGroupMsg, (sender) =>
+
+            MessagingCenter.Subscribe<MessagingCenterSender>(this, LeaveGroupMsg, async (sender) =>
             {
-                Device.BeginInvokeOnMainThread(async () =>
-                {
-                    await EndGroup();
-                });
+                await LeaveGroup();
             });
-            MessagingCenter.Subscribe<MessagingCenterSender, ChatMessageVm>(this, SendChatMsg, (sender, chatMessageVm) =>
+            MessagingCenter.Subscribe<MessagingCenterSender>(this, EndGroupMsg, async (sender) =>
             {
-                Device.BeginInvokeOnMainThread(async () =>
-                {
-                    await SendChatMessage(chatMessageVm.GroupMemberVm, chatMessageVm.Message);
-                });
+                await EndGroup();
+            });
+            MessagingCenter.Subscribe<MessagingCenterSender, ChatMessageVm>(this, SendChatMsg, async (sender, chatMessageVm) =>
+            {
+                await SendChatMessage(chatMessageVm.GroupMemberVm, chatMessageVm.Message);
             });
             MessagingCenter.Subscribe<MessagingCenterSender>(this, GetInvitationsMsg, (sender) =>
             {
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    GetInvitations();
-                });
+                GetInvitations();
             });
         }
 

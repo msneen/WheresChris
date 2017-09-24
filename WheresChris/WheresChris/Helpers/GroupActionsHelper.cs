@@ -32,7 +32,7 @@ namespace WheresChris.Helpers
             var userMapPosition = await PositionHelper.GetMapPosition();
             var userPosition = PositionConverter.Convert(userMapPosition.Value);
             var groupVm = GroupHelper.InitializeGroupVm(selectedGroupMemberVms, userPosition, userPhoneNumber, expirationHours);
-            MessagingCenter.Send<MessagingCenterSender, GroupVm>(new MessagingCenterSender(), LocationSender.ConfirmGroupInvitationMsg, groupVm);
+            MessagingCenter.Send<object, GroupVm>(new MessagingCenterSender(), LocationSender.StartOrAddGroupMsg, groupVm);
         }
 
         public static List<GroupMemberVm> GetSelectedGroupMembers(ObservableCollection<ContactDisplayItemVm> items)

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.Mobile.Analytics;
+using StayTogether;
 using StayTogether.Helpers;
 using WheresChris.Helpers;
 using WheresChris.Views;
@@ -15,18 +16,26 @@ namespace WheresChris
     public partial class App : Application
     {
         private static TabbedPage _mainTabbedPage;
+        private LocationSender _locationSender;
 
         public App()
         {
             InitializeComponent();
 
-            SetMainPage().Wait();     
+            SetMainPage().Wait();
+
+            StartLocationSenderAsync();
         }
 
         private static readonly Interval PermissionRequest = new Interval();
         private static readonly Interval AddPagesInterval = new Interval();
         private static int _permisionRequestIntervalTime = 5000;
         private static int _addPagesIntervalTime = 5000;
+
+        private async void StartLocationSenderAsync()
+        {
+            _locationSender = await LocationSender.GetInstanceAsync();
+        }
 
         public static async Task SetMainPage()
         {
