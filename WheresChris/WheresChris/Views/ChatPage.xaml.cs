@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
 using StayTogether;
-using StayTogether.Group;
 using StayTogether.Helpers;
 using WheresChris.ViewModels;
 using Xamarin.Forms;
@@ -25,34 +21,23 @@ namespace WheresChris.Views
             Title = "Where's Chris - Chat";
             Items = new ObservableCollection<ChatMessageVm>();
 
-            _locationSender = LocationSender.GetInstance();
-            _locationSender.OnChatMessageReceived += (sender, args) =>
+            MessagingCenter.Subscribe<LocationSender, ChatMessageVm>(this, LocationSender.ChatReceivedMsg,
+            (sender, chatMessageVm) =>
             {
-                //add chat message to list
-                Device.BeginInvokeOnMainThread(()=>{
+                Device.BeginInvokeOnMainThread(() =>
+                {
                     Items.Add(new ChatMessageVm
                     {
-                        Message = args.Message,
-                        Name = ContactsHelper.NameOrPhone( args?.GroupMember?.PhoneNumber, args?.GroupMember?.Name),
-                        Member = args.GroupMember
+                        Message = chatMessageVm.Message,
+                        Name = ContactsHelper.NameOrPhone(chatMessageVm?.Member?.PhoneNumber, chatMessageVm?.Member?.Name),
+                        Member = chatMessageVm?.Member
                     });
                 });
-            };
+            });
+
             BindingContext = this;
 
         }
-
-        //                ItemTapped="Handle_ItemTapped"
-        //async void Handle_ItemTapped(object sender, SelectedItemChangedEventArgs e)
-        //{
-        //    if (e.SelectedItem == null)
-        //        return;
-
-        //    await DisplayAlert("Item Tapped", "An item was tapped.", "OK");
-
-        //    //Deselect Item
-        //    ((ListView)sender).SelectedItem = null;
-        //}
 
         private async void SendButton_OnClickedButton_OnClicked(object sender, EventArgs e)
         {

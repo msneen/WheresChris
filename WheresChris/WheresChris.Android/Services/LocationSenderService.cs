@@ -6,6 +6,7 @@ using StayTogether;
 using StayTogether.Classes;
 using StayTogether.Droid.NotificationCenter;
 using StayTogether.Droid.Services;
+using StayTogether.Models;
 using WheresChris.Helpers;
 using WheresChris.Views;
 using Xamarin.Forms;
@@ -63,7 +64,6 @@ namespace WheresChris.Droid.Services
             if (!phonePermissionGranted) return;
 
             _locationSender = await LocationSender.GetInstanceAsync();
-            if (_locationSender == null) return;
 
             MessagingCenter.Subscribe<LocationSender, GroupMemberVm>(this, LocationSender.SomeoneIsLostMsg,
             (sender, groupMember) =>
@@ -74,19 +74,32 @@ namespace WheresChris.Droid.Services
                 });
             });
 
-            _locationSender.OnGroupInvitationReceived += (sender, args) => 
+            MessagingCenter.Subscribe<LocationSender, InvitationVm>(this, LocationSender.GroupInvitationReceivedMsg,
+            (sender, invitationVm) =>
             {
-                GroupInvitationNotification.DisplayGroupInvitationNotification(args.GroupId, args.Name);
-            };
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    GroupInvitationNotification.DisplayGroupInvitationNotification(invitationVm.PhoneNumber, invitationVm.Name);
+                });
+            });
 
-            _locationSender.OnSomeoneLeft += (sender, args) =>
-            {                
-                LeftGroupNotification.DisplayLostNotification(args.PhoneNumber, args.Name);
-            };
-            _locationSender.OnSomeoneAlreadyInAnotherGroup += (sender, args) =>
+            MessagingCenter.Subscribe<LocationSender, GroupMemberSimpleVm>(this, LocationSender.SomeoneLeftMsg,
+            (sender, groupMemberSimpleVm) =>
             {
-                InAnotherGroupNotification.DisplayInAnotherGroupNotification(args.PhoneNumber, args.Name);
-            };
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    LeftGroupNotification.DisplayLostNotification(groupMemberSimpleVm.PhoneNumber, groupMemberSimpleVm.Name);
+                });
+            });
+
+            MessagingCenter.Subscribe<LocationSender, GroupMemberSimpleVm>(this, LocationSender.MemberAlreadyInGroupMsg,
+            (sender, groupMemberSimpleVm) =>
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    InAnotherGroupNotification.DisplayInAnotherGroupNotification(groupMemberSimpleVm.PhoneNumber, groupMemberSimpleVm.Name);
+                });
+            });
         }
 
         public override IBinder OnBind(Intent intent)

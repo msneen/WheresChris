@@ -68,14 +68,6 @@ namespace StayTogether
             return _instance;
         }
 
-	    public event EventHandler OnPhoneNumberMissing;
-
-        public event EventHandler<InvitedEventArgs> OnGroupInvitationReceived;
-        public event EventHandler OnGroupJoined;
-        public event EventHandler OnGroupDisbanded;
-        public event EventHandler<MemberMinimalEventArgs> OnSomeoneLeft;
-        public event EventHandler<MemberMinimalEventArgs> OnSomeoneAlreadyInAnotherGroup;
-        public event EventHandler<ChatMessageEventArgs> OnChatMessageReceived;
 
         public const string MemberAlreadyInGroupMsg = "MEMBERINGROUP";
 	    public const string SomeoneIsLostMsg = "SOMEONEISLOST";
@@ -89,7 +81,8 @@ namespace StayTogether
 	    public const string GroupInvitationReceivedMsg = "GROUPINVITATIONRECEIVED";
 	    public const string LocationSentMsg = "LOCATIONSENT";
 	    public const string GroupPositionUpdateMsg = "GROUPPOSITIONUPDATE";
-        
+	    public const string PhoneNumberMissingMsg = "PHONENUMBERMISSING";
+	    public const string ChatReceivedMsg = "CHATRECEIVED";
 
 
         public bool InAGroup { get; set; }
@@ -184,12 +177,13 @@ Debugger.Break();
 
 	    private void ChatMessageReceived(GroupMemberVm groupMember, string message)
 	    {
-            OnChatMessageReceived?.Invoke(this, new ChatMessageEventArgs
+            var chatMessageVm = new ChatMessageVm
             {
                 Message = message,
-                GroupMember = groupMember
-            });
-	    }
+                GroupMemberVm = groupMember
+            };
+            MessagingCenter.Send<LocationSender, ChatMessageVm>(this, ChatReceivedMsg, chatMessageVm);
+        }
 
 	    private async Task InvokeChatHubProxy(string method, params object[] args)
 	    {
@@ -212,8 +206,9 @@ Debugger.Break();
 	    {
 	        if (_phoneNumber.IsValidPhoneNumber() && this.IsInitialized) return true;
 
-	        OnPhoneNumberMissing?.Invoke(this, new EventArgs());
-	        return false;
+	        //OnPhoneNumberMissing?.Invoke(this, new EventArgs());
+            MessagingCenter.Send<LocationSender>(this, PhoneNumberMissingMsg);
+            return false;
 	    }
 
 	    private async Task RequestMemberPositions(string leaderPhoneNumber)
@@ -361,13 +356,13 @@ Debugger.Break();
 	    {
             try
             {
-                OnSomeoneAlreadyInAnotherGroup?.Invoke(this, new MemberMinimalEventArgs
+                var groupMemberSimpleVm = new GroupMemberSimpleVm
                 {
                     Name = memberName,
                     PhoneNumber = memberPhoneNumber
-                });
+                };
 
-                MessagingCenter.Send<LocationSender>(this, MemberAlreadyInGroupMsg);
+                MessagingCenter.Send<LocationSender, GroupMemberSimpleVm>(this, MemberAlreadyInGroupMsg, groupMemberSimpleVm);
             }
             catch (Exception ex)
             {
@@ -386,12 +381,12 @@ Debugger.Break();
             try
             {
                 if (memberPhoneNumber == _phoneNumber) return; //I dont need to notify myself that I left
-                OnSomeoneLeft?.Invoke(this, new MemberMinimalEventArgs
+                var groupMemberSimpleVm = new GroupMemberSimpleVm
                 {
                     Name = memberName,
                     PhoneNumber = memberPhoneNumber
-                });
-                MessagingCenter.Send<LocationSender>(this, SomeoneLeftMsg);
+                };
+                MessagingCenter.Send<LocationSender, GroupMemberSimpleVm>(this, SomeoneLeftMsg, groupMemberSimpleVm);
             }
             catch (Exception ex)
             {
@@ -414,8 +409,6 @@ Debugger.Break();
                 GroupLeader = false;
                 GroupMembers = null;
 
-                //AddNotification("Group Disbanded", "Your Group has been disbanded");
-                OnGroupDisbanded?.Invoke(this, new EventArgs());
                 MessagingCenter.Send<LocationSender>(this, GroupDisbandedMsg);
             }
             catch (Exception ex)
@@ -439,19 +432,22 @@ Debugger.Break();
             {
                 if (phoneNumber.CleanPhoneNumber() == _phoneNumber.CleanPhoneNumber()) return;//don't invite myself to a group
 
-                OnGroupInvitationReceived?.Invoke(this, new InvitedEventArgs
-                {
-                    Name = name,
-                    GroupId = phoneNumber
-                });
+                //OnGroupInvitationReceived?.Invoke(this, new InvitedEventArgs
+                //{
+                //    Name = name,
+                //    GroupId = phoneNumber
+                //});
 
-                _invitationList.AddInvitation(new InvitationVm
+                var invitationVm = new InvitationVm
                 {
                     Name = name,
                     PhoneNumber = phoneNumber,
                     ReceivedTime = DateTime.Now
-                });
-                MessagingCenter.Send<LocationSender>(this, GroupInvitationReceivedMsg);
+                };
+
+                _invitationList.AddInvitation(invitationVm);
+               
+                MessagingCenter.Send<LocationSender, InvitationVm>(this, GroupInvitationReceivedMsg, invitationVm);
             }
             catch (Exception ex)
             {
@@ -489,7 +485,7 @@ Debugger.Break();
 	    {
             try
             {
-                OnGroupJoined?.Invoke(this, new EventArgs());
+                //Might want to send Group Joined message here
                 _groupId = id;
                 InAGroup = true;
             }
