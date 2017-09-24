@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using StayTogether;
-using WheresChris.Messaging;
+using StayTogether.Models;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -12,8 +12,6 @@ namespace WheresChris.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class JoinPage : ContentPage
     {
-        public InvitationReceivedEvent InvitationReceivedEvent;
-
         public JoinPage()
         {
             Title = "Where's Chris - Join Group";
@@ -27,11 +25,22 @@ namespace WheresChris.Views
 
         private void InitializeMessagingCenterSubscriptions()
         {
-            InvitationReceivedEvent = new InvitationReceivedEvent();
-            InvitationReceivedEvent.OnInvitationReceivedMsg += async (sender, args) =>
+            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupInvitationReceivedMsg,
+            (sender) =>
             {
-                await ((JoinPageViewModel)BindingContext).LoadInvitations();
-            };
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    await ((JoinPageViewModel)BindingContext).RequestInvitations();
+                });
+            });
+            MessagingCenter.Subscribe<LocationSender, InvitationList>(this, LocationSender.GroupInvitationsMsg,
+            (sender, invitationList) =>
+            {
+                Device.BeginInvokeOnMainThread( () =>
+                {
+                    ((JoinPageViewModel)BindingContext).LoadInvitations(invitationList);
+                });
+            });
         }
 
         void Handle_ItemTapped(object sender, ItemTappedEventArgs e)
@@ -46,8 +55,12 @@ namespace WheresChris.Views
             var selectedItem = e.SelectedItem as ContactDisplayItemVm;
             if (selectedItem != null)
             {
-                var locationSender = await LocationSender.GetInstanceAsync();
-                await locationSender.ConfirmGroupInvitation(selectedItem.Invitation.PhoneNumber, selectedItem.Invitation.Name);
+                var groupMemberSimpleVm = new GroupMemberSimpleVm
+                {
+                    Name = selectedItem.Invitation.Name,
+                    PhoneNumber = selectedItem.Invitation.PhoneNumber
+                };
+                MessagingCenter.Send<MessagingCenterSender, GroupMemberSimpleVm>(new MessagingCenterSender(), LocationSender.ConfirmGroupInvitationMsg, groupMemberSimpleVm);
             }
             //Deselect Item
             ((ListView)sender).SelectedItem = null;
@@ -55,7 +68,7 @@ namespace WheresChris.Views
 
         private async void RefreshButton_OnClicked(object sender, EventArgs e)
         {
-            await ((JoinPageViewModel)BindingContext).LoadInvitations();
+            await ((JoinPageViewModel)BindingContext).RequestInvitations();
         }
     }
 
@@ -69,11 +82,16 @@ namespace WheresChris.Views
             Items = new ObservableCollection<ContactDisplayItemVm>();
         }
 
-        public async Task LoadInvitations()
+        public Task RequestInvitations()
         {
             Items.Clear();
-            var locationSender = await LocationSenderFactory.GetLocationSender();
-            var invitationList = locationSender.GetInvitations();
+            MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.GetInvitationsMsg);
+
+            return Task.CompletedTask;
+        }
+
+        public Task LoadInvitations(InvitationList invitationList)
+        {
             invitationList
                 .OrderBy(i => i.ReceivedTime)
                 .ToList()
@@ -82,6 +100,7 @@ namespace WheresChris.Views
                     Name = invitation.DisplayName(),
                     Invitation = invitation
                 }));
+            return Task.CompletedTask;
         }
     }
 }

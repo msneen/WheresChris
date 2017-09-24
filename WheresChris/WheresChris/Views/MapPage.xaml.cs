@@ -6,7 +6,6 @@ using StayTogether.Helpers;
 using StayTogether.Models;
 using TK.CustomMap;
 using WheresChris.Helpers;
-using WheresChris.Messaging;
 using WheresChris.Views.GroupViews;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
@@ -20,10 +19,6 @@ namespace WheresChris.Views
 	{
         private bool _mapInitialized = false;
         private Interval _positionInitializationInterval = new Interval();
-
-        public GroupPositionChangedEvent GroupPositionChangedEvent;
-        public GroupLeftEvent GroupLeftEvent;
-        public GroupJoinedEvent GroupJoinedEvent;
 
         public MapPage ()
 		{
@@ -70,34 +65,52 @@ namespace WheresChris.Views
         /// </summary>
 	    private void InitializeMessagingCenterSubscriptions()
 	    {
-            GroupPositionChangedEvent = new GroupPositionChangedEvent(new TimeSpan(0, 0, 30));
-            GroupPositionChangedEvent.OnGroupPositionChangedMsg += (sender, args) =>
+            MessagingCenter.Subscribe<LocationSender, List <GroupMemberSimpleVm >> (this, LocationSender.GroupPositionUpdateMsg, (sender, groupMemberSimpleVm) =>
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     if (!GroupMap.IsVisible) return;
                     AddMembersButton.TextColor = AddMembersButton.TextColor == Color.Blue ? Color.Black : Color.Blue;
                     SetFormEnabled(true);
-                    UpdateMap(args.GroupMembers);
+                    UpdateMap(groupMemberSimpleVm);
                 });
-            };
-            GroupJoinedEvent = new GroupJoinedEvent();
-            GroupJoinedEvent.OnGroupJoinedMsg += (sender, args) =>
+            });
+
+            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupJoinedMsg,
+            (sender) =>
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     SetFormEnabled(true);
                 });
-            };
+            });
+            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupCreatedMsg,
+            (sender) =>
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    SetFormEnabled(true);
+                });
+            });
 
-            GroupLeftEvent = new GroupLeftEvent();
-            GroupLeftEvent.OnGroupLeftMsg += (sender, args) =>
+            //If the group is disbanded, it means this user also left the group with everyone else
+            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupDisbandedMsg,
+            (sender) =>
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     SetFormEnabled(false);
                 });
-            };
+            });
+            //This user left the group
+            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.ThisUserLeftGroupMsg,
+            (sender) =>
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    SetFormEnabled(false);
+                });
+            });
         }
 
         private async Task InitializeMap()
@@ -185,13 +198,11 @@ namespace WheresChris.Views
 	        await Navigation.PushAsync(memberPage);
 	    }
 
-	    private async void LeaveGroupButton_OnClicked(object sender, EventArgs e)
+	    private void LeaveGroupButton_OnClicked(object sender, EventArgs e)
 	    {
-            var locationSender = await LocationSenderFactory.GetLocationSender();
-            //Calling both because I can only leave if I'm not the group leader, otherwise I have to end the group
-	        await locationSender.LeaveGroup();
-	        await locationSender.EndGroup();
-            MessagingCenter.Send<LocationSender>(locationSender, LocationSender.ThisUserLeftGroupMsg);
+            MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.LeaveGroupMsg);
+            MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.EndGroupMsg);
+            MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.ThisUserLeftGroupMsg);
         }
 
         private void HideSpinnerShowMap()

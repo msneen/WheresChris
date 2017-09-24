@@ -21,11 +21,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\TimeGate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Location\LocationSender.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Location\SendMeter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ChatMessageVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GroupMemberSimpleVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GroupMemberVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GroupVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\InvitationList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\InvitationVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\LostMemberVm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\MessagingCenterSender.cs" />
   </ItemGroup>
 </Project>

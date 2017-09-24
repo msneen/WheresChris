@@ -9,7 +9,9 @@ using StayTogether;
 using StayTogether.Classes;
 using StayTogether.Group;
 using StayTogether.Helpers;
+using StayTogether.Models;
 using WheresChris.Views;
+using Xamarin.Forms;
 
 namespace WheresChris.Helpers
 {
@@ -27,11 +29,10 @@ namespace WheresChris.Helpers
             if (!selectedGroupMemberVms.Any()) return;
             if (string.IsNullOrWhiteSpace(userPhoneNumber)) return;
 
-            var locationSender = await LocationSender.GetInstanceAsync();
             var userMapPosition = await PositionHelper.GetMapPosition();
             var userPosition = PositionConverter.Convert(userMapPosition.Value);
             var groupVm = GroupHelper.InitializeGroupVm(selectedGroupMemberVms, userPosition, userPhoneNumber, expirationHours);
-            await locationSender.StartOrAddToGroup(groupVm);
+            MessagingCenter.Send<object, GroupVm>(new MessagingCenterSender(), LocationSender.StartOrAddGroupMsg, groupVm);
         }
 
         public static List<GroupMemberVm> GetSelectedGroupMembers(ObservableCollection<ContactDisplayItemVm> items)
@@ -64,7 +65,7 @@ namespace WheresChris.Helpers
             var locationSender = await LocationSenderFactory.GetLocationSender();
             if(locationSender == null) return new List<GroupMemberVm>();
 
-            var groupMembers = await locationSender.GetMembers(groupMemberVm);
+            var groupMembers = await locationSender.GetMembers(groupMemberVm); //Todo: turn this into a Message
             return groupMembers;
         }
     }

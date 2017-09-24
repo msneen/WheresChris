@@ -9,15 +9,20 @@ using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
 using Microsoft.Azure.Mobile.Distribute;
 using Plugin.Toasts;
+using StayTogether;
+using StayTogether.Classes;
 using StayTogether.Helpers;
 using StayTogether.iOS.NotificationCenter;
+using StayTogether.Models;
 using TK.CustomMap.iOSUnified;
 using UIKit;
 using UserNotifications;
 using WheresChris.Helpers;
 using WheresChris.iOS.Classes;
 using WheresChris.iOS.NotificationCenter;
+using Xamarin.Forms;
 using XLabs.Forms;
+using Device = Microsoft.Azure.Mobile.Device;
 
 namespace WheresChris.iOS
 {
@@ -168,36 +173,51 @@ namespace WheresChris.iOS
 
             if (manager?.LocationSender == null || _eventsInitialized) return;
 
-	        manager.LocationSender.OnPhoneNumberMissing += (sender, args) =>
-	        {
-                PhoneNumberMissingNotification.DisplayGroupInvitationNotification();
-	        };
+            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.PhoneNumberMissingMsg,
+            (sender) =>
+            {
+                Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                {
+                    PhoneNumberMissingNotification.DisplayGroupInvitationNotification();
+                });
+            });
 
-            manager.LocationSender.OnSomeoneIsLost += (sender, args) =>
+            MessagingCenter.Subscribe<LocationSender, GroupMemberVm>(this, LocationSender.SomeoneIsLostMsg,
+            (sender, groupMember) =>
             {
-                LostNotification.DisplayLostNotification(args.GroupMember);
-            };
+                Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                {
+                    LostNotification.DisplayLostNotification(groupMember);
+                });
+            });
 
-            manager.LocationSender.OnGroupInvitationReceived += (sender, args) =>
+            MessagingCenter.Subscribe<LocationSender, InvitationVm>(this, LocationSender.GroupInvitationReceivedMsg,
+            (sender, invitationVm) =>
             {
-                GroupInvitationNotification.DisplayGroupInvitationNotification(args.GroupId, args.Name);
-            };
-            manager.LocationSender.OnGroupJoined += (sender, args) =>
-            {
+                Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                {
+                    GroupInvitationNotification.DisplayGroupInvitationNotification(invitationVm.PhoneNumber, invitationVm.Name);
+                });
+            });
 
-            };
-            manager.LocationSender.OnSomeoneLeft += (sender, args) =>
+            MessagingCenter.Subscribe<LocationSender, GroupMemberSimpleVm>(this, LocationSender.SomeoneLeftMsg,
+            (sender, groupMemberSimpleVm) =>
             {
-                LeftGroupNotification.DisplayGroupInvitationNotification(args.PhoneNumber, args.Name);
-            };
-            manager.LocationSender.OnSomeoneAlreadyInAnotherGroup += (sender, args) =>
-            {
-                InAnotherGroupNotification.DisplayInAnotherGroupNotification(args.PhoneNumber, args.Name);
-            };
-            manager.LocationSender.OnGroupDisbanded += (sender, args) =>
-            {
+                Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                {
+                    LeftGroupNotification.DisplayGroupInvitationNotification(groupMemberSimpleVm.PhoneNumber, groupMemberSimpleVm.Name);
+                });
+            });
 
-            };
+            MessagingCenter.Subscribe<LocationSender, GroupMemberSimpleVm>(this, LocationSender.MemberAlreadyInGroupMsg,
+            (sender, groupMemberSimpleVm) =>
+            {
+                Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                {
+                    InAnotherGroupNotification.DisplayInAnotherGroupNotification(groupMemberSimpleVm.PhoneNumber, groupMemberSimpleVm.Name);
+                });
+            });
+
             //Analytics.TrackEvent("IPhoneLocationEventsInitialized");
             _eventsInitialized = true;
         }

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.Mobile.Analytics;
+using StayTogether;
 using StayTogether.Helpers;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using WheresChris.Helpers;
-using WheresChris.Messaging;
 
 namespace WheresChris.Views
 {
@@ -15,8 +15,6 @@ namespace WheresChris.Views
     // ReSharper disable once RedundantExtendsListEntry
     public partial class InvitePage : ContentPage
     {
-        public GroupLeftEvent GroupLeftEvent;
-        public GroupJoinedEvent GroupJoinedEvent;
         private readonly Interval _contactInterval = new Interval();
 
         public InvitePage()
@@ -46,24 +44,44 @@ namespace WheresChris.Views
 
         private void InitializeMessagingCenterSubscriptions()
         {
-            GroupJoinedEvent = new GroupJoinedEvent();
-            GroupJoinedEvent.OnGroupJoinedMsg += (sender, args) =>
+            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupJoinedMsg,
+            (sender) =>
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     SetFormEnabled(false);
+                    App.SetCurrentTab("Map");
                 });
-                App.SetCurrentTab("Map");
-            };
+            });
+            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupCreatedMsg,
+            (sender) =>
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    SetFormEnabled(false);
+                    App.SetCurrentTab("Map");
+                });
+            });
 
-            GroupLeftEvent = new GroupLeftEvent();
-            GroupLeftEvent.OnGroupLeftMsg += (sender, args) =>
+            //If the group is disbanded, it means this user also left the group with everyone else
+            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupDisbandedMsg,
+            (sender) =>
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     SetFormEnabled(true);
                 });
-            };
+            });
+            //This user left the group
+            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.ThisUserLeftGroupMsg,
+            (sender) =>
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    SetFormEnabled(true);
+                });
+            });
+
         }
 
         private void InitializeExpirationPicker()
