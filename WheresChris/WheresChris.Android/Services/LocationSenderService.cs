@@ -3,9 +3,12 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using StayTogether;
+using StayTogether.Classes;
 using StayTogether.Droid.NotificationCenter;
 using StayTogether.Droid.Services;
 using WheresChris.Helpers;
+using WheresChris.Views;
+using Xamarin.Forms;
 
 namespace WheresChris.Droid.Services
 {
@@ -62,10 +65,15 @@ namespace WheresChris.Droid.Services
             _locationSender = await LocationSender.GetInstanceAsync();
             if (_locationSender == null) return;
 
-            _locationSender.OnSomeoneIsLost += (sender, args) =>
+            MessagingCenter.Subscribe<LocationSender, GroupMemberVm>(this, LocationSender.SomeoneIsLostMsg,
+            (sender, groupMember) =>
             {
-                LostNotification.DisplayLostNotification(args.GroupMember);
-            };
+                Device.BeginInvokeOnMainThread( () =>
+                {
+                    LostNotification.DisplayLostNotification(groupMember);
+                });
+            });
+
             _locationSender.OnGroupInvitationReceived += (sender, args) => 
             {
                 GroupInvitationNotification.DisplayGroupInvitationNotification(args.GroupId, args.Name);

@@ -69,7 +69,7 @@ namespace StayTogether
         }
 
 	    public event EventHandler OnPhoneNumberMissing;
-	    public event EventHandler<LostEventArgs> OnSomeoneIsLost;
+
         public event EventHandler<InvitedEventArgs> OnGroupInvitationReceived;
         public event EventHandler OnGroupJoined;
         public event EventHandler OnGroupDisbanded;
@@ -514,18 +514,26 @@ Debugger.Break();
                 if (lostMemberVm.LostDistance > 5280 * 60) return;
                 if (string.IsNullOrWhiteSpace(_groupId)) return;
 
-                OnSomeoneIsLost?.Invoke(this, new LostEventArgs
+                //OnSomeoneIsLost?.Invoke(this, new LostEventArgs
+                //{
+                //    GroupMember = new GroupMemberVm
+                //    {
+                //        PhoneNumber = lostMemberVm.PhoneNumber,
+                //        Name = lostMemberVm.Name,
+                //        Latitude = Convert.ToDouble(lostMemberVm.Latitude),
+                //        Longitude = Convert.ToDouble(lostMemberVm.Longitude),
+                //        LostDistance = lostMemberVm.LostDistance
+                //    }
+                //});
+                var groupMember = new GroupMemberVm
                 {
-                    GroupMember = new GroupMemberVm
-                    {
-                        PhoneNumber = lostMemberVm.PhoneNumber,
-                        Name = lostMemberVm.Name,
-                        Latitude = Convert.ToDouble(lostMemberVm.Latitude),
-                        Longitude = Convert.ToDouble(lostMemberVm.Longitude),
-                        LostDistance = lostMemberVm.LostDistance
-                    }
-                });
-                MessagingCenter.Send<LocationSender>(this, SomeoneIsLostMsg);
+                    PhoneNumber = lostMemberVm.PhoneNumber,
+                    Name = lostMemberVm.Name,
+                    Latitude = Convert.ToDouble(lostMemberVm.Latitude),
+                    Longitude = Convert.ToDouble(lostMemberVm.Longitude),
+                    LostDistance = lostMemberVm.LostDistance
+                };
+                MessagingCenter.Send<LocationSender, GroupMemberVm>(this, SomeoneIsLostMsg, groupMember);
             }
             catch (Exception ex)
             {

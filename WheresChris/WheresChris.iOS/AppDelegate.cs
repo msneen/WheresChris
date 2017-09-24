@@ -9,6 +9,8 @@ using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
 using Microsoft.Azure.Mobile.Distribute;
 using Plugin.Toasts;
+using StayTogether;
+using StayTogether.Classes;
 using StayTogether.Helpers;
 using StayTogether.iOS.NotificationCenter;
 using TK.CustomMap.iOSUnified;
@@ -17,7 +19,9 @@ using UserNotifications;
 using WheresChris.Helpers;
 using WheresChris.iOS.Classes;
 using WheresChris.iOS.NotificationCenter;
+using Xamarin.Forms;
 using XLabs.Forms;
+using Device = Microsoft.Azure.Mobile.Device;
 
 namespace WheresChris.iOS
 {
@@ -173,10 +177,14 @@ namespace WheresChris.iOS
                 PhoneNumberMissingNotification.DisplayGroupInvitationNotification();
 	        };
 
-            manager.LocationSender.OnSomeoneIsLost += (sender, args) =>
+            MessagingCenter.Subscribe<LocationSender, GroupMemberVm>(this, LocationSender.SomeoneIsLostMsg,
+            (sender, groupMember) =>
             {
-                LostNotification.DisplayLostNotification(args.GroupMember);
-            };
+                Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                {
+                    LostNotification.DisplayLostNotification(groupMember);
+                });
+            });
 
             manager.LocationSender.OnGroupInvitationReceived += (sender, args) =>
             {
