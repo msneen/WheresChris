@@ -198,13 +198,11 @@ namespace WheresChris.Views
 	        await Navigation.PushAsync(memberPage);
 	    }
 
-	    private async void LeaveGroupButton_OnClicked(object sender, EventArgs e)
+	    private void LeaveGroupButton_OnClicked(object sender, EventArgs e)
 	    {
-            var locationSender = await LocationSenderFactory.GetLocationSender();
-            //Calling both because I can only leave if I'm not the group leader, otherwise I have to end the group
-	        await locationSender.LeaveGroup();
-	        await locationSender.EndGroup();
-            MessagingCenter.Send<LocationSender>(locationSender, LocationSender.ThisUserLeftGroupMsg);
+            MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.LeaveGroupMsg);
+            MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.EndGroupMsg);
+            MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.ThisUserLeftGroupMsg);
         }
 
         private void HideSpinnerShowMap()

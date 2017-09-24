@@ -65,7 +65,7 @@ namespace WheresChris.Helpers
             var locationSender = await LocationSenderFactory.GetLocationSender();
             if(locationSender == null) return new List<GroupMemberVm>();
 
-            var groupMembers = await locationSender.GetMembers(groupMemberVm);
+            var groupMembers = await locationSender.GetMembers(groupMemberVm); //Todo: turn this into a Message
             return groupMembers;
         }
     }
