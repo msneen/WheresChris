@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using StayTogether;
+using StayTogether.Models;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -46,8 +47,12 @@ namespace WheresChris.Views
             var selectedItem = e.SelectedItem as ContactDisplayItemVm;
             if (selectedItem != null)
             {
-                var locationSender = await LocationSender.GetInstanceAsync();
-                await locationSender.ConfirmGroupInvitation(selectedItem.Invitation.PhoneNumber, selectedItem.Invitation.Name);
+                var groupMemberSimpleVm = new GroupMemberSimpleVm
+                {
+                    Name = selectedItem.Invitation.Name,
+                    PhoneNumber = selectedItem.Invitation.PhoneNumber
+                };
+                MessagingCenter.Send<JoinPage, GroupMemberSimpleVm>(this, LocationSender.ConfirmGroupInvitationMsg, groupMemberSimpleVm);
             }
             //Deselect Item
             ((ListView)sender).SelectedItem = null;

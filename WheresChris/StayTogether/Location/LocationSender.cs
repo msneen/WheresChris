@@ -8,9 +8,11 @@ using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Settings;
 using StayTogether.Classes;
+using StayTogether.Droid.NotificationCenter;
 using StayTogether.Helpers;
 using StayTogether.Models;
 using WheresChris.Helpers;
+using WheresChris.Views;
 using Xamarin.Forms;
 
 namespace StayTogether
@@ -84,6 +86,8 @@ namespace StayTogether
 	    public const string PhoneNumberMissingMsg = "PHONENUMBERMISSING";
 	    public const string ChatReceivedMsg = "CHATRECEIVED";
 
+	    public const string ConfirmGroupInvitationMsg = "CONFIRMGROUPiNVITATION";
+
 
         public bool InAGroup { get; set; }
         public bool GroupLeader { get; set; }
@@ -103,6 +107,7 @@ namespace StayTogether
             {
                 GetNickname();
                 GetPhoneNumber();
+                InitializeMessageCenter();
             }
             catch (Exception ex)
             {
@@ -114,6 +119,25 @@ Debugger.Break();
                     { "Message", ex.Message}
                 });
             }
+        }
+
+	    private void InitializeMessageCenter()
+	    {
+	        MessagingCenter.Subscribe<JoinPage, GroupMemberSimpleVm>(this, ConfirmGroupInvitationMsg, (sender, groupMemberSimpleVm) =>
+	            {
+                    Device.BeginInvokeOnMainThread(async () =>
+                    {
+                        await ConfirmGroupInvitation(groupMemberSimpleVm.PhoneNumber, groupMemberSimpleVm.Name);
+                    });                    
+                });
+
+            MessagingCenter.Subscribe<GroupInvitationNotification, GroupMemberSimpleVm>(this, ConfirmGroupInvitationMsg, (sender, groupMemberSimpleVm) =>
+            {
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    await ConfirmGroupInvitation(groupMemberSimpleVm.PhoneNumber, groupMemberSimpleVm.Name);
+                });
+            });
         }
 
 	    public async Task InitializeAsync()

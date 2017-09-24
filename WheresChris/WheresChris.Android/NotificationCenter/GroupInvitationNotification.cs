@@ -1,8 +1,12 @@
 using Android.App;
 using Android.Content;
 using StayTogether.Droid.Services;
+using StayTogether.Models;
 using WheresChris.Droid;
 using WheresChris.Droid.Services;
+using WheresChris.Views;
+using Xamarin.Forms;
+using Application = Android.App.Application;
 
 namespace StayTogether.Droid.NotificationCenter
 {
@@ -36,14 +40,19 @@ namespace StayTogether.Droid.NotificationCenter
         }
 
 
-        public async void OnNotify(Intent intent)
+        public void OnNotify(Intent intent)
         {
             if (!GroupInvitation.Equals(intent.Action)) return;
 
             var name = intent.GetStringExtra("name");
             var phoneNumber = intent.GetStringExtra("phonenumber");
-            var locationSender = await LocationSender.GetInstanceAsync();
-            await locationSender.ConfirmGroupInvitation(phoneNumber, name);
+
+            var groupMemberSimpleVm = new GroupMemberSimpleVm
+            {
+                Name = name,
+                PhoneNumber = phoneNumber
+            };
+            MessagingCenter.Send<GroupInvitationNotification, GroupMemberSimpleVm>(this, LocationSender.ConfirmGroupInvitationMsg, groupMemberSimpleVm);
         }
     }
 }
