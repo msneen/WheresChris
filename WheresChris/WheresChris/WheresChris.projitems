@@ -23,6 +23,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\PermissionHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LocationSenderFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\BaseDataObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ChatMessageSimpleVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ChatMessageVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ContactDisplayItemVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ExpirationPickerViewModel.cs" />

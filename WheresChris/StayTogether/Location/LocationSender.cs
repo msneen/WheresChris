@@ -12,8 +12,10 @@ using StayTogether.Droid.NotificationCenter;
 using StayTogether.Helpers;
 using StayTogether.Models;
 using WheresChris.Helpers;
+using WheresChris.ViewModels;
 using WheresChris.Views;
 using Xamarin.Forms;
+using ChatMessageVm = StayTogether.Models.ChatMessageVm;
 
 namespace StayTogether
 {
@@ -217,12 +219,12 @@ Debugger.Break();
 
 	    private void ChatMessageReceived(GroupMemberVm groupMember, string message)
 	    {
-            var chatMessageVm = new ChatMessageVm
+            var chatMessageVm = new ChatMessageSimpleVm
             {
                 Message = message,
-                GroupMemberVm = groupMember
+                Member = groupMember
             };
-            MessagingCenter.Send<LocationSender, ChatMessageVm>(this, ChatReceivedMsg, chatMessageVm);
+            MessagingCenter.Send<LocationSender, ChatMessageSimpleVm>(this, ChatReceivedMsg, chatMessageVm);
         }
 
 	    private async Task InvokeChatHubProxy(string method, params object[] args)
@@ -817,6 +819,15 @@ Debugger.Break();
                 {
                     groupMemberVm.GroupId = _groupId;
                     await InvokeChatHubProxy("SendToGroup", groupMemberVm, message);
+                }
+                else
+                {
+                    var chatMessageVm = new ChatMessageSimpleVm
+                    {
+                        Message = "Message not sent.  Not currently in a group",
+                        Member = new GroupMemberVm { Name = "System"}
+                    };
+                    MessagingCenter.Send<LocationSender, ChatMessageSimpleVm>(this, ChatReceivedMsg, chatMessageVm);
                 }
             }
             catch (Exception ex)

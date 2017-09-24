@@ -20,23 +20,25 @@ namespace WheresChris.Views
             InitializeComponent();
             Title = "Where's Chris - Chat";
             Items = new ObservableCollection<ChatMessageVm>();
+            BindingContext = this;
+            InitializeMessagingCenter();
+        }
 
-            MessagingCenter.Subscribe<LocationSender, ChatMessageVm>(this, LocationSender.ChatReceivedMsg,
-            (sender, chatMessageVm) =>
-            {
-                Device.BeginInvokeOnMainThread(() =>
+        private void InitializeMessagingCenter()
+        {
+            MessagingCenter.Subscribe<LocationSender, ChatMessageSimpleVm>(this, LocationSender.ChatReceivedMsg,
+                (sender, chatMessageVm) =>
                 {
-                    Items.Add(new ChatMessageVm
+                    Device.BeginInvokeOnMainThread(() =>
                     {
-                        Message = chatMessageVm.Message,
-                        Name = ContactsHelper.NameOrPhone(chatMessageVm?.Member?.PhoneNumber, chatMessageVm?.Member?.Name),
-                        Member = chatMessageVm?.Member
+                        Items.Add(new ChatMessageVm
+                        {
+                            Message = chatMessageVm.Message,
+                            Name = ContactsHelper.NameOrPhone(chatMessageVm?.Member?.PhoneNumber, chatMessageVm?.Member?.Name),
+                            Member = chatMessageVm?.Member
+                        });
                     });
                 });
-            });
-
-            BindingContext = this;
-
         }
 
         private async void SendButton_OnClickedButton_OnClicked(object sender, EventArgs e)
