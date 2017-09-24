@@ -52,7 +52,7 @@ namespace StayTogether.Droid.NotificationCenter
                 Name = name,
                 PhoneNumber = phoneNumber
             };
-            MessagingCenter.Send<GroupInvitationNotification, GroupMemberSimpleVm>(this, LocationSender.ConfirmGroupInvitationMsg, groupMemberSimpleVm);
+            MessagingCenter.Send<MessagingCenterSender, GroupMemberSimpleVm>(new MessagingCenterSender(), LocationSender.ConfirmGroupInvitationMsg, groupMemberSimpleVm);
         }
     }
 }

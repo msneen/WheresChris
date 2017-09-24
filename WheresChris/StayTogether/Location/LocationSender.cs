@@ -123,7 +123,7 @@ Debugger.Break();
 
 	    private void InitializeMessageCenter()
 	    {
-	        MessagingCenter.Subscribe<JoinPage, GroupMemberSimpleVm>(this, ConfirmGroupInvitationMsg, (sender, groupMemberSimpleVm) =>
+	        MessagingCenter.Subscribe<MessagingCenterSender, GroupMemberSimpleVm>(this, ConfirmGroupInvitationMsg, (sender, groupMemberSimpleVm) =>
 	            {
                     Device.BeginInvokeOnMainThread(async () =>
                     {
@@ -131,13 +131,7 @@ Debugger.Break();
                     });                    
                 });
 
-            MessagingCenter.Subscribe<GroupInvitationNotification, GroupMemberSimpleVm>(this, ConfirmGroupInvitationMsg, (sender, groupMemberSimpleVm) =>
-            {
-                Device.BeginInvokeOnMainThread(async () =>
-                {
-                    await ConfirmGroupInvitation(groupMemberSimpleVm.PhoneNumber, groupMemberSimpleVm.Name);
-                });
-            });
+
         }
 
 	    public async Task InitializeAsync()

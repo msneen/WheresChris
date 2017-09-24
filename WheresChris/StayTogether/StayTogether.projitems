@@ -28,5 +28,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\InvitationList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\InvitationVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\LostMemberVm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\MessagingCenterSender.cs" />
   </ItemGroup>
 </Project>

@@ -52,7 +52,7 @@ namespace WheresChris.Views
                     Name = selectedItem.Invitation.Name,
                     PhoneNumber = selectedItem.Invitation.PhoneNumber
                 };
-                MessagingCenter.Send<JoinPage, GroupMemberSimpleVm>(this, LocationSender.ConfirmGroupInvitationMsg, groupMemberSimpleVm);
+                MessagingCenter.Send<MessagingCenterSender, GroupMemberSimpleVm>(new MessagingCenterSender(), LocationSender.ConfirmGroupInvitationMsg, groupMemberSimpleVm);
             }
             //Deselect Item
             ((ListView)sender).SelectedItem = null;

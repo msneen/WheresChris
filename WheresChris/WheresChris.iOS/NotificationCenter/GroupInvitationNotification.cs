@@ -44,7 +44,7 @@ namespace StayTogether.iOS.NotificationCenter
                     Name = name,
                     PhoneNumber = phoneNumber
                 };
-                MessagingCenter.Send<GroupInvitationNotification, GroupMemberSimpleVm>(new GroupInvitationNotification(), LocationSender.ConfirmGroupInvitationMsg, groupMemberSimpleVm);
+                MessagingCenter.Send<MessagingCenterSender, GroupMemberSimpleVm>(new MessagingCenterSender(), LocationSender.ConfirmGroupInvitationMsg, groupMemberSimpleVm);
             });
 
             actions.Add(declineAction);
