@@ -346,13 +346,10 @@ Debugger.Break();
 	                GroupMembers.Clear();
 	                GroupMembers.AddRange(groupMembers);
 	            }
-	            MessagingCenter.Send<LocationSender>(this, GroupPositionUpdateMsg);
+	            MessagingCenter.Send<LocationSender, List<GroupMemberSimpleVm>>(this, GroupPositionUpdateMsg, groupMembers);
 	        }
             catch (Exception ex)
             {
-#if (DEBUG)
-                Debugger.Break();
-#endif
                 Analytics.TrackEvent($"LocationSender_OnGroupPositionUpdate", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}

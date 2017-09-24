@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Plugin.Toasts;
+using StayTogether;
 using WheresChris.Helpers;
-using WheresChris.Messaging;
 using Xamarin.Forms;
 
 
@@ -13,7 +13,6 @@ namespace WheresChris.Views
     /// </summary>
     public partial class MainPage : ContentPage
     {
-        public LocationSentEvent LocationSentEvent;
 
         public MainPage()
         {
@@ -61,15 +60,13 @@ namespace WheresChris.Views
 
         private void InitializeMessagingCenterSubscriptions()
         {
-            LocationSentEvent = new LocationSentEvent();
-            LocationSentEvent.OnLocationSentMsg +=
-            (sender, args) =>
+            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.LocationSentMsg, (sender) =>
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     TitleLabel.TextColor = TitleLabel.TextColor == Color.White ? Color.Yellow : Color.White;
                 });
-            };
+            });
         }
 
         public void StartGroup(object sender, EventArgs e)

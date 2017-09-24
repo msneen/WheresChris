@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using StayTogether;
-using WheresChris.Messaging;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -12,8 +11,6 @@ namespace WheresChris.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class JoinPage : ContentPage
     {
-        public InvitationReceivedEvent InvitationReceivedEvent;
-
         public JoinPage()
         {
             Title = "Where's Chris - Join Group";
@@ -27,11 +24,14 @@ namespace WheresChris.Views
 
         private void InitializeMessagingCenterSubscriptions()
         {
-            InvitationReceivedEvent = new InvitationReceivedEvent();
-            InvitationReceivedEvent.OnInvitationReceivedMsg += async (sender, args) =>
+            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupInvitationReceivedMsg,
+            (sender) =>
             {
-                await ((JoinPageViewModel)BindingContext).LoadInvitations();
-            };
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    await((JoinPageViewModel)BindingContext).LoadInvitations();
+                });
+            });
         }
 
         void Handle_ItemTapped(object sender, ItemTappedEventArgs e)
