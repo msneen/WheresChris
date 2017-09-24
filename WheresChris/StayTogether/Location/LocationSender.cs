@@ -246,7 +246,15 @@ Debugger.Break();
 	    {
 	        if (_phoneNumber.IsValidPhoneNumber() && this.IsInitialized) return true;
 
-	        //OnPhoneNumberMissing?.Invoke(this, new EventArgs());
+            if (string.IsNullOrWhiteSpace(_phoneNumber))
+            {
+                GetPhoneNumber();
+                if (_phoneNumber.IsValidPhoneNumber() && this.IsInitialized) return true;
+                if (!IsInitialized && !string.IsNullOrWhiteSpace(_phoneNumber))
+                {
+                    Initialize();
+                }
+            }
             MessagingCenter.Send<LocationSender>(this, PhoneNumberMissingMsg);
             return false;
 	    }
