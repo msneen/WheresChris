@@ -4,8 +4,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Plugin.Geolocator;
 using StayTogether.Classes;
+using StayTogether.Models;
 using WheresChris;
 using WheresChris.Helpers;
+using Xamarin.Forms;
 
 namespace StayTogether.Helpers
 {
@@ -23,10 +25,13 @@ namespace StayTogether.Helpers
                 PhoneNumber = userPhoneNumber,
                 Name = nickname
             };
-            var locationSender = await LocationSenderFactory.GetLocationSender();
-            if (locationSender == null) return;
-
-            await locationSender.SendChatMessage(groupMemberVm, message);          
+  
+            var chatMessageVm = new ChatMessageVm
+            {
+                GroupMemberVm = groupMemberVm,
+                Message = message
+            };       
+            MessagingCenter.Send<MessagingCenterSender, ChatMessageVm>(new MessagingCenterSender(), LocationSender.SendChatMsg, chatMessageVm);
         }
     }
 }

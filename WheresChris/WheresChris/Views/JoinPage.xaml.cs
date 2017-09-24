@@ -30,7 +30,15 @@ namespace WheresChris.Views
             {
                 Device.BeginInvokeOnMainThread(async () =>
                 {
-                    await((JoinPageViewModel)BindingContext).LoadInvitations();
+                    await ((JoinPageViewModel)BindingContext).RequestInvitations();
+                });
+            });
+            MessagingCenter.Subscribe<LocationSender, InvitationList>(this, LocationSender.GroupInvitationsMsg,
+            (sender, invitationList) =>
+            {
+                Device.BeginInvokeOnMainThread( () =>
+                {
+                    ((JoinPageViewModel)BindingContext).LoadInvitations(invitationList);
                 });
             });
         }
@@ -60,7 +68,7 @@ namespace WheresChris.Views
 
         private async void RefreshButton_OnClicked(object sender, EventArgs e)
         {
-            await ((JoinPageViewModel)BindingContext).LoadInvitations();
+            await ((JoinPageViewModel)BindingContext).RequestInvitations();
         }
     }
 
@@ -74,11 +82,16 @@ namespace WheresChris.Views
             Items = new ObservableCollection<ContactDisplayItemVm>();
         }
 
-        public async Task LoadInvitations()
+        public Task RequestInvitations()
         {
             Items.Clear();
-            var locationSender = await LocationSenderFactory.GetLocationSender();
-            var invitationList = locationSender.GetInvitations();
+            MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.GetInvitationsMsg);
+
+            return Task.CompletedTask;
+        }
+
+        public Task LoadInvitations(InvitationList invitationList)
+        {
             invitationList
                 .OrderBy(i => i.ReceivedTime)
                 .ToList()
@@ -87,6 +100,7 @@ namespace WheresChris.Views
                     Name = invitation.DisplayName(),
                     Invitation = invitation
                 }));
+            return Task.CompletedTask;
         }
     }
 }

@@ -16,7 +16,9 @@ using StayTogether;
 using StayTogether.Droid.NotificationCenter;
 using StayTogether.Droid.Services;
 using StayTogether.Helpers;
+using StayTogether.Models;
 using WheresChris.Droid.Services;
+using Xamarin.Forms;
 using Permission = Android.Content.PM.Permission;
 
 namespace WheresChris.Droid
@@ -120,12 +122,11 @@ namespace WheresChris.Droid
 			IsBound = false;
 		}
 
-		public async Task CleanupGroupsForExit()
+		public void CleanupGroupsForExit()
 		{
-			var locationSender = await LocationSender.GetInstanceAsync();
-			await locationSender.LeaveGroup();
-			await locationSender.EndGroup();
-		}
+            MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.LeaveGroupMsg);
+            MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.EndGroupMsg);
+        }
 
 		protected override void OnPause()
 		{
@@ -141,10 +142,10 @@ namespace WheresChris.Droid
 			BindToService();
 		}
 
-		protected override async void OnDestroy()
+		protected override void OnDestroy()
 		{
 			base.OnDestroy();
-			await CleanupGroupsForExit();
+			CleanupGroupsForExit();
 			Binder?.GetLocationSenderService()?.StopSelf();
 			Process.KillProcess(Process.MyPid());
 			System.Environment.Exit(0);

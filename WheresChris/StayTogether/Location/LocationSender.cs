@@ -85,8 +85,14 @@ namespace StayTogether
 	    public const string GroupPositionUpdateMsg = "GROUPPOSITIONUPDATE";
 	    public const string PhoneNumberMissingMsg = "PHONENUMBERMISSING";
 	    public const string ChatReceivedMsg = "CHATRECEIVED";
-
-	    public const string ConfirmGroupInvitationMsg = "CONFIRMGROUPiNVITATION";
+	    public const string StartOrAddGroupMsg = "STARTORADDGROUP";
+	    public const string LeaveGroupMsg = "LEAVEGROUP";
+	    public const string EndGroupMsg = "ENDGROUP";
+	    public const string SendChatMsg = "SENDCHAT";
+	    public const string GroupInvitationsMsg = "GROUPINVITATIONSMSG";
+	    public const string GetInvitationsMsg = "GETINVITATIONS";
+             
+        public const string ConfirmGroupInvitationMsg = "CONFIRMGROUPiNVITATION";
 
 
         public bool InAGroup { get; set; }
@@ -130,8 +136,41 @@ Debugger.Break();
                         await ConfirmGroupInvitation(groupMemberSimpleVm.PhoneNumber, groupMemberSimpleVm.Name);
                     });                    
                 });
-
-
+            MessagingCenter.Subscribe<MessagingCenterSender, GroupVm>(this, StartOrAddGroupMsg, (sender, groupVm) =>
+            {
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    await StartOrAddToGroup(groupVm);
+                });
+            });
+            MessagingCenter.Subscribe<MessagingCenterSender>(this, LeaveGroupMsg, (sender) =>
+            {
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    await LeaveGroup();
+                });
+            });
+            MessagingCenter.Subscribe<MessagingCenterSender>(this, EndGroupMsg, (sender) =>
+            {
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    await EndGroup();
+                });
+            });
+            MessagingCenter.Subscribe<MessagingCenterSender, ChatMessageVm>(this, SendChatMsg, (sender, chatMessageVm) =>
+            {
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    await SendChatMessage(chatMessageVm.GroupMemberVm, chatMessageVm.Message);
+                });
+            });
+            MessagingCenter.Subscribe<MessagingCenterSender>(this, GetInvitationsMsg, (sender) =>
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    GetInvitations();
+                });
+            });
         }
 
 	    public async Task InitializeAsync()
@@ -484,6 +523,7 @@ Debugger.Break();
             try
             {
                 _invitationList.Clean();
+                MessagingCenter.Send<LocationSender, InvitationList>(this, GroupInvitationsMsg, _invitationList);
                 return _invitationList;
             }
             catch (Exception ex)
