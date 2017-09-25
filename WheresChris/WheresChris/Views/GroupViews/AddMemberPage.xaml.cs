@@ -36,12 +36,29 @@ namespace WheresChris.Views.GroupViews
             var userPhoneNumber = SettingsHelper.GetPhoneNumber();
             await GroupActionsHelper.StartOrAddToGroup(selectedGroupMemberVms, userPhoneNumber);
         }
-    }
+        private void TapGestureRecognizer_OnTapped(object sender, EventArgs e)
+        {
+            if (ContactsListView.IsEnabled)
+            {
+                var selectedColor = Color.LightSkyBlue;
+                object themeColor;
+                if (Application.Current.Resources.TryGetValue("ListViewSelectedColor", out themeColor))
+                {
+                    selectedColor = (Color)themeColor;
+                }
+                var contactDisplayItemVm = (ContactDisplayItemVm)((RelativeLayout)sender).BindingContext;
+                contactDisplayItemVm.Selected = !contactDisplayItemVm.Selected;
+                var color = contactDisplayItemVm.Selected ? selectedColor : ContactsListView.BackgroundColor;
+                ((RelativeLayout)sender).BackgroundColor = color;
+            }
+        }
 
+    }
 
 
     public class AddMemberPageViewModel : INotifyPropertyChanged
     {
+        public string Title { get; set; } = "Add Members";
         public ObservableCollection<ContactDisplayItemVm> Items { get; set; }
 
         public async Task InitializeContacts()

@@ -27,6 +27,8 @@ namespace WheresChris.Views.GroupViews
 
     internal class MemberPageViewModel
     {
+        public string Title { get; set; } = "View Members";
+
         public ObservableCollection<ContactDisplayItemVm> Items { get; }
 
         public MemberPageViewModel()
