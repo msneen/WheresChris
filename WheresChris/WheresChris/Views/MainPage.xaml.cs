@@ -60,13 +60,13 @@ namespace WheresChris.Views
 
         private void InitializeMessagingCenterSubscriptions()
         {
-            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.LocationSentMsg, (sender) =>
-            {
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    TitleLabel.TextColor = TitleLabel.TextColor == Color.White ? Color.Yellow : Color.White;
-                });
-            });
+            //MessagingCenter.Subscribe<LocationSender>(this, LocationSender.LocationSentMsg, (sender) =>
+            //{
+            //    Device.BeginInvokeOnMainThread(() =>
+            //    {
+            //        TitleLabel.TextColor = TitleLabel.TextColor == Color.White ? Color.Yellow : Color.White;
+            //    });
+            //});
         }
 
         public void StartGroup(object sender, EventArgs e)

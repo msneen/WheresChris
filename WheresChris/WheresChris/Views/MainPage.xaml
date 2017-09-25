@@ -24,7 +24,8 @@
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.2, Constant=0}"
                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.0, Constant=0}" />
 
-                <Label x:Name="TitleLabel" Text="Where's Chris?" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" FontSize="Large" Style="{StaticResource labelBannerStyle}"  
+                <Label x:Name="TitleLabel" Text="Where's Chris?" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" 
+                   IsVisible="False" FontSize="Large" Style="{StaticResource labelBannerStyle}"  
                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.05, Constant=0}"
                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.9,Constant=0}"
                    RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.15, Constant=0}"/>

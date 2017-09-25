@@ -93,6 +93,8 @@ namespace WheresChris.Views
         public Task LoadInvitations(InvitationList invitationList)
         {
             invitationList
+                .GroupBy(g=>g.DisplayName())
+                .Select(i=>i.First())
                 .OrderBy(i => i.ReceivedTime)
                 .ToList()
                 .ForEach(invitation => Items.Add(new ContactDisplayItemVm
