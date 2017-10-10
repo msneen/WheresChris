@@ -32,6 +32,13 @@ namespace WheresChris.UITest
             app.Screenshot("First screen.");
             //app.Repl();
         }
+
+        [Test]
+        public void AcceptsName()
+        {
+            app.EnterText(x=>x.Marked("Nickname"),"Mike");
+            app.Tap(x=>x.Marked("SaveButton"));
+        }
     }
 }
 
