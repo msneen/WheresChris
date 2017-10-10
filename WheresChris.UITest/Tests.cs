@@ -29,8 +29,8 @@ namespace WheresChris.UITest
         [Test]
         public void AppLaunches()
         {
-            //app.Screenshot("First screen.");
-            app.Repl();
+            app.Screenshot("First screen.");
+            //app.Repl();
         }
     }
 }
