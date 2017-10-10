@@ -6,10 +6,10 @@
 
     <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
         <RelativeLayout Padding="5,0,0,0" VerticalOptions="Start">
-            <Entry x:Name="SearchEntry"
+            <Entry x:Name="SearchEntry" AutomationId="SearchEntry"
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.7,Constant=0}"/>
-            <Button x:Name="SearchButton" Text="Search" Clicked="SearchButton_OnClicked" Style="{StaticResource buttonStyle}"
+            <Button x:Name="SearchButton"  AutomationId="SearchButton" Text="Search" Clicked="SearchButton_OnClicked" Style="{StaticResource buttonStyle}"
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.7, Constant=0}"
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.3,Constant=0}" />
         </RelativeLayout>
@@ -52,10 +52,10 @@
             </ListView.ItemTemplate>
         </ListView>
         <RelativeLayout Padding="5,0,0,0" VerticalOptions="End" HorizontalOptions="FillAndExpand">
-            <Picker x:Name="ExpirationPicker"
+            <Picker x:Name="ExpirationPicker" AutomationId="ExpirationPicker"
                 RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.25,Constant=0}"/>
-            <Button x:Name="InviteButton" Text="Invite" Clicked="StartGroup" Style="{StaticResource buttonStyle}"  
+            <Button x:Name="InviteButton" AutomationId="InviteButton" Text="Invite" Clicked="StartGroup" Style="{StaticResource buttonStyle}"  
                 RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.3, Constant=0}"
                 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.75,Constant=0}"/>
         </RelativeLayout>

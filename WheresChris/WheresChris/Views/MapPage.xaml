@@ -13,15 +13,15 @@
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=1,Constant=0}" 
                     RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height,Factor=0.75,Constant=0}" />
             <!--<RelativeLayout Padding="5,0,0,0" VerticalOptions="End">-->
-                <Button x:Name="AddMembersButton" Text="Add" Clicked="AddMembersButton_OnClicked" Style="{StaticResource buttonStyle}"
+                <Button x:Name="AddMembersButton" AutomationId="AddMembersButton" Text="Add" Clicked="AddMembersButton_OnClicked" Style="{StaticResource buttonStyle}"
                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.75, Constant=0}"
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}"/>
-                <Button x:Name="ViewMembersButton" Text="Members" Clicked="ViewMembersButton_OnClicked" Style="{StaticResource buttonStyle}"
+                <Button x:Name="ViewMembersButton" AutomationId="ViewMembersButton" Text="Members" Clicked="ViewMembersButton_OnClicked" Style="{StaticResource buttonStyle}"
                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.75, Constant=0}"
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=0}"
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}"/>
-                <Button x:Name="LeaveGroupButton" Text="Leave" Clicked="LeaveGroupButton_OnClicked" Style="{StaticResource buttonStyle}"
+                <Button x:Name="LeaveGroupButton" AutomationId="LeaveGroupButton" Text="Leave" Clicked="LeaveGroupButton_OnClicked" Style="{StaticResource buttonStyle}"
                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.82, Constant=0}"
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.3, Constant=0}"
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.4,Constant=0}" />
