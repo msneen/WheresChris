@@ -22,8 +22,8 @@ namespace WheresChris.UITest
         [SetUp]
         public void BeforeEachTest()
         {
-            //app = AppInitializer.StartApp(platform);
-            app = ConfigureApp.Android.StartApp();
+            app = AppInitializer.StartApp(platform);
+            //app = ConfigureApp.Android.StartApp();
         }
 
         [Test]

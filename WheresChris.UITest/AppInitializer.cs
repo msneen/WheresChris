@@ -14,7 +14,7 @@ namespace WheresChris.UITest
             {
                 return ConfigureApp
                     .Android
-                    .ApkFile("../WheresChris/WheresChris/WheresChris.Android/bin/Release/whereschris.whereschris.apk")
+                    .ApkFile("../WheresChris/WheresChris/WheresChris.Android/bin/Release/com.whereschris.WheresChris.apk")
                     .StartApp();
             }
 
