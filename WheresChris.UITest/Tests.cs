@@ -22,13 +22,15 @@ namespace WheresChris.UITest
         [SetUp]
         public void BeforeEachTest()
         {
-            app = AppInitializer.StartApp(platform);
+            //app = AppInitializer.StartApp(platform);
+            app = ConfigureApp.Android.StartApp();
         }
 
         [Test]
         public void AppLaunches()
         {
-            app.Screenshot("First screen.");
+            //app.Screenshot("First screen.");
+            app.Repl();
         }
     }
 }
