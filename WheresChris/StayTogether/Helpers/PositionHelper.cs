@@ -116,6 +116,11 @@ namespace StayTogether.Helpers
             }
 
             var userPosition = GetMedianPosition(positionList);
+            return GetMapPosition(userPosition);
+        }
+
+        public static Xamarin.Forms.Maps.Position? GetMapPosition(Position userPosition)
+        {
             if (userPosition == null) return null;
             if (!LocationValid(userPosition)) return null;
             var mapPosition = PositionConverter.Convert(userPosition);

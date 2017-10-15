@@ -19,8 +19,10 @@ namespace WheresChris.Views
 	{
         private bool _mapInitialized = false;
         private Interval _positionInitializationInterval = new Interval();
+	    private Position? _mapPosition;
+        private DateTime _lastPositionUpdateTime = DateTime.Now;
 
-        public MapPage ()
+	    public MapPage ()
 		{
             Title = "Where's Chris - Map";
             InitializeComponent ();
@@ -111,6 +113,11 @@ namespace WheresChris.Views
                     SetFormEnabled(false);
                 });
             });
+            MessagingCenter.Subscribe<MessagingCenterSender, Plugin.Geolocator.Abstractions.Position>(this, LocationSender.PositionUpdatedMsg, (sender, position) =>
+            {
+                _mapPosition = PositionHelper.GetMapPosition(position);
+                _lastPositionUpdateTime = DateTime.Now;
+            });
         }
 
         private async Task InitializeMap()
@@ -128,13 +135,19 @@ namespace WheresChris.Views
             _mapInitialized = true;
         }
 
-	    private static async Task<List<GroupMemberSimpleVm>> GetMyPositionList()
+	    private async Task<List<GroupMemberSimpleVm>> GetMyPositionList()
 	    {
 	        var hasLocationPermissions = await PermissionHelper.HasOrRequestLocationPermission();
 	        if (!hasLocationPermissions) return null;
 
-	        var userPosition = await PositionHelper.GetMapPosition();
-	        if (!userPosition.HasValue) return null;
+	        if (DateTime.Now.Subtract(new TimeSpan(0, 0, 10)) > _lastPositionUpdateTime)
+	        {
+                _mapPosition = await PositionHelper.GetMapPosition();
+                _lastPositionUpdateTime = DateTime.Now;
+	        }
+            var userPosition = _mapPosition;
+
+            if (!userPosition.HasValue) return null;
 	        if (!PositionHelper.LocationValid(userPosition.Value)) return null;
 
 	        var userPhoneNumber = SettingsHelper.GetPhoneNumber();

@@ -14,6 +14,7 @@ using WheresChris.Helpers;
 using WheresChris.ViewModels;
 using Xamarin.Forms;
 using ChatMessageVm = StayTogether.Models.ChatMessageVm;
+using Position = Xamarin.Forms.Maps.Position;
 
 namespace StayTogether
 {
@@ -90,9 +91,9 @@ namespace StayTogether
 	    public const string EndGroupMsg = "ENDGROUP";
 	    public const string SendChatMsg = "SENDCHAT";
 	    public const string GroupInvitationsMsg = "GROUPINVITATIONSMSG";
-	    public const string GetInvitationsMsg = "GETINVITATIONS";
-             
+	    public const string GetInvitationsMsg = "GETINVITATIONS";             
         public const string ConfirmGroupInvitationMsg = "CONFIRMGROUPiNVITATION";
+	    public const string PositionUpdatedMsg = "POSITIONUPDATED";
 
 
         public bool InAGroup { get; set; }
@@ -154,6 +155,12 @@ Debugger.Break();
             {
                 GetInvitations();
             });
+            MessagingCenter.Subscribe<MessagingCenterSender, Plugin.Geolocator.Abstractions.Position>(this, PositionUpdatedMsg, async (sender, position) =>
+            {
+                var mapPosition = PositionHelper.GetMapPosition(position);
+                await SendUpdatePosition(mapPosition);
+            });
+
         }
 
 	    public async Task InitializeAsync()
@@ -304,8 +311,11 @@ Debugger.Break();
                     PauseLocationUpdatesAutomatically = false
                 });
 
-                _geoLocator.PositionChanged +=
-                    async delegate (object o, PositionEventArgs args) { await LocatorOnPositionChanged(o, args); };
+                _geoLocator.PositionChanged += delegate (object o, PositionEventArgs args)
+                {
+                    //await LocatorOnPositionChanged(o, args);
+                    MessagingCenter.Send(new MessagingCenterSender(), PositionUpdatedMsg, args.Position);
+                };
 
                 _geolocatorInitialized = true;
             }
@@ -321,51 +331,31 @@ Debugger.Break();
             }
         }
 
-        private async Task LocatorOnPositionChanged(object sender, PositionEventArgs positionEventArgs)
-        {
-            try
-            {
-                Analytics.TrackEvent($"LocationSender_LocatorOnPositionChanged");
-                await SendUpdatePosition();
-            }
-            catch (Exception ex)
-            {
-#if (DEBUG)
-                Debugger.Break();
-#endif
-                Analytics.TrackEvent($"LocationSender_LocatorOnPositionChanged", new Dictionary<string, string>
-                {
-                    { "Message", ex.Message}
-                });
-            }
-        }
+//        private async Task LocatorOnPositionChanged(object sender, PositionEventArgs positionEventArgs)
+//        {
+//            try
+//            {
+//                Analytics.TrackEvent($"LocationSender_LocatorOnPositionChanged");
+//                await SendUpdatePosition();
+//            }
+//            catch (Exception ex)
+//            {
+//#if (DEBUG)
+//                Debugger.Break();
+//#endif
+//                Analytics.TrackEvent($"LocationSender_LocatorOnPositionChanged", new Dictionary<string, string>
+//                {
+//                    { "Message", ex.Message}
+//                });
+//            }
+//        }
 
 	    public async Task SendUpdatePosition()
 	    {
             try
             {
                 var currentPosition = await PositionHelper.GetMapPosition();
-                if (!currentPosition.HasValue)
-                {
-                    Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionNull");
-                    return;
-                }
-                if (!PositionHelper.LocationValid(currentPosition.Value))
-                {
-                    Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionInvalid");
-                    return;
-                }
-
-                var groupMemberVm = new GroupMemberVm()
-                {
-                    Latitude = currentPosition.Value.Latitude, //positionEventArgs.Position.Latitude,
-                    Longitude = currentPosition.Value.Longitude, //positionEventArgs.Position.Longitude,
-                    PhoneNumber = _phoneNumber,
-                    Name = _nickName
-                };
-
-                Analytics.TrackEvent("LocationSender_SendUpdatePosition");
-                await SendUpdatePosition(groupMemberVm);
+                if (await SendUpdatePosition(currentPosition)) return;
             }
             catch (Exception ex)
             {
@@ -378,6 +368,47 @@ Debugger.Break();
                 });
             }
         }
+
+	    public async Task<bool> SendUpdatePosition(Position? currentPosition)
+	    {
+	        try
+	        {
+	            if (!currentPosition.HasValue)
+	            {
+	                Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionNull");
+	                return false;
+	            }
+	            if (!PositionHelper.LocationValid(currentPosition.Value))
+	            {
+	                Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionInvalid");
+	                return false;
+	            }
+
+	            var groupMemberVm = new GroupMemberVm()
+	            {
+	                Latitude = currentPosition.Value.Latitude, //positionEventArgs.Position.Latitude,
+	                Longitude = currentPosition.Value.Longitude, //positionEventArgs.Position.Longitude,
+	                PhoneNumber = _phoneNumber,
+	                Name = _nickName
+	            };
+
+	            Analytics.TrackEvent("LocationSender_SendUpdatePosition");
+	            await SendUpdatePosition(groupMemberVm);
+                return true;
+            }
+	        catch (Exception ex)
+	        {
+#if (DEBUG)
+	            Debugger.Break();
+#endif
+	            Analytics.TrackEvent($"LocationSender_SendUpdatePosition", new Dictionary<string, string>
+	            {
+	                {"Message", ex.Message}
+	            });
+                return false;
+	        }
+	        
+	    }
 
 
 	    private void OnGroupPositionUpdate(List<GroupMemberSimpleVm> groupMembers)

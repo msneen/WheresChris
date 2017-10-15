@@ -9,16 +9,18 @@ using StayTogether;
 using StayTogether.Classes;
 using StayTogether.Helpers;
 using StayTogether.Location;
+using StayTogether.Models;
 using UIKit;
 using WheresChris.Helpers;
+using Xamarin.Forms;
 
 namespace WheresChris.iOS.Classes
 {
     public class LocationManager
     {
-        private CLLocation _lastLocation;
+        //private CLLocation _lastLocation;
         private LocationSender _locationSender;
-        private readonly SendMeter _sendMeter;
+        //private readonly SendMeter _sendMeter;
         public string UserPhoneNumber { get; set; }
 
         public LocationSender LocationSender => _locationSender;
@@ -27,7 +29,7 @@ namespace WheresChris.iOS.Classes
 
         public LocationManager()
         {
-            _sendMeter = new SendMeter(15, TimeSpan.FromSeconds(15));
+            //_sendMeter = new SendMeter(15, TimeSpan.FromSeconds(15));
             ClLocationManager = new CLLocationManager
             {
                 PausesLocationUpdatesAutomatically = false
@@ -57,7 +59,7 @@ namespace WheresChris.iOS.Classes
 
             //set the desired accuracy, in meters
             ClLocationManager.DesiredAccuracy = 1;
-            ClLocationManager.LocationsUpdated += async (sender, e) =>
+            ClLocationManager.LocationsUpdated += (sender, e) =>
             {
                 Analytics.TrackEvent("LocationManager_LocationsUpdated_started");
                 // fire our custom Location Updated event
@@ -80,80 +82,83 @@ namespace WheresChris.iOS.Classes
                     {"Longitude", medianLongitude.ToString()},
                 });
 
-                _lastLocation = new CLLocation(medianLatitude, medianLongitude);
-                await SendPositionUpdate();
+                //_lastLocation = new CLLocation(medianLatitude, medianLongitude);
+
+                MessagingCenter.Send(new MessagingCenterSender(), LocationSender.PositionUpdatedMsg, new Position
+                {
+                    Latitude = medianLatitude,
+                    Longitude = medianLongitude,
+                    Accuracy = ClLocationManager.DesiredAccuracy
+                });
+
+                //await SendPositionUpdate();//If I os doesn't work, this could be the problem
                 Analytics.TrackEvent("LocationManager_LocationsUpdated_SendPositionUpdate_Sent");
             };
 
             _locationSender = LocationSender.GetInstance();
-            //Analytics.TrackEvent("LocationManager_LocationSender_GotInstance", new Dictionary<string, string>
-            //    {
-            //        {"IsInitialized", _locationSender.IsInitialized.ToString()},
-            //    });
-
 
             ClLocationManager.StartUpdatingLocation();
             //Analytics.TrackEvent("LocationManager_ClLocationManager_StartUpdatingLocation");
         }
 
-        private async Task SendPositionUpdate()
-        {
-            var position = await GetPosition();
-            UserPhoneNumber = SettingsHelper.GetPhoneNumber();
-            var nickname = SettingsHelper.GetNickname();
+        //private async Task SendPositionUpdate()
+        //{
+        //    var position = await GetPosition();
+        //    UserPhoneNumber = SettingsHelper.GetPhoneNumber();
+        //    var nickname = SettingsHelper.GetNickname();
 
-            Analytics.TrackEvent("LocationManager_SendPositionUpdate_Start", new Dictionary<string, string>
-            {
-                { "UserPhoneNumber",  UserPhoneNumber},
-            });
+        //    Analytics.TrackEvent("LocationManager_SendPositionUpdate_Start", new Dictionary<string, string>
+        //    {
+        //        { "UserPhoneNumber",  UserPhoneNumber},
+        //    });
 
-            //                                                if more than x seconds or x feet from last location, send update to server
-            if (string.IsNullOrWhiteSpace(UserPhoneNumber) || !_sendMeter.CanSend(position)) return;
+        //    //                                                if more than x seconds or x feet from last location, send update to server
+        //    if (string.IsNullOrWhiteSpace(UserPhoneNumber) || !_sendMeter.CanSend(position)) return;
 
             
-            var groupMemberVm = new GroupMemberVm
-            {
-                //Get Group Member Properties
-                Name = nickname,
-                PhoneNumber = UserPhoneNumber,
-                Latitude = position.Latitude,
-                Longitude = position.Longitude
-            };
+        //    var groupMemberVm = new GroupMemberVm
+        //    {
+        //        //Get Group Member Properties
+        //        Name = nickname,
+        //        PhoneNumber = UserPhoneNumber,
+        //        Latitude = position.Latitude,
+        //        Longitude = position.Longitude
+        //    };
 
-            //Send position update
-            _locationSender = await LocationSender.GetInstanceAsync();
-            await _locationSender.SendUpdatePosition(groupMemberVm);
+        //    //Send position update
+        //    _locationSender = await LocationSender.GetInstanceAsync();
+        //    await _locationSender.SendUpdatePosition(groupMemberVm);
 
-            Analytics.TrackEvent("Sent", new Dictionary<string, string>
-            {
-                { "LocationSenderInitialized",  _locationSender.IsInitialized.ToString()},
-            });
-        }
+        //    Analytics.TrackEvent("Sent", new Dictionary<string, string>
+        //    {
+        //        { "LocationSenderInitialized",  _locationSender.IsInitialized.ToString()},
+        //    });
+        //}
 
-        public async Task<Position> GetPosition()
-        {
-            var currentPosition = await PositionHelper.GetMapPosition();
-            if (currentPosition.HasValue &&  PositionHelper.LocationValid(currentPosition.Value))
-            {
-                var averageList = new List<CLLocation>
-                {
-                    new CLLocation(currentPosition.Value.Latitude, currentPosition.Value.Longitude),
-                    _lastLocation
-                };
-                var averageLatitude = averageList.Average(x => x.Coordinate.Latitude);
-                var averageLongitude = averageList.Average(x => x.Coordinate.Longitude);
+        //public async Task<Position> GetPosition()
+        //{
+        //    var currentPosition = await PositionHelper.GetMapPosition();
+        //    if (currentPosition.HasValue &&  PositionHelper.LocationValid(currentPosition.Value))
+        //    {
+        //        var averageList = new List<CLLocation>
+        //        {
+        //            new CLLocation(currentPosition.Value.Latitude, currentPosition.Value.Longitude),
+        //            _lastLocation
+        //        };
+        //        var averageLatitude = averageList.Average(x => x.Coordinate.Latitude);
+        //        var averageLongitude = averageList.Average(x => x.Coordinate.Longitude);
 
-                _lastLocation = new CLLocation(averageLatitude, averageLongitude);
-            }
+        //        _lastLocation = new CLLocation(averageLatitude, averageLongitude);
+        //    }
 
-            if (_lastLocation == null) return null;
+        //    if (_lastLocation == null) return null;
 
-            var position = new Position
-            {
-                Latitude = _lastLocation.Coordinate.Latitude,
-                Longitude = _lastLocation.Coordinate.Longitude
-            };
-            return position;
-        }
+        //    var position = new Position
+        //    {
+        //        Latitude = _lastLocation.Coordinate.Latitude,
+        //        Longitude = _lastLocation.Coordinate.Longitude
+        //    };
+        //    return position;
+        //}
     }
 }

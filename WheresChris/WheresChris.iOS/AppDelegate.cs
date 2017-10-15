@@ -1,7 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 using Foundation;
 using Google.MobileAds;
 using Microsoft.Azure.Mobile;
@@ -22,7 +19,6 @@ using WheresChris.iOS.Classes;
 using WheresChris.iOS.NotificationCenter;
 using Xamarin.Forms;
 using XLabs.Forms;
-using Device = Microsoft.Azure.Mobile.Device;
 
 namespace WheresChris.iOS
 {
