@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WheresChris.iOS", "WheresCh
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "StayTogether", "WheresChris\StayTogether\StayTogether.shproj", "{CA57673E-6A8E-4CA1-9A18-739C96517D47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WheresChris.UITest", "WheresChris.UITest\WheresChris.UITest.csproj", "{21F09A00-79F8-408C-8682-A2ADB3710E9A}"
-EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		WheresChris\StayTogether\StayTogether.projitems*{5cd7563f-f4c5-4397-a442-70e1bc59cab5}*SharedItemsImports = 4
@@ -57,18 +55,6 @@ Global
 		{75CA22B5-1F6D-4030-8F61-CF40AD377F4C}.Release|iPhone.Build.0 = Release|iPhone
 		{75CA22B5-1F6D-4030-8F61-CF40AD377F4C}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{75CA22B5-1F6D-4030-8F61-CF40AD377F4C}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
-		{21F09A00-79F8-408C-8682-A2ADB3710E9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{21F09A00-79F8-408C-8682-A2ADB3710E9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{21F09A00-79F8-408C-8682-A2ADB3710E9A}.Debug|iPhone.ActiveCfg = Debug|Any CPU
-		{21F09A00-79F8-408C-8682-A2ADB3710E9A}.Debug|iPhone.Build.0 = Debug|Any CPU
-		{21F09A00-79F8-408C-8682-A2ADB3710E9A}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{21F09A00-79F8-408C-8682-A2ADB3710E9A}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
-		{21F09A00-79F8-408C-8682-A2ADB3710E9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{21F09A00-79F8-408C-8682-A2ADB3710E9A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{21F09A00-79F8-408C-8682-A2ADB3710E9A}.Release|iPhone.ActiveCfg = Release|Any CPU
-		{21F09A00-79F8-408C-8682-A2ADB3710E9A}.Release|iPhone.Build.0 = Release|Any CPU
-		{21F09A00-79F8-408C-8682-A2ADB3710E9A}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{21F09A00-79F8-408C-8682-A2ADB3710E9A}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
