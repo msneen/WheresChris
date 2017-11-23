@@ -19,15 +19,15 @@
         <StackLayout>
             <controls:AdView x:Name="AdView"/>
             <RelativeLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-           
-                <Label x:Name="MessageLabel"  FontSize="Large" TextColor="Red"
-                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.2, Constant=0}"
-                    RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.0, Constant=0}" />
 
                 <Button x:Name="LastInviteButton" AutomationId="LastInviteButton" Text="Send Last Invitation"  Clicked="SendLastInvitmtion" Style="{StaticResource buttonStyle}"
                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.05, Constant=0}"
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.05, Constant=0}"
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.9,Constant=0}"/>
+                
+                <Label x:Name="MessageLabel"  FontSize="Large" TextColor="Red"
+                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.2, Constant=0}"
+                    RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.0, Constant=0}" />
 
                 <Label x:Name="TitleLabel" Text="Where's Chris?" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" 
                    IsVisible="False" FontSize="Large" Style="{StaticResource labelBannerStyle}"  
