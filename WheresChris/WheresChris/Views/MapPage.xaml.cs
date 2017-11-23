@@ -233,6 +233,7 @@ namespace WheresChris.Views
             var userPhoneNumber = SettingsHelper.GetPhoneNumber();
             Intent i = new Intent();
             i.SetAction(Intent.ActionView);
+	        i.SetFlags(ActivityFlags.NewTask);
 	        var uri =
 	            Android.Net.Uri.Parse(
 	                string.Format("https://whereschrisardata.azurewebsites.net/api/GroupData?code=MG80/ufNZ3YbsUw6Q/tJelkgtcSoEaD7OdB1hHUPq6zZdrM2M3Xb/A==&phone={0}", userPhoneNumber));
