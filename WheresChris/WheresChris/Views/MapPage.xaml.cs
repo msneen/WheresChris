@@ -11,6 +11,9 @@ using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.Xaml;
 using Distance = Xamarin.Forms.Maps.Distance;
+#if (__ANDROID__)
+using Android.Content;
+#endif
 
 namespace WheresChris.Views
 {
@@ -223,5 +226,19 @@ namespace WheresChris.Views
             Spinner.IsRunning = false;
             Spinner.IsVisible = false;
         }
-    }
+
+	    private void ViewARButton_OnClicked(object sender, EventArgs e)
+	    {
+#if (__ANDROID__)
+            var userPhoneNumber = SettingsHelper.GetPhoneNumber();
+            Intent i = new Intent();
+            i.SetAction(Intent.ActionView);
+	        var uri =
+	            Android.Net.Uri.Parse(
+	                string.Format("https://whereschrisardata.azurewebsites.net/api/GroupData?code=MG80/ufNZ3YbsUw6Q/tJelkgtcSoEaD7OdB1hHUPq6zZdrM2M3Xb/A==&phone={0}", userPhoneNumber));
+            i.SetDataAndType(uri, "application/mixare-json");
+            Forms.Context.StartActivity(i);
+#endif
+        }
+	}
 }
