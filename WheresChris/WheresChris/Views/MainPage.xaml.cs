@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Plugin.Toasts;
 using StayTogether;
 using WheresChris.Helpers;
+using WheresChris.Models;
 using Xamarin.Forms;
 
 
@@ -13,13 +14,22 @@ namespace WheresChris.Views
     /// </summary>
     public partial class MainPage : ContentPage
     {
-
+        private Invitation Invitation;
         public MainPage()
         {
             InitializeComponent();
             SaveButton.Clicked += SaveButton_OnClicked;
             InitializeMessagingCenterSubscriptions();
             InitializePhoneAndNickname();
+            Invitation = InvitationHelper.LoadInvitation();
+            if(Invitation?.Members != null && Invitation.Members.Count > 0)
+            {
+                LastInviteButton.IsVisible = true;
+            }
+            else
+            {
+                LastInviteButton.IsVisible = false;
+            }
         }
 
         private void InitializePhoneAndNickname()
@@ -137,6 +147,11 @@ namespace WheresChris.Views
                 return true;
             }
             return false;
+        }
+
+        private async void SendLastInvitmtion(object sender, EventArgs e)
+        {
+            await GroupActionsHelper.StartGroup(Invitation.Members, Invitation.UserPhoneNumber, Invitation.ExpirationHours);
         }
     }
 }

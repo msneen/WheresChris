@@ -8,6 +8,7 @@ using StayTogether.Helpers;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using WheresChris.Helpers;
+using WheresChris.Models;
 
 namespace WheresChris.Views
 {
@@ -120,17 +121,14 @@ namespace WheresChris.Views
 
             await GroupActionsHelper.StartGroup(selectedGroupMemberVms, userPhoneNumber, expirationHours);
 
+            var savedInvitation = new Invitation
+            {
+                Members = selectedGroupMemberVms,
+                UserPhoneNumber = userPhoneNumber,
+                ExpirationHours = expirationHours
+            };
+            InvitationHelper.SaveInvitation(savedInvitation);
 
-            //Todo:  this is supposed to be clearing the selection, but it doesn't seem to be working
-            //foreach (var item in ContactsListView.ItemsSource)
-            //{
-            //    var currentBackgroundColor = ((ContactDisplayItemVm) item).BackgroundColor;
-            //    if (currentBackgroundColor != ContactsListView.BackgroundColor)
-            //    {
-            //        ((ContactDisplayItemVm) item).Selected = false;
-            //        ((ContactDisplayItemVm) item).BackgroundColor = ContactsListView.BackgroundColor;
-            //    }
-            //}
             lock (selectedGroupMemberVms)
             {
                 foreach (var groupMember in selectedGroupMemberVms)
@@ -145,8 +143,7 @@ namespace WheresChris.Views
                     }
                 }
             }
-            //ContactsListView.ItemsSource = null;
-            //await InitializeContactsAsync();
+
             SetFormEnabled(false);
 
         }
