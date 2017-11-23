@@ -55,6 +55,7 @@ namespace WheresChris.Views
 	        AddMembersButton.IsEnabled = isSelected;
 	        ViewMembersButton.IsEnabled = isSelected;
 	        LeaveGroupButton.IsEnabled = isSelected;
+	        ViewARButton.IsEnabled = isSelected;
 	    }
 
 
