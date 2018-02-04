@@ -11,8 +11,13 @@ using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.Xaml;
 using Distance = Xamarin.Forms.Maps.Distance;
+
 #if (__ANDROID__)
 using Android.Content;
+#endif
+#if (__IOS__)
+using Foundation;
+using UIKit;
 #endif
 
 namespace WheresChris.Views
@@ -240,6 +245,10 @@ namespace WheresChris.Views
 	                string.Format("http://whereschrisardata.azurewebsites.net/api/GroupData?code=MG80/ufNZ3YbsUw6Q/tJelkgtcSoEaD7OdB1hHUPq6zZdrM2M3Xb/A==&phone={0}", userPhoneNumber));
             i.SetDataAndType(uri, "application/mixare-json");
             Forms.Context.StartActivity(i);
+#endif
+#if (__IOS__)
+	        NSUrl request = new NSUrl("mixare://");
+            var isOpened = UIApplication.SharedApplication.OpenUrl(request);
 #endif
         }
 	}
