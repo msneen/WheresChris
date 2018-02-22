@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
-using Org.Json;
+﻿using Newtonsoft.Json;
 using Plugin.Settings;
 using WheresChris.Models;
 
