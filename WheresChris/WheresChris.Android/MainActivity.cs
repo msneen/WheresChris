@@ -17,6 +17,7 @@ using StayTogether.Droid.NotificationCenter;
 using StayTogether.Droid.Services;
 using StayTogether.Helpers;
 using StayTogether.Models;
+using TK.CustomMap.Droid;
 using WheresChris.Droid.Services;
 using Xamarin.Forms;
 using Permission = Android.Content.PM.Permission;
@@ -60,6 +61,7 @@ namespace WheresChris.Droid
 		        ToolbarResource = Resource.Layout.Toolbar;
 		        Xamarin.Forms.Forms.Init(this, bundle);
 		        Xamarin.FormsMaps.Init(this, bundle);
+		        TKGoogleMaps.Init(this, bundle);
 		        ToastNotification.Init(this);
 
 		        SetTheme(Resource.Style.MyTheme);
@@ -171,6 +173,7 @@ namespace WheresChris.Droid
 
 		public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
 		{
+		    base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 			PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 		}
 	}
