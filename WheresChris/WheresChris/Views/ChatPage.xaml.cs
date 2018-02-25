@@ -13,7 +13,6 @@ namespace WheresChris.Views
     public partial class ChatPage : ContentPage
     {        
 
-        private LocationSender _locationSender;
         public ObservableCollection<ChatMessageVm> Items { get; set; }
 
         public ChatPage()

@@ -244,7 +244,7 @@ namespace WheresChris.Views
 	            Android.Net.Uri.Parse(
 	                string.Format("http://whereschrisardata.azurewebsites.net/api/GroupData?code=MG80/ufNZ3YbsUw6Q/tJelkgtcSoEaD7OdB1hHUPq6zZdrM2M3Xb/A==&phone={0}", userPhoneNumber));
             i.SetDataAndType(uri, "application/mixare-json");
-            Forms.Context.StartActivity(i);
+	        Android.App.Application.Context.StartActivity(i);
 #endif
 #if (__IOS__)
 	        NSUrl request = new NSUrl("mixare://");

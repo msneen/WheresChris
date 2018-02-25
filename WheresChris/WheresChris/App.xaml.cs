@@ -93,10 +93,25 @@ namespace WheresChris
                 var navigationPage = new NavigationPage(page)
                 {
                     Title = title,
-                    Icon = Device.OnPlatform("tab_feed.png", null, null),
+                    Icon = GetIcon()
                 };
                 _mainTabbedPage.Children.Add(navigationPage);
             });
+        }
+
+        private static FileImageSource GetIcon()
+        {
+            FileImageSource icon = null;
+            switch(Device.RuntimePlatform)
+            {
+                case Device.iOS:
+                    icon = "tab_feed.png";
+                    break;
+                default:
+                    icon = null;
+                    break;
+            }
+            return icon;
         }
 
         private static void InsertPageBeforeAbout(Page page, string title)
@@ -108,7 +123,7 @@ namespace WheresChris
                 var navigationPage = new NavigationPage(page)
                 {
                     Title = title,
-                    Icon = Device.OnPlatform("tab_feed.png", null, null),
+                    Icon = GetIcon()
                 };
                 var lastIndex = _mainTabbedPage.Children.Count - 1;
 

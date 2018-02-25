@@ -25,8 +25,8 @@ namespace StayTogether.Helpers
                 var action = (Action) state;
                 action();
             }
-            catch (Exception ex)
-            {
+            catch (Exception)
+            {               
                 throw;
             }
         }

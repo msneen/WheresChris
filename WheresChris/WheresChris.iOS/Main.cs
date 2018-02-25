@@ -13,7 +13,7 @@ namespace WheresChris.iOS
             {
                 UIApplication.Main(args, null, "AppDelegate");
             }
-            catch (System.Exception ex)
+            catch (System.Exception)
             {
                 throw;
             }
