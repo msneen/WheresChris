@@ -1,4 +1,5 @@
-﻿using Android.Widget;
+﻿using Android.Content;
+using Android.Widget;
 using Android.Gms.Ads;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
@@ -8,17 +9,21 @@ namespace WheresChris.Droid
 {
     public class AdViewRenderer : ViewRenderer<Controls.AdView, AdView>
     {
+        public AdViewRenderer(Context context): base(context)
+        {
+            
+        }
 
         string adUnitId = string.Empty;
-        AdSize adSize = AdSize.Banner;
+        readonly AdSize adSize = AdSize.Banner;
         AdView adView;
         protected override AdView CreateNativeControl()
         {
             if (adView != null)
                 return adView;
-
-            adUnitId = Forms.Context.Resources.GetString(Resource.String.banner_ad_unit_id);
-            adView = new AdView(Forms.Context);
+            
+            adUnitId = base.Context.Resources.GetString(Resource.String.banner_ad_unit_id);
+            adView = new AdView(base.Context);
             adView.AdSize = adSize;
             adView.AdUnitId = adUnitId;
 
@@ -56,11 +61,9 @@ namespace WheresChris.Droid
         protected override void OnElementChanged(ElementChangedEventArgs<Controls.AdView> elementChangedEventArgs)
         {
             base.OnElementChanged(elementChangedEventArgs);
-            if (Control == null)
-            {
-                CreateNativeControl();
-                SetNativeControl(adView);
-            }
+            if(Control != null) return;
+            CreateNativeControl();
+            SetNativeControl(adView);
         }
     }
 }

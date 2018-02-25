@@ -6,10 +6,10 @@ using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Ads;
 using Android.OS;
-using Microsoft.Azure.Mobile;
-using Microsoft.Azure.Mobile.Analytics;
-using Microsoft.Azure.Mobile.Crashes;
-using Microsoft.Azure.Mobile.Distribute;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+using Microsoft.AppCenter.Distribute;
 using Plugin.Permissions;
 using Plugin.Toasts;
 using StayTogether;
@@ -33,7 +33,7 @@ namespace WheresChris.Droid
 		public bool IsBound;
 		private LocationSenderServiceConnection _locationSenderServiceConnection;
         Interval _backgroundServiceInterval = new Interval();
-        Interval _backgroundStartupInterval = new Interval();
+
 
         public const int SdkVersionMarshmallow = 23;
 
@@ -43,13 +43,12 @@ namespace WheresChris.Droid
 			NotificationStrategyController.GetNotificationHandler(intent)?.OnNotify(intent);
 		}
 
-		protected override async void OnCreate(Bundle bundle)
+		protected override void OnCreate(Bundle bundle)
 		{
 		    try
 		    {
-		        MobileCenter.LogLevel = LogLevel.Verbose;
-		        MobileCenter.Start("14162ca6-0c56-4822-9d95-f265b524bd98", typeof(Analytics), typeof(Crashes),
-		            typeof(Distribute));
+		        AppCenter.LogLevel = LogLevel.Verbose;
+		        AppCenter.Start("14162ca6-0c56-4822-9d95-f265b524bd98", typeof(Analytics), typeof(Crashes), typeof(Distribute));
 
 #pragma warning disable 618
 		        MobileAds.Initialize(ApplicationContext, "ca-app-pub-5660348862902976~9593604641");
@@ -69,8 +68,7 @@ namespace WheresChris.Droid
 
                 LoadApplication(new App());
 
-
-                await TryToStartLocationService();
+                TryToStartLocationService();
             }
 		    catch (Exception ex)
 		    {
@@ -81,23 +79,12 @@ namespace WheresChris.Droid
             }
 		}
 
-		private async Task TryToStartLocationService()
+		private void TryToStartLocationService()
 		{
              _backgroundServiceInterval.SetInterval(StartLocationService, 60000);
 		}
 
-		private void TryStartGps()
-		{
-			var isGpsEnabled = GpsService.IsGpsEnabled();
-			if (!isGpsEnabled)
-			{
-				isGpsEnabled = GpsService.EnableGps();
-				if (!isGpsEnabled)
-				{
-					ShowAlert(); // Prompt user to turn on GPS
-				}
-			}
-		}
+
 
 		private bool _locationServiceStarted = false;
 		private void StartLocationService()

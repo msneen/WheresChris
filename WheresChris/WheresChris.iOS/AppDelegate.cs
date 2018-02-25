@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using Foundation;
 using Google.MobileAds;
-using Microsoft.Azure.Mobile;
-using Microsoft.Azure.Mobile.Analytics;
-using Microsoft.Azure.Mobile.Crashes;
-using Microsoft.Azure.Mobile.Distribute;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+using Microsoft.AppCenter.Distribute;
 using Plugin.Toasts;
 using StayTogether;
 using StayTogether.Classes;
@@ -39,9 +39,8 @@ namespace WheresChris.iOS
 		{
 			global::Xamarin.Forms.Forms.Init();
 
-            MobileCenter.Start("2cd11ff1-c5b1-47d8-ac96-9fa5b74a47bd", typeof(Analytics), typeof(Crashes)/*, typeof(Distribute)*/);
+            AppCenter.Start("2cd11ff1-c5b1-47d8-ac96-9fa5b74a47bd", typeof(Analytics), typeof(Crashes), typeof(Distribute));
             
-
             Xamarin.FormsMaps.Init();
             TKCustomMapRenderer.InitMapRenderer();
             ToastNotification.Init();

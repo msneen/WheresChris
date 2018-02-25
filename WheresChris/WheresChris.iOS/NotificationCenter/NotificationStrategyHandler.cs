@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Microsoft.Azure.Mobile.Analytics;
+using Microsoft.AppCenter.Analytics;
 using UIKit;
 using WheresChris.iOS.NotificationCenter;
 
