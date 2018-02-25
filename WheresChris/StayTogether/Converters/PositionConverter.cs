@@ -2,7 +2,7 @@
 
 namespace WheresChris.Helpers
 {
-    public class PositionConverter
+    public static class PositionConverter
     {
         public static Position Convert(Plugin.Geolocator.Abstractions.Position geolocatorPosition)
         {
@@ -16,6 +16,19 @@ namespace WheresChris.Helpers
                 Latitude = geolocatorPosition.Latitude,
                 Longitude = geolocatorPosition.Longitude
             };
+        }
+
+        public static TK.CustomMap.Position ToTkPosition(this Position position)
+        {
+            return new TK.CustomMap.Position(position.Latitude, position.Longitude);
+        }
+
+        public static Plugin.Geolocator.Abstractions.Position ToGeolocatorPosition(this TK.CustomMap.Position position)
+        {
+            var geoPosition = new Plugin.Geolocator.Abstractions.Position();
+            geoPosition.Latitude = position.Latitude;
+            geoPosition.Longitude = position.Longitude;
+            return geoPosition;
         }
     }
 }

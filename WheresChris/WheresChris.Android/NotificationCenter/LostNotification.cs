@@ -31,7 +31,7 @@ namespace StayTogether.Droid.NotificationCenter
             var lostDistance = Math.Round(groupMemberVm.LostDistance);
 
             var notification = new Notification.Builder(Application.Context)
-                .SetSmallIcon(Resource.Drawable.ic_speaker_dark)
+                .SetSmallIcon(Resource.Drawable.ic_vol_type_speaker_dark)
                 .SetContentTitle($"{ContactsHelper.NameOrPhone(groupMemberVm.PhoneNumber, groupMemberVm.Name)} is lost by {lostDistance} feet")
                 .SetContentText("View On Map")
                 .SetContentIntent(PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.UpdateCurrent | PendingIntentFlags.OneShot))

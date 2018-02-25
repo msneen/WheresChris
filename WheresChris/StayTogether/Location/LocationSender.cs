@@ -872,7 +872,7 @@ Debugger.Break();
         {
             try
             {
-                _nickName = CrossSettings.Current.GetValueOrDefault<string>("nickname");
+                _nickName = CrossSettings.Current.GetValueOrDefault("nickname", "");
             }
             catch (Exception ex)
             {

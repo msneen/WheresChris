@@ -34,5 +34,10 @@ namespace StayTogether.Helpers.DistanceCalculator
 	        var statuteMiles = distance*60*1.1515; // Imperial measurement (in statute miles)
 	        return statuteMiles;
 	    }
+
+	    public static TK.CustomMap.Distance ToTkDistance(this Xamarin.Forms.Maps.Distance distance)
+	    {
+	        return new TK.CustomMap.Distance(distance.Meters);
+	    }
 	}
 }

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using StayTogether;
 using StayTogether.Helpers;
+using StayTogether.Helpers.DistanceCalculator;
 using StayTogether.Models;
 using TK.CustomMap;
 using WheresChris.Helpers;
 using WheresChris.Views.GroupViews;
 using Xamarin.Forms;
-using Xamarin.Forms.Maps;
 using Xamarin.Forms.Xaml;
 using Distance = Xamarin.Forms.Maps.Distance;
 
@@ -27,7 +27,7 @@ namespace WheresChris.Views
 	{
         private bool _mapInitialized = false;
         private Interval _positionInitializationInterval = new Interval();
-	    private Position? _mapPosition;
+	    private Xamarin.Forms.Maps.Position? _mapPosition;
         private DateTime _lastPositionUpdateTime = DateTime.Now;
 
 	    public MapPage ()
@@ -181,7 +181,7 @@ namespace WheresChris.Views
             foreach (var groupMember in groupMembers)
             {
                 var position = new Position(groupMember.Latitude, groupMember.Longitude);
-                if (PositionHelper.LocationValid(position))
+                if (PositionHelper.LocationValid(position.ToGeolocatorPosition()))
                 {
                     customPins.Add(new TKCustomMapPin
                     {
@@ -201,9 +201,9 @@ namespace WheresChris.Views
             Device.BeginInvokeOnMainThread(() =>
             {
                 GroupMap.MapType = MapType.Hybrid; //This doesn't seem to work on android
-                GroupMap.MapCenter = mapCenterPosition;
-                GroupMap.MapRegion = MapSpan.FromCenterAndRadius(mapCenterPosition, Distance.FromMiles(radius));
-                GroupMap.CustomPins = customPins;
+                //GroupMap.MapCenter = mapCenterPosition;
+                GroupMap.MapRegion = MapSpan.FromCenterAndRadius(mapCenterPosition.ToTkPosition(), Distance.FromMiles(radius).ToTkDistance());
+                GroupMap.Pins = customPins;
             });
             return;
 	    }

@@ -14,7 +14,7 @@ namespace WheresChris.Helpers
     {
         public static string GetPhoneNumber()
         {
-            var existingNumber = CrossSettings.Current.GetValueOrDefault<string>("phonenumber");
+            var existingNumber = CrossSettings.Current.GetValueOrDefault("phonenumber", "");
             var cleanExistingPhone = ContactsHelper.CleanPhoneNumber(existingNumber);
             return !string.IsNullOrWhiteSpace(cleanExistingPhone) ? cleanExistingPhone : string.Empty;
         }
@@ -46,7 +46,7 @@ namespace WheresChris.Helpers
 
         public static string GetNickname()
         {
-            return CrossSettings.Current.GetValueOrDefault<string>("nickname");
+            return CrossSettings.Current.GetValueOrDefault("nickname", "");
         }
 
         public static string SaveNickname(string nickname)

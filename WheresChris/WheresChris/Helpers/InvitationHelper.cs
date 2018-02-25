@@ -14,7 +14,7 @@ namespace WheresChris.Helpers
 
         public static Invitation LoadInvitation()
         {
-            var lastInvitationJson = CrossSettings.Current.GetValueOrDefault<string>("lastinvitation");
+            var lastInvitationJson = CrossSettings.Current.GetValueOrDefault("lastinvitation", "");
             var lastInvitation = JsonConvert.DeserializeObject<Invitation> (lastInvitationJson);
             return lastInvitation;            
         }

@@ -43,7 +43,7 @@ namespace WheresChris.Droid.Services
             var notificationIntent = new Intent(this, typeof(MainActivity));
             var pendingIntent = PendingIntent.GetActivity(this, 0, notificationIntent, 0);
             var notification = new Notification.Builder(this)
-                .SetSmallIcon(Resource.Drawable.ic_speaker_dark)
+                .SetSmallIcon(Resource.Drawable.ic_vol_type_speaker_dark)
                 .SetContentTitle("Where's Chris")
                 .SetContentText("Wheres Chris")
                 .SetContentIntent(pendingIntent).Build();

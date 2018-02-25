@@ -27,7 +27,7 @@ namespace StayTogether.Droid.NotificationCenter
             notificationIntent.PutExtra("name", name);
 
             var notification = new Notification.Builder(Application.Context)
-                .SetSmallIcon(Resource.Drawable.ic_speaker_dark)
+                .SetSmallIcon(Resource.Drawable.ic_vol_type_speaker_dark)
                 .SetContentTitle($"Group Invitation from {ContactsHelper.NameOrPhone(phoneNumber, name)}")
                 .SetContentText($"{ContactsHelper.NameOrPhone(phoneNumber, name)} invited to you join a group.  Click here to join!")
                 .SetContentIntent(PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.UpdateCurrent | PendingIntentFlags.OneShot))
