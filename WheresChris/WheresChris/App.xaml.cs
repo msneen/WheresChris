@@ -22,9 +22,9 @@ namespace WheresChris
         {
             InitializeComponent();
 
-            SetMainPage().Wait();
+            SetMainPage().ConfigureAwait(true);
 
-            StartLocationSenderAsync();
+            StartLocationSenderAsync().ConfigureAwait(true);
         }
 
         private static readonly Interval PermissionRequest = new Interval();
@@ -32,7 +32,7 @@ namespace WheresChris
         private static int _permisionRequestIntervalTime = 5000;
         private static int _addPagesIntervalTime = 5000;
 
-        private async void StartLocationSenderAsync()
+        private async Task StartLocationSenderAsync()
         {
             _locationSender = await LocationSender.GetInstanceAsync();
         }
@@ -42,6 +42,7 @@ namespace WheresChris
             try
             {
                 _mainTabbedPage = new TabbedPage();
+                Current.MainPage = _mainTabbedPage;
 
                 AddPage(new MainPage(), "Main");
 
@@ -53,9 +54,9 @@ namespace WheresChris
                 }
 
                 PermissionRequest.SetInterval(InsertPagesNeedingPermissions, _permisionRequestIntervalTime);
-               
+
                 AddPage(new AboutPage(), "About");
-                Current.MainPage = _mainTabbedPage;
+                
             }
             catch (System.Exception ex)
             {

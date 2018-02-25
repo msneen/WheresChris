@@ -23,7 +23,7 @@ using XLabs.Forms;
 namespace WheresChris.iOS
 {
 	[Register("AppDelegate")]
-	public partial class AppDelegate : XFormsApplicationDelegate //global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
+	public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate //XFormsApplicationDelegate //
     {
 	    public static LocationManager LocationManager = null;
         private bool _eventsInitialized;
@@ -53,9 +53,9 @@ namespace WheresChris.iOS
             NotificationManager.RegisterNotifications(app);
             NotificationManager.InitializeNotifications(options, UIApplication.SharedApplication.KeyWindow);
 
-            //Analytics.TrackEvent("AppDelegate_InitializingTimer");
+            Analytics.TrackEvent("AppDelegate_InitializingTimer");
             _interval = new Interval();
-            _interval.SetInterval(TryToStartLocationService , 10000);
+            _interval.SetInterval(TryToStartLocationService, 10000);
 
             return base.FinishedLaunching(app, options);
 		}

@@ -22,7 +22,7 @@ namespace WheresChris.Views
             InitializeMessagingCenterSubscriptions();
             InitializePhoneAndNickname();
             Invitation = InvitationHelper.LoadInvitation();
-            if(Invitation?.Members != null && Invitation.Members.Count > 0)
+            if (Invitation?.Members != null && Invitation.Members.Count > 0)
             {
                 LastInviteButton.IsVisible = true;
             }
@@ -90,12 +90,12 @@ namespace WheresChris.Views
 
         }
 
-        private async void SaveButton_OnClicked(object sender, EventArgs e)
+        private void SaveButton_OnClicked(object sender, EventArgs e)
         {
             TrySavePhoneNumber();
-            if (await AskForPhoneNumber()) return;
+            if (AskForPhoneNumber().ConfigureAwait(true).GetAwaiter().GetResult()) return;
             TrySaveNickname();
-            if (await AskForNickname()) return;
+            if ( AskForNickname().ConfigureAwait(true).GetAwaiter().GetResult()) return;
             SaveButton.IsVisible = false;
             InviteButton.IsEnabled = true;
             JoinButton.IsEnabled = true;
@@ -149,7 +149,7 @@ namespace WheresChris.Views
             return false;
         }
 
-        private async void SendLastInvitmtion(object sender, EventArgs e)
+        private async Task SendLastInvitmtion(object sender, EventArgs e)
         {
             await GroupActionsHelper.StartGroup(Invitation.Members, Invitation.UserPhoneNumber, Invitation.ExpirationHours);
         }

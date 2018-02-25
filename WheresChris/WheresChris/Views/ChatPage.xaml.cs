@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using StayTogether;
 using StayTogether.Helpers;
 using WheresChris.ViewModels;
@@ -41,7 +42,7 @@ namespace WheresChris.Views
                 });
         }
 
-        private async void SendButton_OnClickedButton_OnClicked(object sender, EventArgs e)
+        private async Task SendButton_OnClickedButton_OnClicked(object sender, EventArgs e)
         {
             var message = ChatMessage.Text.Trim();
             if (string.IsNullOrWhiteSpace(message)) return;
