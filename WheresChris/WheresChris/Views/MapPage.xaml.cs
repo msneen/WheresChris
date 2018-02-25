@@ -38,6 +38,10 @@ namespace WheresChris.Views
                      
             InitializeMessagingCenterSubscriptions();
             SetFormEnabled(false);
+
+#if (__ANDROID__)
+		    ViewARButton.IsVisible = true;
+#endif
 		}
 
 	    private void SetMapInitialPosition()
