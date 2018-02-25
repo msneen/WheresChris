@@ -100,7 +100,7 @@ namespace WheresChris.Views
             ExpirationPicker.SelectedIndex = 0;
         }
 
-        public async void StartGroup(object sender, EventArgs e)
+        public async Task StartGroup(object sender, EventArgs e)
         {            
             App.SetCurrentTab("Map");
 
