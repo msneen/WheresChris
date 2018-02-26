@@ -18,7 +18,6 @@ using WheresChris.Helpers;
 using WheresChris.iOS.Classes;
 using WheresChris.iOS.NotificationCenter;
 using Xamarin.Forms;
-using XLabs.Forms;
 
 namespace WheresChris.iOS
 {

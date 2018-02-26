@@ -147,7 +147,6 @@
     <Reference Include="Microsoft.AspNet.SignalR.Client">
       <HintPath>..\SignalRLib\ios\Microsoft.AspNet.SignalR.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.11.0.1\lib\netstandard1.3\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -202,13 +201,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Net.Http.Extensions">
-      <HintPath>..\SignalRLib\ios\System.Net.Http.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Primitives">
-      <HintPath>..\SignalRLib\ios\System.Net.Http.Primitives.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="TK.CustomMap">
       <HintPath>..\..\packages\TK.CustomMap.2.0.1\lib\Xamarin.iOS10\TK.CustomMap.dll</HintPath>
@@ -251,7 +243,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Xamarin.iOS" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="Xamarin.iOS.ClusterKit">
       <HintPath>..\..\packages\Xamarin.iOS.ClusterKit.0.3.1.1\lib\Xamarin.iOS10\Xamarin.iOS.ClusterKit.dll</HintPath>
       <Private>True</Private>

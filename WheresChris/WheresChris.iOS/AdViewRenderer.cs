@@ -79,7 +79,7 @@ namespace WheresChris.iOS
             return rootController.PresentedViewController;
         }
 
-        protected void OnElementChanged(ElementChangedEventArgs<WheresChris.Controls.AdView> elementChangedEventArgs)
+        protected override void OnElementChanged(ElementChangedEventArgs<WheresChris.Controls.AdView> elementChangedEventArgs)
         {
             base.OnElementChanged(elementChangedEventArgs);
             if (Control == null)
