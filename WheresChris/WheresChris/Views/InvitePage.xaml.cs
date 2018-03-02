@@ -155,7 +155,7 @@ namespace WheresChris.Views
             ContactsListView.IsEnabled = isSelected;
         }
 
-        public async Task InitializeContactsAsync()
+        public async Task InitializeContactsAsync(string characters = "")
         {
             var hasPermissions = await PermissionHelper.HasOrRequestContactPermission();
 
@@ -163,8 +163,8 @@ namespace WheresChris.Views
             {
                 try
                 {
-                    await ((InvitePageViewModel)BindingContext).InitializeContactsAsync();
-                    //ContactsListView.ItemsSource = ((InvitePageViewModel)BindingContext).Items; 
+                    ContactsListView.ItemsSource = null;
+                    await ((InvitePageViewModel)BindingContext).InitializeContactsAsync(characters);
                     ContactsListView.SetBinding(ListView.ItemsSourceProperty, "Items", BindingMode.TwoWay);                                  
                 }
                 catch (Exception ex)
@@ -204,6 +204,14 @@ namespace WheresChris.Views
 
             ContactsListView.ScrollTo(foundItem, ScrollToPosition.Center, false);
             SearchEntry.Text = string.Empty;
+        }
+
+        private async Task SearchEntry_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if(e.NewTextValue.Length==0 || e.NewTextValue.Length > 2)
+            {
+                await InitializeContactsAsync(e.NewTextValue);
+            }
         }
     }
 }

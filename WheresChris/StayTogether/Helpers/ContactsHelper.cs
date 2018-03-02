@@ -14,9 +14,9 @@ namespace StayTogether
     {
         public static ObservableCollection<ContactDisplayItemVm> GroupMemberListInstance { get; set; }
 
-        public async Task<ObservableCollection<ContactDisplayItemVm>> GetContactsAsync()
+        public async Task<ObservableCollection<ContactDisplayItemVm>> GetContactsAsync(string characters = "")
         {
-            if (GroupMemberListInstance != null) return GroupMemberListInstance;
+            //if (GroupMemberListInstance != null) return GroupMemberListInstance;
 
             if (!await CrossContacts.Current.RequestPermission()) return null;
 
@@ -35,7 +35,24 @@ namespace StayTogether
                     })
                     .OrderBy(groupMemberVm => groupMemberVm.Name)
                     .ToList();
-            GroupMemberListInstance = new ObservableCollection<ContactDisplayItemVm>(itemList);
+            List<ContactDisplayItemVm> itemListFiltered;
+            if(!string.IsNullOrWhiteSpace(characters) && characters.Length > 2)
+            {
+                if(characters.IsNumeric())
+                {
+                    itemListFiltered = itemList.Where(x => x.PhoneNumber.Contains(characters)).ToList<ContactDisplayItemVm>();
+                }
+                else
+                {
+                    itemListFiltered = itemList.Where(x => x.Name.ToLower().Contains(characters.ToLower())).ToList<ContactDisplayItemVm>();
+                }
+            }
+            else
+            {
+                itemListFiltered = itemList;
+            }
+
+            GroupMemberListInstance = new ObservableCollection<ContactDisplayItemVm>(itemListFiltered);
 
             return GroupMemberListInstance;
         }
@@ -128,6 +145,11 @@ namespace StayTogether
         public static bool HasValidName(this Contact contact)
         {
             return !string.IsNullOrWhiteSpace(ContactsHelper.CleanName(contact));
+        }
+
+        public static bool IsNumeric(this string characters)
+        {
+            return characters.All(char.IsDigit);
         }
     }
 }

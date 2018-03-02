@@ -6,7 +6,7 @@
 
     <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
         <RelativeLayout Padding="5,0,0,0" VerticalOptions="Start">
-            <Entry x:Name="SearchEntry" AutomationId="SearchEntry"
+            <Entry x:Name="SearchEntry" AutomationId="SearchEntry" TextChanged="SearchEntry_OnTextChanged"
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.7,Constant=0}"/>
             <Button x:Name="SearchButton"  AutomationId="SearchButton" Text="Search" Clicked="SearchButton_OnClicked" Style="{StaticResource buttonStyle}"

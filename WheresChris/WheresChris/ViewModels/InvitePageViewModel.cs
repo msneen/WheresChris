@@ -24,19 +24,20 @@ namespace WheresChris.Views
                 async () => await RefreshData());
         }
 
-        public async Task InitializeContactsAsync()
+        public async Task InitializeContactsAsync(string characters = "")
         {
-            var contacts = await LoadContactsAsync();
+            var contacts = await LoadContactsAsync(characters);
             if (contacts != null)
             {
-                Items = contacts;                
+                Items = contacts; 
+                await RefreshData();
             }
         }
 
-        private static async Task<ObservableCollection<ContactDisplayItemVm>> LoadContactsAsync()
+        private static async Task<ObservableCollection<ContactDisplayItemVm>> LoadContactsAsync(string characters = "")
         {
             var contactsHelper = new ContactsHelper();
-            return await contactsHelper.GetContactsAsync();
+            return await contactsHelper.GetContactsAsync(characters);
         }
 
 
@@ -46,7 +47,7 @@ namespace WheresChris.Views
         {
             IsBusy = true;
             //Load Data Here
-            await Task.Delay(2000);
+            await Task.Delay(100);
 
             IsBusy = false;
         }
