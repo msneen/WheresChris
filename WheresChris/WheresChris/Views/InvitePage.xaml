@@ -6,12 +6,20 @@
 
     <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
         <RelativeLayout Padding="5,0,0,0" VerticalOptions="Start">
+            <Button x:Name="ContactsListButton" AutomationId="ContactsListButton" Text="View Contacts" Clicked="ContactsListButton_OnClicked" Style="{StaticResource buttonStyle}"  
+                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0., Constant=0}"
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.45,Constant=0}"/>
+            <Button x:Name="InviteListButton" AutomationId="InviteButton" Text="View Invitees" Clicked="InviteListButton_OnClicked" Style="{StaticResource buttonStyle}"  
+                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.55, Constant=0}"
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}"/>
+        </RelativeLayout>
+        <RelativeLayout Padding="5,0,0,0" VerticalOptions="Start">
             <Entry x:Name="SearchEntry" AutomationId="SearchEntry" TextChanged="SearchEntry_OnTextChanged"
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
-                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.7,Constant=0}"/>
-            <Button x:Name="AddButton"  AutomationId="AddButton" Text="+" Clicked="AddButton_OnClickedButton_OnClicked" Style="{StaticResource buttonStyle}"
-                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.7, Constant=0}"
-                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.3,Constant=0}" />
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.9,Constant=0}"/>
+            <Button x:Name="AddButton"  AutomationId="AddButton" Text="+" IsEnabled="False" Clicked="AddButton_OnClickedButton_OnClicked" Style="{StaticResource buttonStyle}"
+                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.9, Constant=0}"
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.1,Constant=0}" />
         </RelativeLayout>
         <ListView 
             x:Name="ContactsListView"

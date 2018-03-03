@@ -103,6 +103,8 @@ namespace WheresChris.Views
 
         public async Task StartGroup(object sender, EventArgs e)
         {            
+            if(!((InvitePageViewModel) BindingContext).IsEnabled) return;
+            
             App.SetCurrentTab("Map");
 
             var userPhoneNumber = SettingsHelper.GetPhoneNumber();
@@ -173,6 +175,8 @@ namespace WheresChris.Views
 
         private void TapGestureRecognizer_OnTapped(object sender, EventArgs e)
         {
+            if(!((InvitePageViewModel) BindingContext).IsEnabled) return;
+
             if (ContactsListView.IsEnabled)
             {
                 var selectedColor = Color.LightSkyBlue;
@@ -195,19 +199,51 @@ namespace WheresChris.Views
         private async Task SearchEntry_OnTextChanged(object sender, TextChangedEventArgs e)
         {
             if(!((InvitePageViewModel) BindingContext).IsEnabled) return;
-            if(e.NewTextValue.Length == 0 || e.NewTextValue.Length > 2)
+            if(e.NewTextValue.Length == 10)
             {
+                HandlePhoneNumber(e.NewTextValue);
+            }
+            else if(e.NewTextValue.Length == 0 || e.NewTextValue.Length > 2)
+            {
+                AddButton.IsEnabled = false;
                 await InitializeContactsAsync(e.NewTextValue);
             }
 
         }
 
+        private void HandlePhoneNumber(string text)
+        {
+            AddButton.IsEnabled = text.IsNumeric();
+        }
+
         private void AddButton_OnClickedButton_OnClicked(object sender, EventArgs e)
         {
+            if(!((InvitePageViewModel) BindingContext).IsEnabled) return;
             var phoneNumber = SearchEntry.Text;
             ((InvitePageViewModel)BindingContext).AddPhoneNumbeContact(phoneNumber);
+            AddButton.IsEnabled = false;
+            SearchEntry.Text = "";
         }
 
 
+        private async Task ContactsListButton_OnClicked(object sender, EventArgs e)
+        {
+            if(!((InvitePageViewModel) BindingContext).IsEnabled) return;
+
+            SearchEntry.Text = "";
+            ContactsListView.ItemsSource = null;
+            await InitializeContactsAsync();
+            ContactsListView.SetBinding(ListView.ItemsSourceProperty, "Items", BindingMode.TwoWay);
+        }
+
+        private async Task InviteListButton_OnClicked(object sender, EventArgs e)
+        {
+            if(!((InvitePageViewModel) BindingContext).IsEnabled) return;
+
+            SearchEntry.Text = "";
+            ContactsListView.ItemsSource = null;
+            var selectedGroupMemberVms = await ((InvitePageViewModel)BindingContext).AddToGroup();
+            ContactsListView.SetBinding(ListView.ItemsSourceProperty, "Items", BindingMode.TwoWay);
+        }
     }
 }
