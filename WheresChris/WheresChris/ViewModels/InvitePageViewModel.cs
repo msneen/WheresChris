@@ -23,6 +23,13 @@ namespace WheresChris.Views
 
         public object ExpirationInHoursIndex { get; set; }
 
+        public enum InviteeAction
+        {
+            None,
+            Added,
+            Removed
+        }
+
         public InvitePageViewModel()
         {
             Title = "Where's Chris - Invite";
@@ -83,19 +90,21 @@ namespace WheresChris.Views
             return selectedGroupMemberVms;
         }
 
-        public void AddSelectedContact(ContactDisplayItemVm contactDisplayItemVm)
+        public InviteeAction AddSelectedContact(ContactDisplayItemVm contactDisplayItemVm)
         {
-            if(!IsEnabled) return;
+            if(!IsEnabled) return InviteeAction.None;
             if(contactDisplayItemVm.Selected)
             {
                 _selectedContacts.Add(contactDisplayItemVm);
+                return InviteeAction.Added;
             }
             else
             {
                 var contact = _selectedContacts.FirstOrDefault(x => x.PhoneNumber == contactDisplayItemVm.PhoneNumber);
-                if(contact == null) return;
+                if(contact == null) return InviteeAction.None;
                 _selectedContacts.Remove(contact);
-            }
+                return InviteeAction.Removed;
+            }           
         }
 
 

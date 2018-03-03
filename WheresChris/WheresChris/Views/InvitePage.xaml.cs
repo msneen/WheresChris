@@ -189,7 +189,11 @@ namespace WheresChris.Views
                 contactDisplayItemVm.Selected = !contactDisplayItemVm.Selected;
                 var color = contactDisplayItemVm.Selected ? selectedColor : ContactsListView.BackgroundColor;
                 ((RelativeLayout) sender).BackgroundColor = color;
-                ((InvitePageViewModel)BindingContext).AddSelectedContact(contactDisplayItemVm);
+                var action = ((InvitePageViewModel)BindingContext).AddSelectedContact(contactDisplayItemVm);
+                if(action == InvitePageViewModel.InviteeAction.Removed)
+                {
+                    ViewInviteeList().ConfigureAwait(true);
+                }
             }
         }
 
@@ -240,9 +244,14 @@ namespace WheresChris.Views
         {
             if(!((InvitePageViewModel) BindingContext).IsEnabled) return;
 
+            await ViewInviteeList();
+        }
+
+        private async Task ViewInviteeList()
+        {
             SearchEntry.Text = "";
             ContactsListView.ItemsSource = null;
-            await ((InvitePageViewModel)BindingContext).AddToGroup();
+            await ((InvitePageViewModel) BindingContext).AddToGroup();
             ContactsListView.SetBinding(ListView.ItemsSourceProperty, "Items", BindingMode.TwoWay);
         }
     }

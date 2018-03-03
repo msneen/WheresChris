@@ -6,10 +6,10 @@
 
     <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
         <RelativeLayout Padding="5,0,0,0" VerticalOptions="Start">
-            <Button x:Name="ContactsListButton" AutomationId="ContactsListButton" Text="View Contacts" Clicked="ContactsListButton_OnClicked" Style="{StaticResource buttonStyle}"  
+            <Button x:Name="ContactsListButton" AutomationId="ContactsListButton" Text="Contacts" Clicked="ContactsListButton_OnClicked" Style="{StaticResource buttonStyle}"  
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0., Constant=0}"
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.45,Constant=0}"/>
-            <Button x:Name="InviteListButton" AutomationId="InviteButton" Text="View Invitees" Clicked="InviteListButton_OnClicked" Style="{StaticResource buttonStyle}"  
+            <Button x:Name="InviteListButton" AutomationId="InviteButton" Text="Invitees" Clicked="InviteListButton_OnClicked" Style="{StaticResource buttonStyle}"  
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.55, Constant=0}"
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}"/>
         </RelativeLayout>
