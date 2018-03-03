@@ -299,6 +299,10 @@ Debugger.Break();
 
                 //Instructions for geoolocator say we need to do this before setting the listener
                 var position = await _geoLocator.GetPositionAsync(new TimeSpan(0,0,10));
+                if(position != null)
+                {
+                    MessagingCenter.Send(new MessagingCenterSender(), PositionUpdatedMsg, position);
+                }
 
                 await _geoLocator.StartListeningAsync(TimeSpan.FromSeconds(5), 10, false, new Plugin.Geolocator.Abstractions.ListenerSettings
                 {

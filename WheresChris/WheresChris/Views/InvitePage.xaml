@@ -9,7 +9,7 @@
             <Entry x:Name="SearchEntry" AutomationId="SearchEntry" TextChanged="SearchEntry_OnTextChanged"
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.7,Constant=0}"/>
-            <Button x:Name="SearchButton"  AutomationId="SearchButton" Text="Search" Clicked="SearchButton_OnClicked" Style="{StaticResource buttonStyle}"
+            <Button x:Name="AddButton"  AutomationId="AddButton" Text="+" Clicked="AddButton_OnClickedButton_OnClicked" Style="{StaticResource buttonStyle}"
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.7, Constant=0}"
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.3,Constant=0}" />
         </RelativeLayout>

@@ -35,7 +35,7 @@ namespace WheresChris.Helpers
             MessagingCenter.Send<object, GroupVm>(new MessagingCenterSender(), LocationSender.StartOrAddGroupMsg, groupVm);
         }
 
-        public static List<GroupMemberVm> GetSelectedGroupMembers(ObservableCollection<ContactDisplayItemVm> items)
+        public static List<GroupMemberVm> GetSelectedGroupMembers(IList<ContactDisplayItemVm> items)
         {
             List<GroupMemberVm> selectedGroupMemberVms = new List<GroupMemberVm>();
             foreach (var item in items)

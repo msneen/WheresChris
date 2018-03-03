@@ -18,6 +18,7 @@ namespace WheresChris.Views
     {
         private readonly Interval _contactInterval = new Interval();
 
+
         public InvitePage()
         {
             Title = "Where's Chris - Invite";
@@ -106,13 +107,13 @@ namespace WheresChris.Views
 
             var userPhoneNumber = SettingsHelper.GetPhoneNumber();
 
-            var invitePageViewModel = BindingContext as InvitePageViewModel;
-            if (invitePageViewModel == null) return;
+            if (!(BindingContext is InvitePageViewModel invitePageViewModel)) return;
 
-            if (invitePageViewModel.Items == null) return;
-            if (invitePageViewModel.Items.Count <= 0) return;
+            ContactsListView.ItemsSource = null;
+            var selectedGroupMemberVms = await ((InvitePageViewModel)BindingContext).AddToGroup();
+            ContactsListView.SetBinding(ListView.ItemsSourceProperty, "Items", BindingMode.TwoWay);
 
-            var selectedGroupMemberVms = GroupActionsHelper.GetSelectedGroupMembers(invitePageViewModel.Items);
+            if(selectedGroupMemberVms == null || selectedGroupMemberVms.Count < 1) return;
 
             var selectedExpirationHours = ExpirationPicker.SelectedItem as ExpirationPickerViewModel;
 
@@ -129,30 +130,23 @@ namespace WheresChris.Views
             };
             InvitationHelper.SaveInvitation(savedInvitation);
 
-            lock (selectedGroupMemberVms)
-            {
-                foreach (var groupMember in selectedGroupMemberVms)
-                {
-                    var contactDisplayItemVm = invitePageViewModel
-                        .Items
-                        .FirstOrDefault(x => x.PhoneNumber == groupMember.PhoneNumber);
-                    if (contactDisplayItemVm != null)
-                    {
-                        contactDisplayItemVm.Selected = false;
-                        contactDisplayItemVm.BackgroundColor = ContactsListView.BackgroundColor;
-                    }
-                }
-            }
-
             SetFormEnabled(false);
-
         }
 
-        private void SetFormEnabled(bool isSelected)
+
+
+        private void SetFormEnabled(bool isEnabled)
         {
-            InviteButton.IsEnabled = isSelected;
-            ExpirationPicker.IsEnabled = isSelected;
-            ContactsListView.IsEnabled = isSelected;
+            ((InvitePageViewModel) BindingContext).IsEnabled = isEnabled;
+            AddButton.IsEnabled = isEnabled;
+            InviteButton.IsEnabled = isEnabled;
+            ExpirationPicker.IsEnabled = isEnabled;
+            ContactsListView.IsEnabled = isEnabled;
+            if(isEnabled == false)
+            {
+                SearchEntry.Text = "";
+            }
+            SearchEntry.IsEnabled = isEnabled;
         }
 
         public async Task InitializeContactsAsync(string characters = "")
@@ -191,27 +185,29 @@ namespace WheresChris.Views
                 contactDisplayItemVm.Selected = !contactDisplayItemVm.Selected;
                 var color = contactDisplayItemVm.Selected ? selectedColor : ContactsListView.BackgroundColor;
                 ((RelativeLayout) sender).BackgroundColor = color;
+                ((InvitePageViewModel)BindingContext).AddSelectedContact(contactDisplayItemVm);
             }
         }
 
-        private void SearchButton_OnClicked(object sender, EventArgs e)
-        {
-            var searchText = SearchEntry.Text;
-            if (string.IsNullOrWhiteSpace(searchText)) return;
 
-            var foundItem = ((InvitePageViewModel)BindingContext).Items.FirstOrDefault(i=>i.Name.StartsWith(searchText,StringComparison.CurrentCultureIgnoreCase));
-            if (foundItem == null) return;
 
-            ContactsListView.ScrollTo(foundItem, ScrollToPosition.Center, false);
-            SearchEntry.Text = string.Empty;
-        }
 
         private async Task SearchEntry_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            if(e.NewTextValue.Length==0 || e.NewTextValue.Length > 2)
+            if(!((InvitePageViewModel) BindingContext).IsEnabled) return;
+            if(e.NewTextValue.Length == 0 || e.NewTextValue.Length > 2)
             {
                 await InitializeContactsAsync(e.NewTextValue);
             }
+
         }
+
+        private void AddButton_OnClickedButton_OnClicked(object sender, EventArgs e)
+        {
+            var phoneNumber = SearchEntry.Text;
+            ((InvitePageViewModel)BindingContext).AddPhoneNumbeContact(phoneNumber);
+        }
+
+
     }
 }

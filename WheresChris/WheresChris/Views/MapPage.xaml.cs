@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Android.Content.PM;
 using StayTogether;
 using StayTogether.Helpers;
 using StayTogether.Helpers.DistanceCalculator;
@@ -35,14 +36,17 @@ namespace WheresChris.Views
             Title = "Where's Chris - Map";
             InitializeComponent ();
             GroupMap.MapType = MapType.Hybrid;
+    
                      
             InitializeMessagingCenterSubscriptions();
             SetFormEnabled(false);
 
-#if (__ANDROID__)
-		    ViewARButton.IsVisible = true;
-#endif
+//#if (__ANDROID__)
+		   // ViewARButton.IsVisible = true;
+//#endif
 		}
+
+
 
 	    private void SetMapInitialPosition()
 	    {

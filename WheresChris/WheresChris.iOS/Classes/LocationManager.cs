@@ -1,14 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using CoreLocation;
 using Microsoft.AppCenter.Analytics;
 using Plugin.Geolocator.Abstractions;
 using StayTogether;
-using StayTogether.Classes;
-using StayTogether.Helpers;
-using StayTogether.Location;
 using StayTogether.Models;
 using UIKit;
 using WheresChris.Helpers;
@@ -100,65 +95,5 @@ namespace WheresChris.iOS.Classes
             ClLocationManager.StartUpdatingLocation();
             //Analytics.TrackEvent("LocationManager_ClLocationManager_StartUpdatingLocation");
         }
-
-        //private async Task SendPositionUpdate()
-        //{
-        //    var position = await GetPosition();
-        //    UserPhoneNumber = SettingsHelper.GetPhoneNumber();
-        //    var nickname = SettingsHelper.GetNickname();
-
-        //    Analytics.TrackEvent("LocationManager_SendPositionUpdate_Start", new Dictionary<string, string>
-        //    {
-        //        { "UserPhoneNumber",  UserPhoneNumber},
-        //    });
-
-        //    //                                                if more than x seconds or x feet from last location, send update to server
-        //    if (string.IsNullOrWhiteSpace(UserPhoneNumber) || !_sendMeter.CanSend(position)) return;
-
-            
-        //    var groupMemberVm = new GroupMemberVm
-        //    {
-        //        //Get Group Member Properties
-        //        Name = nickname,
-        //        PhoneNumber = UserPhoneNumber,
-        //        Latitude = position.Latitude,
-        //        Longitude = position.Longitude
-        //    };
-
-        //    //Send position update
-        //    _locationSender = await LocationSender.GetInstanceAsync();
-        //    await _locationSender.SendUpdatePosition(groupMemberVm);
-
-        //    Analytics.TrackEvent("Sent", new Dictionary<string, string>
-        //    {
-        //        { "LocationSenderInitialized",  _locationSender.IsInitialized.ToString()},
-        //    });
-        //}
-
-        //public async Task<Position> GetPosition()
-        //{
-        //    var currentPosition = await PositionHelper.GetMapPosition();
-        //    if (currentPosition.HasValue &&  PositionHelper.LocationValid(currentPosition.Value))
-        //    {
-        //        var averageList = new List<CLLocation>
-        //        {
-        //            new CLLocation(currentPosition.Value.Latitude, currentPosition.Value.Longitude),
-        //            _lastLocation
-        //        };
-        //        var averageLatitude = averageList.Average(x => x.Coordinate.Latitude);
-        //        var averageLongitude = averageList.Average(x => x.Coordinate.Longitude);
-
-        //        _lastLocation = new CLLocation(averageLatitude, averageLongitude);
-        //    }
-
-        //    if (_lastLocation == null) return null;
-
-        //    var position = new Position
-        //    {
-        //        Latitude = _lastLocation.Coordinate.Latitude,
-        //        Longitude = _lastLocation.Coordinate.Longitude
-        //    };
-        //    return position;
-        //}
     }
 }
