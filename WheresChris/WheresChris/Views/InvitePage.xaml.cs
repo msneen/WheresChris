@@ -242,7 +242,7 @@ namespace WheresChris.Views
 
             SearchEntry.Text = "";
             ContactsListView.ItemsSource = null;
-            var selectedGroupMemberVms = await ((InvitePageViewModel)BindingContext).AddToGroup();
+            await ((InvitePageViewModel)BindingContext).AddToGroup();
             ContactsListView.SetBinding(ListView.ItemsSourceProperty, "Items", BindingMode.TwoWay);
         }
     }
