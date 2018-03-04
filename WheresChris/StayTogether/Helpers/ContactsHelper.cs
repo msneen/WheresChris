@@ -32,6 +32,7 @@ namespace StayTogether
                     {
                         Name = filteredContact.CleanName(),
                         PhoneNumber = filteredContact.FirstOrDefaultMobileNumber().CleanPhoneNumber()
+                        
                     })
                     .OrderBy(groupMemberVm => groupMemberVm.Name)
                     .ToList();
