@@ -78,9 +78,9 @@ namespace WheresChris
         private static void InsertPages()
         {
             InsertPageBeforeAbout(new InvitePage(), "Invite");
-            InsertPageBeforeAbout(new JoinPage(), "Join");
             InsertPageBeforeAbout(new MapPage(), "Map");
             InsertPageBeforeAbout(new ChatPage(), "Chat");
+            InsertPageBeforeAbout(new JoinPage(), "Join");
         }
 
         private static void AddPage(Page page, string title)
