@@ -29,18 +29,6 @@
             CachingStrategy="RecycleElement"
             HorizontalOptions="FillAndExpand"
             VerticalOptions="FillAndExpand" RowHeight="50">
-            <ListView.Header>
-                <StackLayout Padding="10" 
-                       Orientation="Horizontal"
-                       HorizontalOptions="FillAndExpand"
-                       BackgroundColor="#dadada">
-                    <Label Text="Choose Contacts"
-                           HorizontalTextAlignment="Center"
-                           HorizontalOptions="FillAndExpand"
-                           TextColor="Black"
-                           FontAttributes="Bold"/>
-                </StackLayout>
-            </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
