@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Android.Content.PM;
 using StayTogether;
 using StayTogether.Helpers;
 using StayTogether.Helpers.DistanceCalculator;
@@ -15,6 +14,7 @@ using Distance = Xamarin.Forms.Maps.Distance;
 
 #if (__ANDROID__)
 using Android.Content;
+using Android.Content.PM;
 #endif
 #if (__IOS__)
 using Foundation;
