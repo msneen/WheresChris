@@ -68,6 +68,8 @@ namespace WheresChris.Droid
 
                 LoadApplication(new App());
 
+		        MessageCenterListener.Initialize();
+
                 TryToStartLocationService();
             }
 		    catch (Exception ex)

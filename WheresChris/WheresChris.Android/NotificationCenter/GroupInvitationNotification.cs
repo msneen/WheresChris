@@ -13,7 +13,8 @@ namespace StayTogether.Droid.NotificationCenter
     public class GroupInvitationNotification: INotificationStrategy
     {
         public static string GroupInvitation = "groupInvitation";
-        public static readonly int NotificationId = 501;
+        public const string GROUP_INVITATION_CHANNEL = "com.whereschris.whereschris.groupinvitation";
+        public static readonly int NotificationId = 52017;
 
 
         public static void DisplayGroupInvitationNotification(string phoneNumber, string name)
@@ -26,7 +27,7 @@ namespace StayTogether.Droid.NotificationCenter
             notificationIntent.PutExtra("phonenumber", phoneNumber);
             notificationIntent.PutExtra("name", name);
 
-            var notification = new Notification.Builder(Application.Context)
+            var notification = new Notification.Builder(Application.Context, GROUP_INVITATION_CHANNEL)
                 .SetSmallIcon(Resource.Drawable.ic_vol_type_speaker_dark)
                 .SetContentTitle($"Group Invitation from {ContactsHelper.NameOrPhone(phoneNumber, name)}")
                 .SetContentText($"{ContactsHelper.NameOrPhone(phoneNumber, name)} invited to you join a group.  Click here to join!")
@@ -35,8 +36,12 @@ namespace StayTogether.Droid.NotificationCenter
 
             notification.Flags = NotificationFlags.AutoCancel;
 
+            var channel = new NotificationChannel(GROUP_INVITATION_CHANNEL, "Group Invitation", NotificationImportance.Max);
+            channel.LockscreenVisibility = NotificationVisibility.Public;
+
             var notificationManager = Application.Context.GetSystemService(Context.NotificationService) as NotificationManager;
-            notificationManager?.Notify(NotificationId, notification);
+            notificationManager.CreateNotificationChannel(channel);
+            notificationManager.Notify(NotificationId, notification);
         }
 
 

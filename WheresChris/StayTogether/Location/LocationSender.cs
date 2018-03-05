@@ -515,12 +515,6 @@ Debugger.Break();
             {
                 if (phoneNumber.CleanPhoneNumber() == _phoneNumber.CleanPhoneNumber()) return;//don't invite myself to a group
 
-                //OnGroupInvitationReceived?.Invoke(this, new InvitedEventArgs
-                //{
-                //    Name = name,
-                //    GroupId = phoneNumber
-                //});
-
                 var invitationVm = new InvitationVm
                 {
                     Name = name,

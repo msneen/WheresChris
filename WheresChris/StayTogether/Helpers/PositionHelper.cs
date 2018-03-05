@@ -107,12 +107,12 @@ namespace StayTogether.Helpers
         {
             var positionList = new List<Plugin.Geolocator.Abstractions.Position>();
             CrossGeolocator.Current.DesiredAccuracy = 30;
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i < 4; i++)
             {
                 var position = await CrossGeolocator.Current.GetPositionAsync(new TimeSpan(0, 0, 10));
                 AddToMinMaxAgg(position);
                 positionList.Add(position);
-                await Task.Delay(1000);
+                await Task.Delay(100);
             }
 
             var userPosition = GetMedianPosition(positionList);
