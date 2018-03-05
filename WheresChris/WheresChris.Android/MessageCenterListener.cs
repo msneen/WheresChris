@@ -80,6 +80,8 @@ namespace WheresChris.Droid
                             groupMemberSimpleVm.Name);
                     });
                 });
+
+            Console.WriteLine("MessageCenterListener Loaded");
         }
     }
 }

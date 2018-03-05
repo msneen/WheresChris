@@ -36,11 +36,11 @@ namespace StayTogether.Droid.NotificationCenter
 
             notification.Flags = NotificationFlags.AutoCancel;
 
-            var channel = new NotificationChannel(GROUP_INVITATION_CHANNEL, "Group Invitation", NotificationImportance.Max);
-            channel.LockscreenVisibility = NotificationVisibility.Public;
+            //var channel = new NotificationChannel(GROUP_INVITATION_CHANNEL, "Group Invitation", NotificationImportance.Max);
+            //channel.LockscreenVisibility = NotificationVisibility.Public;
 
             var notificationManager = Application.Context.GetSystemService(Context.NotificationService) as NotificationManager;
-            notificationManager.CreateNotificationChannel(channel);
+            //notificationManager.CreateNotificationChannel(channel);
             notificationManager.Notify(NotificationId, notification);
         }
 

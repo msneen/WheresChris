@@ -181,8 +181,8 @@ Debugger.Break();
             try
             {
                 // Connect to the server
-                _hubConnection = new HubConnection("https://staytogetherserver.azurewebsites.net/");//mike
-                                                                                                    //_hubConnection = new HubConnection("http://162.231.59.41/StayTogetherServer/");//mike
+                _hubConnection = new HubConnection("https://staytogetherserver.azurewebsites.net/"); //mike
+                //_hubConnection = new HubConnection("http://162.231.59.41/StayTogetherServer/");//mike
                 _hubConnection.Headers.Add("AuthToken", "x0y2!tJyHR%$Sip@*%amaGxvs");
 
                 // Create a proxy to the 'ChatHub' SignalR Hub
@@ -202,7 +202,7 @@ Debugger.Break();
                 _chatHubProxy.On<string>("RequestMemberLocations", async s => await RequestMemberPositions(s));
 
                 _chatHubProxy.On<GroupMemberVm, string>("GroupMessage", ChatMessageReceived);
-          
+
                 // Start the connection
                 await _hubConnection.Start();
 
@@ -210,15 +210,19 @@ Debugger.Break();
 
                 IsInitialized = true;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
 #if (DEBUG)
                 Debugger.Break();
 #endif
                 Analytics.TrackEvent($"LocationSender_InitializeSignalRAsync", new Dictionary<string, string>
                 {
-                    { "Message", ex.Message}
+                    {"Message", ex.Message}
                 });
+            }
+            finally
+            {
+                Console.WriteLine("LocationSender Loaded");
             }
         }
 
