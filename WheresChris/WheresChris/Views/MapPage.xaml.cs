@@ -228,12 +228,13 @@ namespace WheresChris.Views
 	        await Navigation.PushAsync(memberPage);
 	    }
 
-	    private void LeaveGroupButton_OnClicked(object sender, EventArgs e)
+	    private async Task LeaveGroupButton_OnClicked(object sender, EventArgs e)
 	    {
             MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.LeaveGroupMsg);
             MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.EndGroupMsg);
             MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.ThisUserLeftGroupMsg);
-        }
+	        await InitializeMap();
+	    }
 
         private void HideSpinnerShowMap()
         {

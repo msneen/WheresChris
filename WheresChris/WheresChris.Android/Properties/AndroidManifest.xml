@@ -4,7 +4,8 @@
 	<application android:label="WheresChris" android:name="WheresChris" android:icon="@drawable/ic_launcher">
 		<!--release key-->
 		<!---->
-		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyAXVq9MOAJCJ9nBYscWnxYzXywOJfYDbeY" />
+		<!--<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyAXVq9MOAJCJ9nBYscWnxYzXywOJfYDbeY" />-->
+	  <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDlnfTS6yFRD02L-cMj0RbWYE2-v4O6pwM" />
 		<!--Debug Key-->
 		<!--<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyBIRMJINtz4ZamDLnLLk7zx8xuKwC2BstM" />-->
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
