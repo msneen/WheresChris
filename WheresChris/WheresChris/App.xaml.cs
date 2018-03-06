@@ -37,9 +37,9 @@ namespace WheresChris
             _locationSender = await LocationSender.GetInstanceAsync();
         }
 
-        public static void SetMainPage()
+        public static void AttemptLoadPagesNeedingPermissions()
         {
-            SetMainPageAsync().ConfigureAwait(true);
+            AttemptLoadPagesNeedingPermissionsAsync().ConfigureAwait(true);
         }
 
         public static async Task SetMainPageAsync()
@@ -51,30 +51,8 @@ namespace WheresChris
 
                 AddPage(new MainPage(), "Main");
 
-                var alreadyHasPermissions = await PermissionHelper.HasNecessaryPermissions();
-                if(alreadyHasPermissions)
-                {
-                    _permisionRequestIntervalTime = 250;
-                    _addPagesIntervalTime = 250;
-                    PermissionRequest.SetInterval(InsertPagesNeedingPermissions, _permisionRequestIntervalTime);
-                }
-                else
-                {
-                    var gpsEnabled = await PermissionHelper.HasGpsEnabled();
-                    if(!gpsEnabled)
-                    {
-                        _permisionRequestIntervalTime = 15000;
-                        _addPagesIntervalTime = 15000;
-                        PermissionRequest.SetInterval(SetMainPage, _permisionRequestIntervalTime);
-                        await PermissionHelper.RequestGpsEnable();
-                    }
-                    else
-                    {
-                        PermissionRequest.SetInterval(InsertPagesNeedingPermissions, _permisionRequestIntervalTime);
-                    }
-                }
+                await AttemptLoadPagesNeedingPermissionsAsync();
 
-                
 
                 AddPage(new AboutPage(), "About");
                 
@@ -85,6 +63,32 @@ namespace WheresChris
                 {
                     {"App.xaml.cs_SetMainPage_Error" , ex.Message}
                 });
+            }
+        }
+
+        private static async Task AttemptLoadPagesNeedingPermissionsAsync()
+        {
+            var alreadyHasPermissions = await PermissionHelper.HasNecessaryPermissions();
+            if(alreadyHasPermissions)
+            {
+                _permisionRequestIntervalTime = 250;
+                _addPagesIntervalTime = 250;
+                PermissionRequest.SetInterval(InsertPagesNeedingPermissions, _permisionRequestIntervalTime);
+            }
+            else
+            {
+                var gpsEnabled = await PermissionHelper.HasGpsEnabled();
+                if(!gpsEnabled)
+                {
+                    _permisionRequestIntervalTime = 15000;
+                    _addPagesIntervalTime = 15000;
+                    PermissionRequest.SetInterval(AttemptLoadPagesNeedingPermissions, _permisionRequestIntervalTime);
+                    await PermissionHelper.RequestGpsEnable();
+                }
+                else
+                {
+                    PermissionRequest.SetInterval(InsertPagesNeedingPermissions, _permisionRequestIntervalTime);
+                }
             }
         }
 
