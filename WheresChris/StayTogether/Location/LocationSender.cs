@@ -25,8 +25,15 @@ namespace StayTogether
 	{
 	    private static LocationSender _instance;
 
+	    public static bool IsGeolocationAvailable()
+	    {
+	        var geoLocator = CrossGeolocator.Current;
+	        return geoLocator.IsGeolocationEnabled && geoLocator.IsGeolocationAvailable;
+	    }
 	    public static async Task<LocationSender> GetInstanceAsync()
 	    {
+	        if(!IsGeolocationAvailable()) return null;
+
             //Make m new instance if null when requested
 	        if (_instance == null)
 	        {
@@ -50,6 +57,7 @@ namespace StayTogether
 
 	    public static LocationSender GetInstance()
 	    {
+	        if(!IsGeolocationAvailable()) return null;
             //Make m new instance if null when requested
             if (_instance == null)
             {
@@ -165,7 +173,7 @@ Debugger.Break();
 
 	    public async Task InitializeAsync()
 	    {
-            if (!IsInitialized)
+            if (!IsInitialized && IsGeolocationAvailable())
             {
                 await InitializeSignalRAsync();
             }
@@ -173,6 +181,7 @@ Debugger.Break();
 
 	    public void Initialize()
 	    {
+	        if(!IsGeolocationAvailable()) return;
 	        InitializeAsync().Wait();
 	    }
 
@@ -180,6 +189,7 @@ Debugger.Break();
         {
             try
             {
+                if(!IsGeolocationAvailable()) return;
                 // Connect to the server
                 _hubConnection = new HubConnection("https://staytogetherserver.azurewebsites.net/"); //mike
                 //_hubConnection = new HubConnection("http://162.231.59.41/StayTogetherServer/");//mike

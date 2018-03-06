@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 using Microsoft.AppCenter.Analytics;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
+using StayTogether;
 
 namespace WheresChris.Helpers
 {
@@ -18,11 +20,21 @@ namespace WheresChris.Helpers
 
         public static async Task<bool> HasNecessaryPermissions()
         {
+            var locationEnabledPermissionsGranted = await HasGpsEnabled();
             var locationPermissionsGranted = await HasLocationPermission();
             var contactsPermissionsGranted = await HastContactPermission();
-            return locationPermissionsGranted && contactsPermissionsGranted;
+            return locationPermissionsGranted && locationEnabledPermissionsGranted && contactsPermissionsGranted;
         }
 
+        public static async Task<bool> HasOrRequestGpsEnabledPermission()
+        {
+            var gpsEnabled = await HasGpsEnabled();
+            if(!gpsEnabled)
+            {
+                await RequestGpsEnable();
+            }
+            return gpsEnabled;
+        }
 
         public static async Task<bool> HasOrRequestPhonePermission()
         {
@@ -50,6 +62,11 @@ namespace WheresChris.Helpers
             return await HasPermission(Permission.Location);
         }
 
+        public static Task<bool> HasGpsEnabled()
+        {
+            return Task.FromResult(LocationSender.IsGeolocationAvailable());
+        }
+
         public static async Task<bool> HastContactPermission()
         {
             return await HasPermission(Permission.Contacts);
@@ -59,6 +76,14 @@ namespace WheresChris.Helpers
         {            
             var phonePermission = await CrossPermissions.Current.CheckPermissionStatusAsync(permission);
             return phonePermission == PermissionStatus.Granted;
+        }
+
+        public static Task<PermissionStatus> RequestGpsEnable()
+        {
+            var title = "Locations are disabled";
+            var body = "Please enable Location services on your device";
+            Plugin.LocalNotifications.CrossLocalNotifications.Current.Show(title, body);
+            return Task.FromResult(PermissionStatus.Unknown);
         }
 
         public static async Task<PermissionStatus> RequestPhonePermission()

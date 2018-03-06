@@ -22,7 +22,7 @@ namespace WheresChris
         {
             InitializeComponent();
 
-            SetMainPage().ConfigureAwait(true);
+            SetMainPageAsync().ConfigureAwait(true);
 
             StartLocationSenderAsync().ConfigureAwait(true);
         }
@@ -37,7 +37,12 @@ namespace WheresChris
             _locationSender = await LocationSender.GetInstanceAsync();
         }
 
-        public static async Task SetMainPage()
+        public static void SetMainPage()
+        {
+            SetMainPageAsync().ConfigureAwait(true);
+        }
+
+        public static async Task SetMainPageAsync()
         {
             try
             {
@@ -47,13 +52,29 @@ namespace WheresChris
                 AddPage(new MainPage(), "Main");
 
                 var alreadyHasPermissions = await PermissionHelper.HasNecessaryPermissions();
-                if (alreadyHasPermissions)
+                if(alreadyHasPermissions)
                 {
                     _permisionRequestIntervalTime = 250;
                     _addPagesIntervalTime = 250;
+                    PermissionRequest.SetInterval(InsertPagesNeedingPermissions, _permisionRequestIntervalTime);
+                }
+                else
+                {
+                    var gpsEnabled = await PermissionHelper.HasGpsEnabled();
+                    if(!gpsEnabled)
+                    {
+                        _permisionRequestIntervalTime = 15000;
+                        _addPagesIntervalTime = 15000;
+                        PermissionRequest.SetInterval(SetMainPage, _permisionRequestIntervalTime);
+                        await PermissionHelper.RequestGpsEnable();
+                    }
+                    else
+                    {
+                        PermissionRequest.SetInterval(InsertPagesNeedingPermissions, _permisionRequestIntervalTime);
+                    }
                 }
 
-                PermissionRequest.SetInterval(InsertPagesNeedingPermissions, _permisionRequestIntervalTime);
+                
 
                 AddPage(new AboutPage(), "About");
                 
