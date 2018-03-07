@@ -24,10 +24,12 @@
     
       </ListView>
         <RelativeLayout Padding="5,0,0,0" VerticalOptions="End">
-            <Editor x:Name="ChatMessage" HeightRequest="100"
-                        RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
-                        RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.7,Constant=0}"/>
-            <Button x:Name="SendButton" Text="->" HeightRequest="100" Clicked="SendButton_OnClickedButton_OnClicked" Style="{StaticResource buttonStyle}"
+            <Frame OutlineColor="Black" HasShadow="True"                        
+                   RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
+                   RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.7,Constant=0}">
+            <Editor x:Name="ChatMessage" HeightRequest="70"/>
+            </Frame>
+            <Button x:Name="SendButton" Text="Send" HeightRequest="70" Clicked="SendButton_OnClickedButton_OnClicked" Style="{StaticResource buttonStyle}"
                         RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.7, Constant=0}"
                         RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.3,Constant=0}" />
         </RelativeLayout>
