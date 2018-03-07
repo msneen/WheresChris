@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Plugin.Toasts;
 using StayTogether;
 using StayTogether.Helpers;
 using WheresChris.ViewModels;
@@ -29,7 +30,7 @@ namespace WheresChris.Views
             MessagingCenter.Subscribe<LocationSender, ChatMessageSimpleVm>(this, LocationSender.ChatReceivedMsg,
                 (sender, chatMessageVm) =>
                 {
-                    Device.BeginInvokeOnMainThread(() =>
+                    Device.BeginInvokeOnMainThread(async () =>
                     {
                         Items.Add(new ChatMessageVm
                         {
@@ -37,6 +38,14 @@ namespace WheresChris.Views
                             Name = ContactsHelper.NameOrPhone(chatMessageVm?.Member?.PhoneNumber, chatMessageVm?.Member?.Name),
                             Member = chatMessageVm?.Member
                         });
+                        var options = new NotificationOptions()
+                        {
+                            Title = "New Message",
+                            Description = chatMessageVm.Message,
+                            IsClickable = false
+                        };
+                        var notification = DependencyService.Get<IToastNotificator>();
+                        var result = await notification.Notify(options);
                     });
                 });
         }
