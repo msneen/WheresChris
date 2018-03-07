@@ -241,6 +241,7 @@ namespace WheresChris.Views
 	    private async void ViewMembersButton_OnClicked(object sender, EventArgs e)
 	    {
 	        var memberPage = new MemberPage();
+	        await memberPage.RefreshMembers();
 	        await Navigation.PushAsync(memberPage);
 	    }
 

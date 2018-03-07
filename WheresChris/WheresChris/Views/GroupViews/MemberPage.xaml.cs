@@ -23,6 +23,11 @@ namespace WheresChris.Views.GroupViews
         {
             await ((MemberPageViewModel) BindingContext).RefreshMembers();
         }
+
+        public async Task RefreshMembers()
+        {
+            await ((MemberPageViewModel) BindingContext).RefreshMembers();            
+        }
     }
 
     internal class MemberPageViewModel
