@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="WheresChris.Views.ChatPage"
              Title="{Binding Title}">
-    <StackLayout>
+    <ScrollView>
+        <StackLayout>
         <ListView ItemsSource="{Binding Items, Mode=TwoWay}" x:Name="ChatListView"
                 CachingStrategy="RecycleElement"
                 HorizontalOptions="FillAndExpand"
@@ -34,4 +35,5 @@
                         RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.3,Constant=0}" />
         </RelativeLayout>
     </StackLayout>
+    </ScrollView>
 </ContentPage>

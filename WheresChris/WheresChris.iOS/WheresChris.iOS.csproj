@@ -111,6 +111,9 @@
     <Reference Include="Google.MobileAds, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xamarin.Google.iOS.MobileAds.7.27.0.1\lib\Xamarin.iOS10\Google.MobileAds.dll</HintPath>
     </Reference>
+    <Reference Include="KeyboardOverlap.Forms.Plugin.iOSUnified, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xam.Plugins.Forms.KeyboardOverlap.1.0.0.4\lib\Xamarin.iOS10\KeyboardOverlap.Forms.Plugin.iOSUnified.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AppCenter, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AppCenter.1.5.0\lib\Xamarin.iOS10\Microsoft.AppCenter.dll</HintPath>
     </Reference>
