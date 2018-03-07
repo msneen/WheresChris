@@ -4,7 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.AppCenter.Analytics;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
+using Plugin.Toasts;
 using StayTogether;
+using Xamarin.Forms;
 
 namespace WheresChris.Helpers
 {
@@ -78,12 +80,27 @@ namespace WheresChris.Helpers
             return phonePermission == PermissionStatus.Granted;
         }
 
-        public static Task<PermissionStatus> RequestGpsEnable()
+        private static bool gpsNotificationWasDisplayed;
+        public static async Task<PermissionStatus> RequestGpsEnable()
         {
+            if(gpsNotificationWasDisplayed) return PermissionStatus.Unknown;
+
             var title = "Locations are disabled";
             var body = "Please enable Location services on your device";
-            Plugin.LocalNotifications.CrossLocalNotifications.Current.Show(title, body);
-            return Task.FromResult(PermissionStatus.Unknown);
+            var id = 75223;
+
+            Plugin.LocalNotifications.CrossLocalNotifications.Current.Show(title, body, id);
+
+            var options = new NotificationOptions()
+            {
+                Title = title,
+                Description = body,
+                IsClickable = false
+            };
+            var notification = DependencyService.Get<IToastNotificator>();
+            gpsNotificationWasDisplayed = true;
+            var result = await notification.Notify(options);
+            return PermissionStatus.Unknown;
         }
 
         public static async Task<PermissionStatus> RequestPhonePermission()
@@ -109,7 +126,6 @@ namespace WheresChris.Helpers
             if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
             {
                 Plugin.LocalNotifications.CrossLocalNotifications.Current.Show(title, body);
-
             }
             var permissionStatus = await CrossPermissions.Current.RequestPermissionsAsync(permission);
 

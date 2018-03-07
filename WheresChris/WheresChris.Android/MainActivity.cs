@@ -61,7 +61,10 @@ namespace WheresChris.Droid
 		        Xamarin.Forms.Forms.Init(this, bundle);
 		        Xamarin.FormsMaps.Init(this, bundle);
 		        TKGoogleMaps.Init(this, bundle);
+
+		        DependencyService.Register<ToastNotification>();
 		        ToastNotification.Init(this);
+                
 
 		        SetTheme(Resource.Style.MyTheme);
 		        base.OnCreate(bundle);
