@@ -80,10 +80,10 @@ namespace WheresChris.Helpers
             return phonePermission == PermissionStatus.Granted;
         }
 
-        private static bool gpsNotificationWasDisplayed;
+        private static bool _gpsNotificationWasDisplayed;
         public static async Task<PermissionStatus> RequestGpsEnable()
         {
-            if(gpsNotificationWasDisplayed) return PermissionStatus.Unknown;
+            if(_gpsNotificationWasDisplayed) return PermissionStatus.Unknown;
 
             var title = "Locations are disabled";
             var body = "Please enable Location services on your device";
@@ -98,7 +98,7 @@ namespace WheresChris.Helpers
                 IsClickable = false
             };
             var notification = DependencyService.Get<IToastNotificator>();
-            gpsNotificationWasDisplayed = true;
+            _gpsNotificationWasDisplayed = true;
             var result = await notification.Notify(options);
             return PermissionStatus.Unknown;
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using StayTogether;
 using StayTogether.Helpers;
@@ -135,6 +136,21 @@ namespace WheresChris.Views
                 _mapPosition = PositionHelper.GetMapPosition(position);
                 _lastPositionUpdateTime = DateTime.Now;
             });
+	        MessagingCenter.Subscribe<LocationSender, GroupMemberSimpleVm>(this, LocationSender.SomeoneLeftMsg,
+	            (sender, groupMemberSimpleVm) =>
+	            {
+	                Device.BeginInvokeOnMainThread(() =>
+	                {
+	                    //Remove pin
+	                    var pins = GroupMap.Pins.ToList();
+
+                        var userPin  = pins.FirstOrDefault(x=>x.Title == ContactsHelper.NameOrPhone(groupMemberSimpleVm.PhoneNumber,
+                                                                  groupMemberSimpleVm.Name));
+	                    if(userPin == null) return;
+	                    pins.Remove(userPin);
+	                    GroupMap.Pins = pins;
+	                });
+	            });
         }
 
         private async Task InitializeMap()
