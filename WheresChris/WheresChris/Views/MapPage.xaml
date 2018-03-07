@@ -4,37 +4,39 @@
              xmlns:customMap="clr-namespace:TK.CustomMap;assembly=TK.CustomMap"
              xmlns:controls="clr-namespace:WheresChris.Controls;"
              x:Class="WheresChris.Views.MapPage">
-    <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-        <controls:AdView x:Name="AdView" VerticalOptions="Start"/>
-        <RelativeLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-            <customMap:TKCustomMap x:Name="GroupMap" MapType="Hybrid" HorizontalOptions="FillAndExpand"
-                    RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0, Constant=0}"
-                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=0}"
-                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=1,Constant=0}" 
-                    RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height,Factor=0.75,Constant=0}" />
-            <!--<RelativeLayout Padding="5,0,0,0" VerticalOptions="End">-->
-                <Button x:Name="AddMembersButton" AutomationId="AddMembersButton" Text="Add" Clicked="AddMembersButton_OnClicked" Style="{StaticResource buttonStyle}"
-                    RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.75, Constant=0}"
-                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
-                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}"/>
-                <Button x:Name="ViewMembersButton" AutomationId="ViewMembersButton" Text="Members" Clicked="ViewMembersButton_OnClicked" Style="{StaticResource buttonStyle}"
-                    RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.75, Constant=0}"
-                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=0}"
-                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}"/>
+    <ScrollView>
+        <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+            <controls:AdView x:Name="AdView" VerticalOptions="Start"/>
+            <RelativeLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <customMap:TKCustomMap x:Name="GroupMap" MapType="Hybrid" HorizontalOptions="FillAndExpand"
+                        RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0, Constant=0}"
+                        RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=0}"
+                        RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=1,Constant=0}" 
+                        RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height,Factor=0.75,Constant=0}" />
+                <!--<RelativeLayout Padding="5,0,0,0" VerticalOptions="End">-->
+                    <Button x:Name="AddMembersButton" AutomationId="AddMembersButton" Text="Add" Clicked="AddMembersButton_OnClicked" Style="{StaticResource buttonStyle}"
+                        RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.75, Constant=0}"
+                        RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
+                        RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}"/>
+                    <Button x:Name="ViewMembersButton" AutomationId="ViewMembersButton" Text="Members" Clicked="ViewMembersButton_OnClicked" Style="{StaticResource buttonStyle}"
+                        RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.75, Constant=0}"
+                        RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=0}"
+                        RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}"/>
                 
-                <Button x:Name="LeaveGroupButton" AutomationId="LeaveGroupButton" Text="Leave" Clicked="LeaveGroupButton_OnClicked" Style="{StaticResource buttonStyle}"
-                    RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.83, Constant=0}"
-                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.0, Constant=10}"
-                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}" />
-                <Button x:Name="ViewARButton" AutomationId="ViewARButton" Text="AR" Clicked="ViewARButton_OnClicked" IsVisible="False" Style="{StaticResource buttonStyle}"
-                    RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.83, Constant=0}"
+                    <Button x:Name="LeaveGroupButton" AutomationId="LeaveGroupButton" Text="Leave" Clicked="LeaveGroupButton_OnClicked" Style="{StaticResource buttonStyle}"
+                        RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.83, Constant=0}"
+                        RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.0, Constant=10}"
+                        RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}" />
+                    <Button x:Name="ViewARButton" AutomationId="ViewARButton" Text="AR" Clicked="ViewARButton_OnClicked" IsVisible="False" Style="{StaticResource buttonStyle}"
+                        RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.83, Constant=0}"
+                        RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=0}"
+                        RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}"/>
+                <!--</RelativeLayout>-->
+                <ActivityIndicator x:Name="Spinner" IsRunning="True" HorizontalOptions="Center" VerticalOptions="Center" Color="#9E0800"
+                    RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.3, Constant=0}"
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=0}"
-                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}"/>
-            <!--</RelativeLayout>-->
-            <ActivityIndicator x:Name="Spinner" IsRunning="True" HorizontalOptions="Center" VerticalOptions="Center" Color="#9E0800"
-                RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.3, Constant=0}"
-                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=0}"
-                RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height,Factor=0.4,Constant=0}"/>
-        </RelativeLayout>
-    </StackLayout>
+                    RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height,Factor=0.4,Constant=0}"/>
+            </RelativeLayout>
+        </StackLayout>
+    </ScrollView>
 </ContentPage>
