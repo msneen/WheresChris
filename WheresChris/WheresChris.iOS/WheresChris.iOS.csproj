@@ -408,6 +408,9 @@
   <ItemGroup>
     <BundleResource Include="Resources\WheresChris%403x.png" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\my_location.png" />
+  </ItemGroup>
   <Import Project="..\StayTogether\StayTogether.projitems" Label="Shared" />
   <Import Project="..\WheresChris\WheresChris.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />

@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Plugin.Geolocator;
-using Plugin.Geolocator.Abstractions;
 using StayTogether.Classes;
 using StayTogether.Models;
+using TK.CustomMap;
 using WheresChris.Helpers;
+using Position = Plugin.Geolocator.Abstractions.Position;
 
 namespace StayTogether.Helpers
 {
-    public class PositionHelper
+    public static class PositionHelper
     {
         public static double MinAccuracy { get; set; }
         public static double MaxAccuracy { get; set; }
@@ -164,12 +165,17 @@ namespace StayTogether.Helpers
             return userPosition;
         }
 
-        public static bool LocationValid(Plugin.Geolocator.Abstractions.Position position)
+        public static bool LocationValid(this Plugin.Geolocator.Abstractions.Position position)
         {
             return LocationValid(position.Latitude, position.Longitude);
         }
 
-        public static bool LocationValid(Xamarin.Forms.Maps.Position position)
+        public static bool LocationValid(this Xamarin.Forms.Maps.Position position)
+        {
+            return LocationValid(position.Latitude, position.Longitude);
+        }
+
+        public static bool LocationValid(this TK.CustomMap.Position position)
         {
             return LocationValid(position.Latitude, position.Longitude);
         }

@@ -11,6 +11,7 @@ using WheresChris.Helpers;
 using WheresChris.Views.GroupViews;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using StayTogether.Helpers;
 using Distance = Xamarin.Forms.Maps.Distance;
 
 #if (__ANDROID__)
@@ -31,6 +32,8 @@ namespace WheresChris.Views
         private Interval _positionInitializationInterval = new Interval();
 	    private Xamarin.Forms.Maps.Position? _mapPosition;
         private DateTime _lastPositionUpdateTime = DateTime.Now;
+	    private Xamarin.Forms.Maps.Position _mapCenterPosition;
+	    private double _radius = 1000; //meters
 
 	    public MapPage ()
 		{
@@ -217,16 +220,15 @@ namespace WheresChris.Views
                 }
             }
 
-            var mapCenterPosition = PositionHelper.GetMapCenter(groupMembers);
-	        if (!PositionHelper.LocationValid(mapCenterPosition)) return;
+            _mapCenterPosition = PositionHelper.GetMapCenter(groupMembers);
+	        if (!PositionHelper.LocationValid(_mapCenterPosition)) return;
 
-	        var radius = PositionHelper.GetRadius(groupMembers, mapCenterPosition);
+	        _radius = PositionHelper.GetRadius(groupMembers, _mapCenterPosition);
 
             Device.BeginInvokeOnMainThread(() =>
             {
-                GroupMap.MapType = MapType.Hybrid; //This doesn't seem to work on android
-                //GroupMap.MapCenter = mapCenterPosition;
-                GroupMap.MapRegion = MapSpan.FromCenterAndRadius(mapCenterPosition.ToTkPosition(), Distance.FromMiles(radius).ToTkDistance());
+                GroupMap.MapType = MapType.Hybrid; //This doesn't seem to work on android                              
+                GroupMap.MapRegion = MapSpan.FromCenterAndRadius(_mapCenterPosition.ToTkPosition(), Distance.FromMiles(_radius).ToTkDistance());
                 GroupMap.Pins = customPins;
             });
             return;
@@ -277,5 +279,20 @@ namespace WheresChris.Views
             var isOpened = UIApplication.SharedApplication.OpenUrl(request);
 #endif
         }
+
+	    private void MyLocation_OnTapped(object sender, EventArgs e)
+	    {
+	        if(Math.Abs(_radius) < 0.00001) return;
+
+	        var centerPosition = _mapCenterPosition;
+	        if(centerPosition.LocationValid() && _mapPosition.HasValue)
+	        {
+	            centerPosition = _mapPosition.Value;
+	        }
+
+	        if(!centerPosition.LocationValid()) return;
+
+	        GroupMap.MapRegion = MapSpan.FromCenterAndRadius(centerPosition.ToTkPosition(), Distance.FromMiles(_radius).ToTkDistance());
+	    }
 	}
 }

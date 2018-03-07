@@ -64,7 +64,6 @@ namespace WheresChris.Droid
 
 		        DependencyService.Register<ToastNotification>();
 		        ToastNotification.Init(this);
-                
 
 		        SetTheme(Resource.Style.MyTheme);
 		        base.OnCreate(bundle);

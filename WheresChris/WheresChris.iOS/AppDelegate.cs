@@ -47,6 +47,7 @@ namespace WheresChris.iOS
 		    DependencyService.Register<ToastNotification>();
             ToastNotification.Init();
             InitializeToastPlugin(app);
+
             MobileAds.Configure("ca-app-pub-5660348862902976~4046598647");
 
             LoadApplication(new App());
