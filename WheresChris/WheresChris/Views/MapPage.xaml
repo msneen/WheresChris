@@ -4,7 +4,7 @@
              xmlns:customMap="clr-namespace:TK.CustomMap;assembly=TK.CustomMap"
              xmlns:controls="clr-namespace:WheresChris.Controls;"
              x:Class="WheresChris.Views.MapPage">
-    <ScrollView>
+    <!--<ScrollView>-->
         <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
             <controls:AdView x:Name="AdView" VerticalOptions="Start"/>
             <RelativeLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
@@ -45,5 +45,5 @@
                     RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height,Factor=0.4,Constant=0}"/>
             </RelativeLayout>
         </StackLayout>
-    </ScrollView>
+    <!--</ScrollView>-->
 </ContentPage>
