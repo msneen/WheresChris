@@ -21,6 +21,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\TimeGate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Location\LocationSender.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Location\SendMeter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\AdditionalMemberInvitationVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ChatMessageVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GroupMemberSimpleVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\GroupMemberVm.cs" />

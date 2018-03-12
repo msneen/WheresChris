@@ -102,6 +102,8 @@ namespace StayTogether
 	    public const string GetInvitationsMsg = "GETINVITATIONS";             
         public const string ConfirmGroupInvitationMsg = "CONFIRMGROUPiNVITATION";
 	    public const string PositionUpdatedMsg = "POSITIONUPDATED";
+	    public const string RequestAdditionalMembersJoinGroup = "REQUESTADDITIONALMEMBERSJOINGROUP";//THIS ORIGINATES THE CALL
+	    public const string AdditionalMembersRequestJoinGroup = "ADDITIONALMEMBERSREQUESTJOINGROUP";//This is the signal r call to the group leader when someone requests to add members
 
 
         public bool InAGroup { get; set; }
@@ -169,7 +171,19 @@ Debugger.Break();
                 await SendUpdatePosition(mapPosition);
             });
 
+	        MessagingCenter.Subscribe<object, AdditionalMemberInvitationVm>(this, RequestAdditionalMembersJoinGroup, async (sender, additionalMemberInvitationVm) =>
+	        {
+	            await RequestAdditionalMembersAddedToGroup(additionalMemberInvitationVm);
+	        });
         }
+
+	    private async Task RequestAdditionalMembersAddedToGroup(AdditionalMemberInvitationVm additionalMemberInvitationVm)
+	    {
+            //Request to add these members to another group, and end the group we are in
+	        await InvokeChatHubProxy("requestJoinGroup", additionalMemberInvitationVm.Group, additionalMemberInvitationVm.GroupLeaderPhoneNumber);
+
+	        await EndGroup();
+	    }
 
 	    public async Task InitializeAsync()
 	    {
@@ -210,6 +224,7 @@ Debugger.Break();
                 _chatHubProxy.On<string, string>("MemberAlreadyInGroup", OnMemberAlreadyInGroup);
                 _chatHubProxy.On<List<GroupMemberSimpleVm>>("GroupPositionUpdate", OnGroupPositionUpdate);
                 _chatHubProxy.On<string>("RequestMemberLocations", async s => await RequestMemberPositions(s));
+                _chatHubProxy.On<List<GroupMemberSimpleVm>>("JoinGroupRequest", async groupMembers => await OnRequestJoinGroup(groupMembers));//
 
                 _chatHubProxy.On<GroupMemberVm, string>("GroupMessage", ChatMessageReceived);
 
@@ -235,6 +250,23 @@ Debugger.Break();
                 Console.WriteLine("LocationSender Loaded");
             }
         }
+
+	    private Task OnRequestJoinGroup(List<GroupMemberSimpleVm> groupMembers)
+	    {
+	        try
+	        {
+	            MessagingCenter.Send<LocationSender, List<GroupMemberSimpleVm>>(this, AdditionalMembersRequestJoinGroup, groupMembers);
+	            return Task.CompletedTask;
+	        }
+	        catch (Exception ex)
+	        {
+	            Analytics.TrackEvent($"LocationSender_OnRequestJoinGroup", new Dictionary<string, string>
+	            {
+	                { "Message", ex.Message}
+	            });
+	            return Task.FromException(ex);
+	        }
+	    }
 
 	    private void ChatMessageReceived(GroupMemberVm groupMember, string message)
 	    {
