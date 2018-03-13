@@ -39,7 +39,7 @@ namespace WheresChris.Views
 		{
             Title = "Where's Chris - Map";
             InitializeComponent ();
-            GroupMap.MapType = MapType.Hybrid;
+            GroupMap.MapType = MapType.Street;
     
                      
             InitializeMessagingCenterSubscriptions();
@@ -227,7 +227,7 @@ namespace WheresChris.Views
 
             Device.BeginInvokeOnMainThread(() =>
             {
-                GroupMap.MapType = MapType.Hybrid; //This doesn't seem to work on android                              
+                GroupMap.MapType = MapType.Street; //This doesn't seem to work on android                              
                 GroupMap.MapRegion = MapSpan.FromCenterAndRadius(_mapCenterPosition.ToTkPosition(), Distance.FromMiles(_radius).ToTkDistance());
                 GroupMap.Pins = customPins;
             });
