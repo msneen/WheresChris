@@ -13,7 +13,7 @@
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=0}"
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=1,Constant=0}" 
                     RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height,Factor=0.75,Constant=0}">
-                    <customMap:TKCustomMap x:Name="GroupMap" MapType="Hybrid" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" />
+                    <customMap:TKCustomMap x:Name="GroupMap" MapType="Street" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" />
                     <Image x:Name="MyLocationButton" Source="my_location.png" AbsoluteLayout.LayoutBounds=".95,.7, 40, 40"
                             AbsoluteLayout.LayoutFlags="PositionProportional"  Aspect="AspectFill" >
                         <Image.GestureRecognizers>
