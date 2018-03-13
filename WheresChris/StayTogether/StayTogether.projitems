@@ -19,6 +19,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\PositionHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\SettingsHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\TimeGate.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\ToastHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Location\LocationSender.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Location\SendMeter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\AdditionalMemberInvitationVm.cs" />

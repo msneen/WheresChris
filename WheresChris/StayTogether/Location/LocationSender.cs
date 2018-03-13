@@ -110,6 +110,7 @@ namespace StayTogether
         public bool GroupLeader { get; set; }
         public bool IsInitialized { get; set; }
         public List<GroupMemberSimpleVm> GroupMembers { get; set; }
+	    public List<GroupMemberVm> InvitedGroupMembers { get; set; } = new List<GroupMemberVm>();
 
         private HubConnection _hubConnection;
 	    private IHubProxy _chatHubProxy;
@@ -173,6 +174,14 @@ Debugger.Break();
 
 	        MessagingCenter.Subscribe<object, AdditionalMemberInvitationVm>(this, RequestAdditionalMembersJoinGroup, async (sender, additionalMemberInvitationVm) =>
 	        {
+	            if( (additionalMemberInvitationVm.Group?.GroupMembers?.Count ?? 0) < 1 && InvitedGroupMembers != null && InvitedGroupMembers.Count < 2)
+	            {
+	                if(additionalMemberInvitationVm.Group == null)
+	                {
+	                    additionalMemberInvitationVm.Group = new GroupVm();
+	                }
+	                additionalMemberInvitationVm.Group.GroupMembers = InvitedGroupMembers;
+	            }
 	            await RequestAdditionalMembersAddedToGroup(additionalMemberInvitationVm);
 	        });
         }
@@ -380,25 +389,6 @@ Debugger.Break();
                 });
             }
         }
-
-//        private async Task LocatorOnPositionChanged(object sender, PositionEventArgs positionEventArgs)
-//        {
-//            try
-//            {
-//                Analytics.TrackEvent($"LocationSender_LocatorOnPositionChanged");
-//                await SendUpdatePosition();
-//            }
-//            catch (Exception ex)
-//            {
-//#if (DEBUG)
-//                Debugger.Break();
-//#endif
-//                Analytics.TrackEvent($"LocationSender_LocatorOnPositionChanged", new Dictionary<string, string>
-//                {
-//                    { "Message", ex.Message}
-//                });
-//            }
-//        }
 
 	    public async Task SendUpdatePosition()
 	    {
@@ -671,6 +661,7 @@ Debugger.Break();
                     await StartGroup(groupVm);
                 }
                 GroupMembers = new List<GroupMemberSimpleVm>();
+                InvitedGroupMembers = groupVm.GroupMembers;
             }
             catch (Exception ex)
             {

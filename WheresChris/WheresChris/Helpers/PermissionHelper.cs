@@ -6,6 +6,7 @@ using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using Plugin.Toasts;
 using StayTogether;
+using StayTogether.Helpers;
 using Xamarin.Forms;
 
 namespace WheresChris.Helpers
@@ -91,15 +92,9 @@ namespace WheresChris.Helpers
 
             Plugin.LocalNotifications.CrossLocalNotifications.Current.Show(title, body, id);
 
-            var options = new NotificationOptions()
-            {
-                Title = title,
-                Description = body,
-                IsClickable = false
-            };
-            var notification = DependencyService.Get<IToastNotificator>();
+            await ToastHelper.Display(title, body);
             _gpsNotificationWasDisplayed = true;
-            var result = await notification.Notify(options);
+
             return PermissionStatus.Unknown;
         }
 
