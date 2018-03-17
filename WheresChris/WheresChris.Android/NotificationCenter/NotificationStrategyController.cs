@@ -20,6 +20,8 @@ namespace StayTogether.Droid.NotificationCenter
                     return new GroupInvitationNotification();
                 case "member_in_another_group":
                     return new InAnotherGroupNotification();
+                case "request_to_join_this_group":
+                    return new RequestToJoinGroupNotification();
                 default:
                     return null;
             }

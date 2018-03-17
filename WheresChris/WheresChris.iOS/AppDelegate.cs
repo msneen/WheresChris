@@ -216,6 +216,15 @@ namespace WheresChris.iOS
                 });
             });
 
+            MessagingCenter.Subscribe<LocationSender, List<GroupMemberSimpleVm>>(this, LocationSender.AdditionalMembersRequestJoinGroup,
+                (sender, groupMemberSimpleListVm) =>
+                {
+                    Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                    {
+                        RequestToJoinGroupNotification.RequestToJoinThisGroup(groupMemberSimpleListVm);
+                    });
+                });
+
             //Analytics.TrackEvent("IPhoneLocationEventsInitialized");
             _eventsInitialized = true;
         }

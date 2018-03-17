@@ -6,8 +6,6 @@ using Plugin.ExternalMaps.Abstractions;
 using StayTogether.Classes;
 using WheresChris.Droid;
 
-//using StayTogether.Droid.Activities;
-
 namespace StayTogether.Droid.NotificationCenter
 {
 

@@ -1,10 +1,6 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Foundation;
-using Microsoft.AppCenter.Analytics;
 using Plugin.ExternalMaps;
 using Plugin.ExternalMaps.Abstractions;
 using StayTogether.Classes;

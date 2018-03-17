@@ -1,14 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using StayTogether;
 using StayTogether.Classes;
 using StayTogether.Droid.NotificationCenter;
@@ -78,6 +69,15 @@ namespace WheresChris.Droid
                     {
                         InAnotherGroupNotification.DisplayInAnotherGroupNotification(groupMemberSimpleVm.PhoneNumber,
                             groupMemberSimpleVm.Name);
+                    });
+                });
+
+            MessagingCenter.Subscribe<LocationSender, List<GroupMemberSimpleVm>>(this, LocationSender.AdditionalMembersRequestJoinGroup,
+                (sender, groupMemberSimpleListVm) =>
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        RequestToJoinGroupNotification.RequestToJoinThisGroup(groupMemberSimpleListVm);
                     });
                 });
 
