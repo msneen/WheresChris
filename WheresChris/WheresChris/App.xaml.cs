@@ -5,6 +5,7 @@ using Microsoft.AppCenter.Analytics;
 using StayTogether;
 using StayTogether.Helpers;
 using WheresChris.Helpers;
+using WheresChris.ViewModels;
 using WheresChris.Views;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -25,6 +26,27 @@ namespace WheresChris
             SetMainPageAsync().ConfigureAwait(true);
 
             StartLocationSenderAsync().ConfigureAwait(true);
+
+            InitializeMessagingCenter();
+        }
+
+        private void InitializeMessagingCenter()
+        {
+            MessagingCenter.Subscribe<LocationSender, ChatMessageSimpleVm>(this, LocationSender.ChatReceivedMsg,
+                (sender, chatMessageVm) =>
+                {
+                    Device.BeginInvokeOnMainThread(async () =>
+                    {
+                        var myPhoneNumber = SettingsHelper.GetPhoneNumber();
+                        if(chatMessageVm.Member.PhoneNumber == myPhoneNumber) return;
+
+                        var title = "New Chat Message";
+                        var body = chatMessageVm.Message;
+
+                        void SendNotificationsAction() => SetCurrentTab("Chat");
+                        await ToastHelper.Display(title, body, null, true, SendNotificationsAction);
+                    });
+                });
         }
 
         private static readonly Interval PermissionRequest = new Interval();

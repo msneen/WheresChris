@@ -4,9 +4,11 @@ using System.Threading.Tasks;
 using Plugin.Toasts;
 using StayTogether;
 using StayTogether.Helpers;
+using StayTogether.Models;
 using WheresChris.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using ChatMessageVm = WheresChris.ViewModels.ChatMessageVm;
 
 namespace WheresChris.Views
 {
@@ -23,6 +25,14 @@ namespace WheresChris.Views
             Items = new ObservableCollection<ChatMessageVm>();
             BindingContext = this;
             InitializeMessagingCenter();
+            ChatMessage.Completed += async (sender, args) => { await ProcessChatMessage(); };
+            ChatMessage.TextChanged += async (sender, args) =>
+            {
+                if(args.NewTextValue.EndsWith(Environment.NewLine))
+                {
+                    await ProcessChatMessage();
+                }
+            };
         }
 
         private void InitializeMessagingCenter()
@@ -38,22 +48,29 @@ namespace WheresChris.Views
                             Name = ContactsHelper.NameOrPhone(chatMessageVm?.Member?.PhoneNumber, chatMessageVm?.Member?.Name),
                             Member = chatMessageVm?.Member
                         });
-                        var options = new NotificationOptions()
-                        {
-                            Title = "New Message",
-                            Description = chatMessageVm.Message,
-                            IsClickable = false
-                        };
-                        var notification = DependencyService.Get<IToastNotificator>();
-                        var result = await notification.Notify(options);
                     });
                 });
+
+
+            MessagingCenter.Subscribe<MessagingCenterSender>(this, LocationSender.LeaveGroupMsg, async (sender) =>
+            {
+               Items.Clear();
+            });
+            MessagingCenter.Subscribe<MessagingCenterSender>(this, LocationSender.EndGroupMsg, async (sender) =>
+            {
+                Items.Clear();
+            });
         }
 
         private async Task SendButton_OnClickedButton_OnClicked(object sender, EventArgs e)
         {
+            await ProcessChatMessage();
+        }
+
+        private async Task ProcessChatMessage()
+        {
             var message = ChatMessage.Text.Trim();
-            if (string.IsNullOrWhiteSpace(message)) return;
+            if(string.IsNullOrWhiteSpace(message)) return;
 
             await ChatHelper.SendChatMessage(message);
             ChatMessage.Text = string.Empty;

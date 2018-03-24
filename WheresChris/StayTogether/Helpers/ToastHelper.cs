@@ -23,6 +23,7 @@ namespace StayTogether.Helpers
         public static async Task Display(NotificationOptions options, Action action = null)
         {
             var notification = DependencyService.Get<IToastNotificator>();
+            notification.CancelAllDelivered();
             var result = await notification.Notify(options);
             if(options.IsClickable && result.Action == NotificationAction.Clicked)
             {
