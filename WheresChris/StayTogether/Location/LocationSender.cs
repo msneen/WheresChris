@@ -104,7 +104,7 @@ namespace StayTogether
 	    public const string PositionUpdatedMsg = "POSITIONUPDATED";
 	    public const string RequestAdditionalMembersJoinGroup = "REQUESTADDITIONALMEMBERSJOINGROUP";//THIS ORIGINATES THE CALL
 	    public const string AdditionalMembersRequestJoinGroup = "ADDITIONALMEMBERSREQUESTJOINGROUP";//This is the signal r call to the group leader when someone requests to add members
-
+	    public const string SendTelemetryMsg = "SENDTELEMETRYMESSAGE";
 
         public bool InAGroup { get; set; }
         public bool GroupLeader { get; set; }
@@ -183,6 +183,11 @@ Debugger.Break();
 	                additionalMemberInvitationVm.Group.GroupMembers = InvitedGroupMembers;
 	            }
 	            await RequestAdditionalMembersAddedToGroup(additionalMemberInvitationVm);
+	        });
+
+	        MessagingCenter.Subscribe<MessagingCenterSender, string>(this, SendTelemetryMsg, async (sender, message) =>
+	        {
+	            await SendTelemetry(message);
 	        });
         }
 
@@ -416,11 +421,13 @@ Debugger.Break();
 	            if (!currentPosition.HasValue)
 	            {
 	                Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionNull");
+	                await SendTelemetry($"LocationSender_LocatorOnPositionChanged_PositionNull");
 	                return false;
 	            }
 	            if (!PositionHelper.LocationValid(currentPosition.Value))
 	            {
 	                Analytics.TrackEvent("LocationSender_LocatorOnPositionChanged_PositionInvalid");
+	                await SendTelemetry($"LocationSender_LocatorOnPositionChanged_PositionInvalid");
 	                return false;
 	            }
 
@@ -492,6 +499,7 @@ Debugger.Break();
                 {
                     { "Message", ex.Message}
                 });
+                SendTelemetry($"Cannot process OnMemberAlreadyInGroup.  Error: {ex.Message}").ConfigureAwait(false);
             }
         }
 
@@ -516,6 +524,7 @@ Debugger.Break();
                 {
                     { "Message", ex.Message}
                 });
+                SendTelemetry($"Cannot process onMemberLeftGroup.  Error: {ex.Message}").ConfigureAwait(false);
             }
         }
 
@@ -539,6 +548,7 @@ Debugger.Break();
                 {
                     { "Message", ex.Message}
                 });
+                SendTelemetry($"Cannot process GroupDisbanded.  Error: {ex.Message}").ConfigureAwait(false);
             }
         }
 
@@ -571,6 +581,7 @@ Debugger.Break();
                 {
                     { "Message", ex.Message}
                 });
+                SendTelemetry($"Cannot process OnGroupInvitation.  Error: {ex.Message}").ConfigureAwait(false);
             }
         }
 
@@ -591,6 +602,7 @@ Debugger.Break();
                 {
                     { "Message", ex.Message}
                 });
+                SendTelemetry($"Cannot Get Invitations.  Error: {ex.Message}").ConfigureAwait(false);
             }
 	        return null;
 	    }
@@ -612,6 +624,7 @@ Debugger.Break();
                 {
                     { "Message", ex.Message}
                 });
+                SendTelemetry($"Cannot update GroupId.  Error: {ex.Message}").ConfigureAwait(false);
             }
         }
 
@@ -643,6 +656,7 @@ Debugger.Break();
                 {
                     { "Message", ex.Message}
                 });
+                SendTelemetry($"Cannot process someoneIsLost.  Error: {ex.Message}").ConfigureAwait(false);
             }         
 	    }
 
@@ -672,6 +686,7 @@ Debugger.Break();
                 {
                     { "Message", ex.Message}
                 });
+                await SendTelemetry($"Cannot Start or Add to Group.  Error: {ex.Message}");
             }
         }
         
@@ -694,6 +709,7 @@ Debugger.Break();
                 {
                     { "Message", ex.Message}
                 });
+                await SendTelemetry($"Cannot Start Group.  Error: {ex.Message}");
             }
         }
 
@@ -713,6 +729,7 @@ Debugger.Break();
                 {
                     { "Message", ex.Message}
                 });
+                await SendTelemetry($"Cannot Add To Group.  Error: {ex.Message}");
             }
         }
 
@@ -729,6 +746,10 @@ Debugger.Break();
                     GroupMembers = null;
                     MessagingCenter.Send<LocationSender>(this, GroupDisbandedMsg);
                 }
+                else
+                {
+                    await SendTelemetry($"Cannot End Group.  InAGroup={InAGroup} GroupLeader={GroupLeader}");
+                }
             }
             catch (Exception ex)
             {
@@ -739,6 +760,7 @@ Debugger.Break();
                 {
                     { "Message", ex.Message}
                 });
+                await SendTelemetry($"Cannot End Group.  Error: {ex.Message}");
             }
         }
 
@@ -746,7 +768,7 @@ Debugger.Break();
         {
             try
             {
-                if (InAGroup && !GroupLeader)
+                if(InAGroup && !GroupLeader)
                 {
                     await InvokeChatHubProxy("LeaveGroup", _groupId, _phoneNumber);
                     InAGroup = false;
@@ -754,6 +776,10 @@ Debugger.Break();
                     _groupId = "";
                     GroupMembers = null;
                     MessagingCenter.Send<LocationSender>(this, ThisUserLeftGroupMsg);
+                }
+                else
+                {
+                    await SendTelemetry($"Cannot Leave Group.  InAGroup={InAGroup} GroupLeader={GroupLeader}");
                 }
             }
             catch (Exception ex)
@@ -765,6 +791,7 @@ Debugger.Break();
                 {
                     { "Message", ex.Message}
                 });
+                await SendTelemetry($"Cannot Leave Group.  Error: {ex.Message}");
             }
         }
 
@@ -778,7 +805,11 @@ Debugger.Break();
         {
             try
             {
-                if (InAGroup) return false;//Don't allow them to join a group
+                if(InAGroup)
+                {
+                    await SendTelemetry($"Cannot Confirm Group Invitation.  Already in a group");
+                    return false; //Don't allow them to join a group
+                }            
 
                 UpdateGroupId(phoneNumber);
 
@@ -786,12 +817,14 @@ Debugger.Break();
                 if (!currentPosition.HasValue)
                 {
                     Analytics.TrackEvent("LocationSender_ConfirmGroupInvitation_PositionNull");
+                    await SendTelemetry($"Cannot Confirm Group Invitation.  PositionNull");
                     return false;
                 }
 
-                if (!PositionHelper.LocationValid(currentPosition.Value))
+                if (!currentPosition.Value.LocationValid())
                 {
                     Analytics.TrackEvent("LocationSender_ConfirmGroupInvitation_PositionInvalid");
+                    await SendTelemetry($"Cannot Confirm Group Invitation.  PositionInvalid");
                 }
 
                 var groupMemberVm = new GroupMemberVm
@@ -806,6 +839,7 @@ Debugger.Break();
                 GroupMembers = new List<GroupMemberSimpleVm>();
                 await SendUpdatePosition();//Send out my current position so group member's maps will update
                 MessagingCenter.Send<LocationSender>(this, GroupJoinedMsg);
+                await SendTelemetry($"Confirmed Group Invitation");
                 return true;
             }
             catch (Exception ex)
@@ -902,6 +936,11 @@ Debugger.Break();
                 });
             }
         }
+
+	    public async Task SendTelemetry(string message)
+	    {
+	        await InvokeChatHubProxy("sendTelemetry", message, _phoneNumber);
+	    }
 
         private void GetNickname()
         {
