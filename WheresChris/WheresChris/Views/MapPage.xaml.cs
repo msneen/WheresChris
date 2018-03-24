@@ -183,7 +183,7 @@ namespace WheresChris.Views
             var userPosition = _mapPosition;
 
             if (!userPosition.HasValue) return null;
-	        if (!PositionHelper.LocationValid(userPosition.Value)) return null;
+	        if (!userPosition.Value.LocationValid()) return null;
 
 	        var userPhoneNumber = SettingsHelper.GetPhoneNumber();
 	        var justMeList = new List<GroupMemberSimpleVm>
