@@ -1,9 +1,11 @@
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Java.Lang;
 using Plugin.ExternalMaps;
 using Plugin.ExternalMaps.Abstractions;
 using StayTogether.Classes;
+using StayTogether.Helpers;
 using WheresChris.Droid;
 
 namespace StayTogether.Droid.NotificationCenter
@@ -28,10 +30,13 @@ namespace StayTogether.Droid.NotificationCenter
 
             var lostDistance = Math.Round(groupMemberVm.LostDistance);
 
+            var title = $"{ContactsHelper.NameOrPhone(groupMemberVm.PhoneNumber, groupMemberVm.Name)} is lost by {lostDistance} feet";
+            var body = "View On Map";
+
             var notification = new Notification.Builder(Application.Context)
                 .SetSmallIcon(Resource.Drawable.ic_vol_type_speaker_dark)
-                .SetContentTitle($"{ContactsHelper.NameOrPhone(groupMemberVm.PhoneNumber, groupMemberVm.Name)} is lost by {lostDistance} feet")
-                .SetContentText("View On Map")
+                .SetContentTitle(title)
+                .SetContentText(body)
                 .SetContentIntent(PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.UpdateCurrent | PendingIntentFlags.OneShot))
                 .Build();
 
@@ -39,6 +44,9 @@ namespace StayTogether.Droid.NotificationCenter
 
             var notificationManager = Application.Context.GetSystemService(Context.NotificationService) as NotificationManager;
             notificationManager?.Notify(NotificationId, notification);
+
+            void SendNotificationsAction() => ShowLostPersonOnMap(groupMemberVm.PhoneNumber, groupMemberVm.Name,groupMemberVm.Latitude, groupMemberVm.Longitude).ConfigureAwait(true);
+            ToastHelper.Display(title, body, null, true, SendNotificationsAction).ConfigureAwait(true);
         }
 
         public async void OnNotify(Intent intent)
@@ -50,6 +58,11 @@ namespace StayTogether.Droid.NotificationCenter
             var phoneNumber = intent.GetStringExtra("phonenumber");
             var latitude = intent.GetDoubleExtra("latitude", 0);
             var longitude = intent.GetDoubleExtra("longitude", 0);
+            await ShowLostPersonOnMap(phoneNumber, name, latitude, longitude);
+        }
+
+        private static async Task ShowLostPersonOnMap(string phoneNumber, string name, double latitude, double longitude)
+        {
             var nameOrPhone = ContactsHelper.NameOrPhone(phoneNumber, name);
             await CrossExternalMaps.Current.NavigateTo(nameOrPhone, latitude, longitude, NavigationType.Default);
         }

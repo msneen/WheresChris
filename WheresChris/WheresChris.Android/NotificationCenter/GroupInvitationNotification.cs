@@ -1,6 +1,7 @@
 using Android.App;
 using Android.Content;
 using StayTogether.Droid.Services;
+using StayTogether.Helpers;
 using StayTogether.Models;
 using WheresChris.Droid;
 using WheresChris.Droid.Services;
@@ -26,21 +27,24 @@ namespace StayTogether.Droid.NotificationCenter
             notificationIntent.PutExtra("phonenumber", phoneNumber);
             notificationIntent.PutExtra("name", name);
 
+            var title = $"Group Invitation from {ContactsHelper.NameOrPhone(phoneNumber, name)}";
+            var body = $"{ContactsHelper.NameOrPhone(phoneNumber, name)} invited to you join a group.  Click here to join!";
+
             var notification = new Notification.Builder(Application.Context)
                 .SetSmallIcon(Resource.Drawable.ic_vol_type_speaker_dark)
-                .SetContentTitle($"Group Invitation from {ContactsHelper.NameOrPhone(phoneNumber, name)}")
-                .SetContentText($"{ContactsHelper.NameOrPhone(phoneNumber, name)} invited to you join a group.  Click here to join!")
+                .SetContentTitle(title)
+                .SetContentText(body)
                 .SetContentIntent(PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.UpdateCurrent | PendingIntentFlags.OneShot))
                 .Build();
 
             notification.Flags = NotificationFlags.AutoCancel;
 
-            //var channel = new NotificationChannel(GROUP_INVITATION_CHANNEL, "Group Invitation", NotificationImportance.Max);
-            //channel.LockscreenVisibility = NotificationVisibility.Public;
-
             var notificationManager = Application.Context.GetSystemService(Context.NotificationService) as NotificationManager;
-            //notificationManager.CreateNotificationChannel(channel);
+
             notificationManager.Notify(NotificationId, notification);
+
+            void SendNotificationsAction() => ConfirmInvitation(name, phoneNumber);
+            ToastHelper.Display(title, body, null, true, SendNotificationsAction).ConfigureAwait(true);
         }
 
 
@@ -51,12 +55,18 @@ namespace StayTogether.Droid.NotificationCenter
             var name = intent.GetStringExtra("name");
             var phoneNumber = intent.GetStringExtra("phonenumber");
 
+            ConfirmInvitation(name, phoneNumber);
+        }
+
+        private static void ConfirmInvitation(string name, string phoneNumber)
+        {
             var groupMemberSimpleVm = new GroupMemberSimpleVm
             {
                 Name = name,
                 PhoneNumber = phoneNumber
             };
-            MessagingCenter.Send<MessagingCenterSender, GroupMemberSimpleVm>(new MessagingCenterSender(), LocationSender.ConfirmGroupInvitationMsg, groupMemberSimpleVm);
+            MessagingCenter.Send<MessagingCenterSender, GroupMemberSimpleVm>(new MessagingCenterSender(),
+                LocationSender.ConfirmGroupInvitationMsg, groupMemberSimpleVm);
         }
     }
 }
