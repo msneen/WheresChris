@@ -34,6 +34,7 @@ namespace WheresChris.Views
         private DateTime _lastPositionUpdateTime = DateTime.Now;
 	    private Xamarin.Forms.Maps.Position _mapCenterPosition;
 	    private double _radius = 1000; //meters
+	    private bool _inAGroup = false;
 
 	    public MapPage ()
 		{
@@ -69,10 +70,8 @@ namespace WheresChris.Views
 
 	    private void SetFormEnabled(bool isSelected)
 	    {
-	        AddMembersButton.IsEnabled = isSelected;
-	        ViewMembersButton.IsEnabled = isSelected;
-	        LeaveGroupButton.IsEnabled = isSelected;
-	        ViewARButton.IsEnabled = isSelected;
+	        _inAGroup = isSelected;
+	        GroupInfo.IsVisible = _inAGroup;
 	    }
 
 
@@ -93,7 +92,7 @@ namespace WheresChris.Views
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     if (!GroupMap.IsVisible) return;
-                    AddMembersButton.TextColor = AddMembersButton.TextColor == Color.Blue ? Color.Black : Color.Blue;
+                    //AddMembersButton.TextColor = AddMembersButton.TextColor == Color.Blue ? Color.Black : Color.Blue;
                     SetFormEnabled(true);
                     UpdateMap(groupMemberSimpleVm);
                 });
@@ -234,20 +233,20 @@ namespace WheresChris.Views
             return;
 	    }
 
-	    private async void AddMembersButton_OnClicked(object sender, EventArgs e)
+	    private async Task AddMembers()
 	    {
 	        var addMemberPage = new AddMemberPage();
 	        await Navigation.PushAsync(addMemberPage);
 	    }
 
-	    private async void ViewMembersButton_OnClicked(object sender, EventArgs e)
+	    private async Task ViewMembers()
 	    {
 	        var memberPage = new MemberPage();
 	        await memberPage.RefreshMembers();
 	        await Navigation.PushAsync(memberPage);
 	    }
 
-	    private async Task LeaveGroupButton_OnClicked(object sender, EventArgs e)
+	    private async Task LeaveGroup()
 	    {
             MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.LeaveGroupMsg);
             MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.EndGroupMsg);
@@ -261,7 +260,7 @@ namespace WheresChris.Views
             Spinner.IsVisible = false;
         }
 
-	    private void ViewARButton_OnClicked(object sender, EventArgs e)
+        private void ViewARButton_OnClicked(object sender, EventArgs e)
 	    {
 #if (__ANDROID__)
             var userPhoneNumber = SettingsHelper.GetPhoneNumber();
@@ -293,6 +292,28 @@ namespace WheresChris.Views
 	        if(!centerPosition.LocationValid()) return;
 
 	        GroupMap.MapRegion = MapSpan.FromCenterAndRadius(centerPosition.ToTkPosition(), Distance.FromMiles(_radius).ToTkDistance());
+	    }
+
+	    private async Task GroupInfo_OnTapped(object sender, EventArgs e)
+	    {
+	        if(_inAGroup)
+	        {
+	            var action = await DisplayActionSheet("Group", "Cancel", null, "Add", "Members", "Leave");
+	            switch(action)
+	            {
+                    case "Add":
+                        await AddMembers();
+                        break;
+                    case "Members":
+                        await ViewMembers();
+                        break;
+                    case "Leave":
+                        await LeaveGroup();
+                        break;
+                    default:
+                        break;
+	            }
+	        }
 	    }
 	}
 }
