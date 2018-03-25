@@ -20,6 +20,7 @@ using WheresChris.iOS.Classes;
 using WheresChris.iOS.NotificationCenter;
 using Xamarin.Forms;
 
+
 namespace WheresChris.iOS
 {
 	[Register("AppDelegate")]

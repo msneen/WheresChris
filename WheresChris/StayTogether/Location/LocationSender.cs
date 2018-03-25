@@ -105,6 +105,7 @@ namespace StayTogether
 	    public const string RequestAdditionalMembersJoinGroup = "REQUESTADDITIONALMEMBERSJOINGROUP";//THIS ORIGINATES THE CALL
 	    public const string AdditionalMembersRequestJoinGroup = "ADDITIONALMEMBERSREQUESTJOINGROUP";//This is the signal r call to the group leader when someone requests to add members
 	    public const string SendTelemetryMsg = "SENDTELEMETRYMESSAGE";
+	    public const string LeaveOrEndGroupMsg = "LEAVEORENDGROUPMESSAGE";
 
         public bool InAGroup { get; set; }
         public bool GroupLeader { get; set; }
@@ -138,6 +139,21 @@ Debugger.Break();
                 });
             }
         }
+
+        
+	    public async Task InitializeAsync()
+	    {
+	        if (!IsInitialized && IsGeolocationAvailable())
+	        {
+	            await InitializeSignalRAsync();
+	        }
+	    }
+
+	    public void Initialize()
+	    {
+	        if(!IsGeolocationAvailable()) return;
+	        InitializeAsync().Wait();
+	    }
 
 	    private void InitializeMessageCenter()
 	    {
@@ -189,29 +205,12 @@ Debugger.Break();
 	        {
 	            await SendTelemetry(message);
 	        });
+
+	        MessagingCenter.Subscribe<MessagingCenterSender>(this, LeaveOrEndGroupMsg, async (sender) =>
+	        {
+	            await LeaveOrEndGroup();
+	        });
         }
-
-	    private async Task RequestAdditionalMembersAddedToGroup(AdditionalMemberInvitationVm additionalMemberInvitationVm)
-	    {
-            //Request to add these members to another group, and end the group we are in
-	        await InvokeChatHubProxy("requestJoinGroup", additionalMemberInvitationVm.Group, additionalMemberInvitationVm.GroupLeaderPhoneNumber);
-
-	        await EndGroup();
-	    }
-
-	    public async Task InitializeAsync()
-	    {
-            if (!IsInitialized && IsGeolocationAvailable())
-            {
-                await InitializeSignalRAsync();
-            }
-        }
-
-	    public void Initialize()
-	    {
-	        if(!IsGeolocationAvailable()) return;
-	        InitializeAsync().Wait();
-	    }
 
 	    public async Task InitializeSignalRAsync()
         {
@@ -264,6 +263,14 @@ Debugger.Break();
                 Console.WriteLine("LocationSender Loaded");
             }
         }
+
+	    private async Task RequestAdditionalMembersAddedToGroup(AdditionalMemberInvitationVm additionalMemberInvitationVm)
+	    {
+	        await EndGroup();
+	        //Request to add these members to another group, and end the group we are in
+	        await InvokeChatHubProxy("requestJoinGroup", additionalMemberInvitationVm.Group, additionalMemberInvitationVm.GroupLeaderPhoneNumber);
+
+	    }
 
 	    private Task OnRequestJoinGroup(List<GroupMemberSimpleVm> groupMembers)
 	    {
@@ -763,6 +770,22 @@ Debugger.Break();
                 await SendTelemetry($"Cannot End Group.  Error: {ex.Message}");
             }
         }
+
+	    public async Task LeaveOrEndGroup()
+	    {	        
+	        try
+	        {
+	            await InvokeChatHubProxy("LeaveOrEndGroup", _phoneNumber);
+	        }
+	        catch(Exception ex)
+	        {
+	            Analytics.TrackEvent($"LocationSender_LeaveOrEndGroup", new Dictionary<string, string>
+	            {
+	                { "Message", ex.Message}
+	            });
+	            await SendTelemetry($"LeaveOrEndGroup: Error: {ex.Message}" );
+	        }
+	    }
 
         public async Task LeaveGroup()
         {

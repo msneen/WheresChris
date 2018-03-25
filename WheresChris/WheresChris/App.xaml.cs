@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AppCenter.Analytics;
 using StayTogether;
 using StayTogether.Helpers;
+using StayTogether.Models;
 using WheresChris.Helpers;
 using WheresChris.ViewModels;
 using WheresChris.Views;
@@ -26,6 +27,8 @@ namespace WheresChris
             SetMainPageAsync().ConfigureAwait(true);
 
             StartLocationSenderAsync().ConfigureAwait(true);
+
+            MessagingCenter.Send(new MessagingCenterSender(), LocationSender.LeaveOrEndGroupMsg);
 
             InitializeMessagingCenter();
             
@@ -220,7 +223,9 @@ namespace WheresChris
 
             var index = GetMainTab().Children.IndexOf(requestedPage);
             return index <= -1 ? null : GetMainTab().Children[index];
+            
         }
+
 
         //protected override void OnStart()
         //{

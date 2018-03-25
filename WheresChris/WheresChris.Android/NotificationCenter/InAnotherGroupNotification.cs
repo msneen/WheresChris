@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Android.App;
 using Android.Content;
 using StayTogether.Helpers;
@@ -25,7 +24,10 @@ namespace StayTogether.Droid.NotificationCenter
             notificationIntent.PutExtra("name", name);
 
             var title = "Invited Person in another Group";
-            var body = $"{displayNameNumber} is in another group and can't be added to your group";
+            var body = $"{displayNameNumber} is in another group" + Environment.NewLine
+                            + "Swipe to ignore" + Environment.NewLine
+                            + "Click to End your group" + Environment.NewLine
+                            + " and request to join theirs";
 
             var notification = new Notification.Builder(Application.Context)
                 .SetSmallIcon(Resource.Drawable.ic_vol_type_speaker_dark)
@@ -40,7 +42,7 @@ namespace StayTogether.Droid.NotificationCenter
             notificationManager?.Notify(NotificationId, notification);
 
             //Display a toast as well as the local notification
-            void QuitMyGroupAndJoinAnotherAction() => QuitMyGroupAndJoinAnother(phoneNumber);
+            void QuitMyGroupAndJoinAnotherAction() => HandlePersonInAnotherGroup(phoneNumber, name);
             ToastHelper.Display(title, body, null, true, QuitMyGroupAndJoinAnotherAction).ConfigureAwait(true);
         }
 
@@ -48,14 +50,15 @@ namespace StayTogether.Droid.NotificationCenter
         {
             if (!MemberInAnotherGroup.Equals(intent.Action)) return;
 
-            //var name = intent.GetStringExtra("name");
+            var name = intent.GetStringExtra("name");
             var phoneNumber = intent.GetStringExtra("phonenumber");
 
-            QuitMyGroupAndJoinAnother(phoneNumber);
+            HandlePersonInAnotherGroup(phoneNumber, name);
         }
 
-        private static void QuitMyGroupAndJoinAnother(string phoneNumber)
-        {
+        private static void HandlePersonInAnotherGroup(string phoneNumber, string name)
+        {           
+
             var additionalMemberInvitationVm = new AdditionalMemberInvitationVm
             {
                 Group = new GroupVm
