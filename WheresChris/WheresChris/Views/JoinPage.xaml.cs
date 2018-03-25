@@ -68,7 +68,12 @@ namespace WheresChris.Views
 
         private async void RefreshButton_OnClicked(object sender, EventArgs e)
         {
-            await ((JoinPageViewModel)BindingContext).RequestInvitations();
+            await RefreshInvitations();
+        }
+
+        public async Task RefreshInvitations()
+        {
+            await ((JoinPageViewModel) BindingContext).RequestInvitations();
         }
     }
 

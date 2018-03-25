@@ -28,6 +28,7 @@ namespace WheresChris
             StartLocationSenderAsync().ConfigureAwait(true);
 
             InitializeMessagingCenter();
+            
         }
 
         private void InitializeMessagingCenter()
@@ -77,7 +78,24 @@ namespace WheresChris
 
 
                 AddPage(new AboutPage(), "About");
-                
+
+                _mainTabbedPage.CurrentPageChanged += async (sender, args) =>
+                {
+                    var currentPage = GetMainTab().CurrentPage;
+                    switch(currentPage.Title)
+                    {
+                        case "Join":
+                            var joinNavigationPage = GetPage("Join");
+                            var joinNavigationStack = joinNavigationPage.Navigation.NavigationStack;
+                            var index = joinNavigationStack.Count - 1;
+                            if(joinNavigationStack[index] is JoinPage joinPage)
+                            {
+                                await joinPage?.RefreshInvitations();
+                            }
+                            break;
+                    }
+                };
+
             }
             catch (System.Exception ex)
             {
@@ -134,8 +152,7 @@ namespace WheresChris
         {
             Device.BeginInvokeOnMainThread(() =>
             {
-                var existingNavigationPage = GetPage(title) as NavigationPage;
-                if (existingNavigationPage != null) return;
+                if (GetPage(title) is NavigationPage existingNavigationPage) return;
 
                 var navigationPage = new NavigationPage(page)
                 {
@@ -164,8 +181,7 @@ namespace WheresChris
         private static void InsertPageBeforeAbout(Page page, string title)
         {
             Device.BeginInvokeOnMainThread(() => {
-                var existingNavigationPage = GetPage(title) as NavigationPage;
-                if (existingNavigationPage != null) return;
+                if (GetPage(title) is NavigationPage existingNavigationPage) return;
 
                 var navigationPage = new NavigationPage(page)
                 {
@@ -192,6 +208,7 @@ namespace WheresChris
         public static void SetCurrentTab(string title)
         {
             GetMainTab().CurrentPage = GetPage(title);
+
         }
 
         public static Page GetPage(string title)
