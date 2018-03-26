@@ -68,10 +68,11 @@ namespace WheresChris.Views
             UpdateMap(rollerCoasterPosition);
         }
 
-	    private void SetFormEnabled(bool isSelected)
+	    private Task SetFormEnabled(bool isSelected)
 	    {
 	        _inAGroup = isSelected;
 	        GroupInfo.IsVisible = _inAGroup;
+            return Task.CompletedTask;
 	    }
 
 
@@ -119,18 +120,20 @@ namespace WheresChris.Views
             MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupDisbandedMsg,
             (sender) =>
             {
-                Device.BeginInvokeOnMainThread(() =>
+                Device.BeginInvokeOnMainThread(async () =>
                 {
-                    SetFormEnabled(false);
+                    await SetFormEnabled(false);
+                    await ResetMap();
                 });
             });
             //This user left the group
             MessagingCenter.Subscribe<LocationSender>(this, LocationSender.ThisUserLeftGroupMsg,
             (sender) =>
             {
-                Device.BeginInvokeOnMainThread(() =>
+                Device.BeginInvokeOnMainThread(async () =>
                 {
-                    SetFormEnabled(false);
+                    await SetFormEnabled(false);
+                    await ResetMap();
                 });
             });
             MessagingCenter.Subscribe<MessagingCenterSender, Plugin.Geolocator.Abstractions.Position>(this, LocationSender.PositionUpdatedMsg, (sender, position) =>
@@ -169,6 +172,12 @@ namespace WheresChris.Views
              HideSpinnerShowMap();
             _mapInitialized = true;
         }
+
+	    private async Task ResetMap()
+	    {
+	        var justMeList = await GetMyPositionList();
+	        UpdateMap(justMeList);
+	    }
 
 	    private async Task<List<GroupMemberSimpleVm>> GetMyPositionList()
 	    {
