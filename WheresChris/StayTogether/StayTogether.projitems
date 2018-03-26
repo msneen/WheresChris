@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Converters\GroupMemberConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\PositionConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\AsyncHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ChatHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ContactsHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\Distance.cs" />
