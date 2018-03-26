@@ -860,7 +860,7 @@ Debugger.Break();
                 };
                 await InvokeChatHubProxy("confirmGroupInvitation", groupMemberVm);
                 GroupMembers = new List<GroupMemberSimpleVm>();
-                await SendUpdatePosition();//Send out my current position so group member's maps will update
+                //await SendUpdatePosition(); //I think this happens in confirmGroupInvitation//Send out my current position so group member's maps will update
                 MessagingCenter.Send<LocationSender>(this, GroupJoinedMsg);
                 await SendTelemetry($"Confirmed Group Invitation");
                 return true;
