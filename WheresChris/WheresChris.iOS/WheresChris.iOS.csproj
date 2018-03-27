@@ -210,6 +210,12 @@
     <Reference Include="Toasts.Forms.Plugin.iOS, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Toasts.Forms.Plugin.3.3.2\lib\Xamarin.iOS10\Toasts.Forms.Plugin.iOS.dll</HintPath>
     </Reference>
+    <Reference Include="Xam.Plugin, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xam.Plugin.PopupMenu.1.1.0\lib\Xamarin.iOS10\Xam.Plugin.dll</HintPath>
+    </Reference>
+    <Reference Include="Xam.Plugin.iOS, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xam.Plugin.PopupMenu.1.1.0\lib\Xamarin.iOS10\Xam.Plugin.iOS.dll</HintPath>
+    </Reference>
     <Reference Include="Xamarin.Forms.Core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xamarin.Forms.2.5.0.280555\lib\Xamarin.iOS10\Xamarin.Forms.Core.dll</HintPath>
       <Private>True</Private>

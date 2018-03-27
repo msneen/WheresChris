@@ -205,6 +205,12 @@
     <Reference Include="Toasts.Forms.Plugin.Droid, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Toasts.Forms.Plugin.3.3.2\lib\MonoAndroid10\Toasts.Forms.Plugin.Droid.dll</HintPath>
     </Reference>
+    <Reference Include="Xam.Plugin, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xam.Plugin.PopupMenu.1.1.0\lib\MonoAndroid10\Xam.Plugin.dll</HintPath>
+    </Reference>
+    <Reference Include="Xam.Plugin.Droid, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xam.Plugin.PopupMenu.1.1.0\lib\MonoAndroid10\Xam.Plugin.Droid.dll</HintPath>
+    </Reference>
     <Reference Include="Xamarin.Android.Arch.Core.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xamarin.Android.Arch.Core.Common.1.0.0\lib\MonoAndroid80\Xamarin.Android.Arch.Core.Common.dll</HintPath>
       <Private>True</Private>

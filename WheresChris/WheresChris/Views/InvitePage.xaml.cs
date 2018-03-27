@@ -103,6 +103,7 @@ namespace WheresChris.Views
 
         public async Task StartGroup(object sender, EventArgs e)
         {            
+
             if(!((InvitePageViewModel) BindingContext).IsEnabled) return;
             
             App.SetCurrentTab("Map");
