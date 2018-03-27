@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AppCenter.Analytics;
@@ -8,8 +9,10 @@ using StayTogether.Models;
 using WheresChris.Helpers;
 using WheresChris.ViewModels;
 using WheresChris.Views;
+using WheresChris.Views.Popup;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Xam.Plugin;
 using Device = Xamarin.Forms.Device;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
@@ -17,6 +20,7 @@ namespace WheresChris
 {
     public partial class App : Application
     {
+        public static PopupMenu Popup;
         private static TabbedPage _mainTabbedPage;
         private LocationSender _locationSender;
 
@@ -32,6 +36,7 @@ namespace WheresChris
 
             InitializeMessagingCenter();
             
+            Popup = new PopupMenu();
         }
 
         private void InitializeMessagingCenter()
@@ -72,7 +77,7 @@ namespace WheresChris
         {
             try
             {
-                _mainTabbedPage = new TabbedPage();
+                _mainTabbedPage = new TabbedPage();               
                 Current.MainPage = _mainTabbedPage;
 
                 AddPage(new MainPage(), "Main");
@@ -226,6 +231,27 @@ namespace WheresChris
             
         }
 
+        
+        //https://github.com/SKLn-Rad/Xam.Plugin.PopupMenu
+        //http://nugetmusthaves.com/Package/Xam.Plugin.PopupMenu
+        //App.ShowPopup(items); //This is what would pop it.  Need to get access to a view 
+        //((App)Application.Current).ShowPopup(items);
+        /// <summary>
+        /// This in an example of how to send in the items
+        ///var items = new ObservableCollection &lt; PopupItem &gt;
+        ///{
+        ///    new PopupItem("Text1", async () => { await DisplayAlert("Item Tapped", "An item was tapped.", "OK"); }),
+        ///    new PopupItem("Text2", () => { Debug.WriteLine("Text2"); }),
+        ///    new PopupItem("Text3", () => { Debug.WriteLine("Text3"); }),
+        ///};
+        /// ((App)Xamarin.Forms.Application.Current).ShowPopup(items);
+        /// </summary>
+        /// <param name="items"></param>
+        public void ShowPopup(ObservableCollection<PopupItem> items)
+        {
+            Current.NavigationProxy.PushModalAsync(new Popup(items));
+        }
+
 
         //protected override void OnStart()
         //{
@@ -241,5 +267,11 @@ namespace WheresChris
         //{
         //    // Handle when your app resumes
         //}
+    }
+
+    public class PopupViewModel
+    {
+        public IList<string> ListItems { get; set; } = new List<string>();
+
     }
 }

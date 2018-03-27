@@ -1,9 +1,12 @@
 using System;
+using System.Collections.ObjectModel;
 using Android.App;
 using Android.Content;
 using StayTogether.Helpers;
 using StayTogether.Models;
+using WheresChris;
 using WheresChris.Droid;
+using WheresChris.Views.Popup;
 using Xamarin.Forms;
 using Application = Android.App.Application;
 
@@ -24,10 +27,7 @@ namespace StayTogether.Droid.NotificationCenter
             notificationIntent.PutExtra("name", name);
 
             var title = "Invited Person in another Group";
-            var body = $"{displayNameNumber} is in another group" + Environment.NewLine
-                            + "Swipe to ignore" + Environment.NewLine
-                            + "Click to End your group" + Environment.NewLine
-                            + " and request to join theirs";
+            var body = $"{displayNameNumber} is in another group";
 
             var notification = new Notification.Builder(Application.Context)
                 .SetSmallIcon(Resource.Drawable.ic_vol_type_speaker_dark)
@@ -57,18 +57,28 @@ namespace StayTogether.Droid.NotificationCenter
         }
 
         private static void HandlePersonInAnotherGroup(string phoneNumber, string name)
-        {           
-
-            var additionalMemberInvitationVm = new AdditionalMemberInvitationVm
+        {
+            var displayName = ContactsHelper.NameOrPhone(phoneNumber, name);
+             var items = new ObservableCollection < PopupItem >
             {
-                Group = new GroupVm
-                {
-                    GroupCreatedDateTime = DateTime.Now,
-                },
-                GroupLeaderPhoneNumber = phoneNumber
+             new PopupItem($"End my group and request to join {displayName}", () =>
+             {
+                 //quit my group and join another
+                 var additionalMemberInvitationVm = new AdditionalMemberInvitationVm
+                 {
+                     Group = new GroupVm
+                     {
+                         GroupCreatedDateTime = DateTime.Now,
+                     },
+                     GroupLeaderPhoneNumber = phoneNumber
+                 };
+                 MessagingCenter.Send<MessagingCenterSender, AdditionalMemberInvitationVm>(new MessagingCenterSender(),
+                     LocationSender.RequestAdditionalMembersJoinGroup, additionalMemberInvitationVm);                 
+             }),
+             new PopupItem("Ignore and try to invite them later", null),
             };
-            MessagingCenter.Send<MessagingCenterSender, AdditionalMemberInvitationVm>(new MessagingCenterSender(),
-                LocationSender.RequestAdditionalMembersJoinGroup, additionalMemberInvitationVm);
+
+            ((App)Xamarin.Forms.Application.Current).ShowPopup(items);
         }
     }
 }

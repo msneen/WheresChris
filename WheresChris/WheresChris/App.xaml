@@ -26,6 +26,13 @@
                 <Setter Property="BackgroundColor" Value="#1744FF"></Setter>
                 <Setter Property="TextColor" Value="White" />
             </Style>
+            <Style x:Key="popupLabelBannerStyle" TargetType="Label">
+                <Setter Property="BackgroundColor" Value="White"></Setter>
+                <Setter Property="TextColor" Value="#1744FF" />
+                <Setter Property="FontSize" Value="Large" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+            </Style>
             <Style x:Key="frameLayoutStyle" TargetType="Frame">
                 <Setter Property="Padding" Value="5"></Setter>
                 <Setter Property="OutlineColor" Value="#a00901" />
