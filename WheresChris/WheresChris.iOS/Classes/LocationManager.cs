@@ -56,11 +56,11 @@ namespace WheresChris.iOS.Classes
             ClLocationManager.DesiredAccuracy = 1;
             ClLocationManager.LocationsUpdated += (sender, e) =>
             {
-                Analytics.TrackEvent("LocationManager_LocationsUpdated_started");
+                Crashes.TrackError("LocationManager_LocationsUpdated_started");
                 // fire our custom Location Updated event
                 if (e.Locations == null || e.Locations.Length <= -1) return;
 
-                Analytics.TrackEvent("LocationManager_LocationsUpdated", new Dictionary<string, string>
+                Crashes.TrackError("LocationManager_LocationsUpdated", new Dictionary<string, string>
                 {
                     {"Latitude", e.Locations[0].Coordinate.Latitude.ToString()},
                     {"Longitude", e.Locations[0].Coordinate.Longitude.ToString()},
@@ -71,7 +71,7 @@ namespace WheresChris.iOS.Classes
                 var medianLatitude = locationList.OrderBy(l => l.Coordinate.Latitude).ToArray()[count / 2].Coordinate.Latitude;
                 var medianLongitude = locationList.OrderBy(l => l.Coordinate.Longitude).ToArray()[count / 2].Coordinate.Longitude;
 
-                Analytics.TrackEvent("LocationManager_LocationsUpdated_MedianCalculated", new Dictionary<string, string>
+                Crashes.TrackError("LocationManager_LocationsUpdated_MedianCalculated", new Dictionary<string, string>
                 {
                     {"Latitude", medianLatitude.ToString()},
                     {"Longitude", medianLongitude.ToString()},
@@ -87,13 +87,13 @@ namespace WheresChris.iOS.Classes
                 });
 
                 //await SendPositionUpdate();//If I os doesn't work, this could be the problem
-                Analytics.TrackEvent("LocationManager_LocationsUpdated_SendPositionUpdate_Sent");
+                Crashes.TrackError("LocationManager_LocationsUpdated_SendPositionUpdate_Sent");
             };
 
             _locationSender = LocationSender.GetInstance();
 
             ClLocationManager.StartUpdatingLocation();
-            //Analytics.TrackEvent("LocationManager_ClLocationManager_StartUpdatingLocation");
+            //Crashes.TrackError("LocationManager_ClLocationManager_StartUpdatingLocation");
         }
     }
 }

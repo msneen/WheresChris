@@ -10,7 +10,7 @@ namespace StayTogether.iOS.NotificationCenter
     {
         public static void ReceiveNotification(UILocalNotification notification, UIWindow window)
         {
-            //Analytics.TrackEvent("IPhoneNotificationStrategyHandlerEntered", new Dictionary<string, string>
+            //Crashes.TrackError("IPhoneNotificationStrategyHandlerEntered", new Dictionary<string, string>
             //{
             //    { "notificationIsNull", notification == null ? "Null": "Ok"},
             //    {"windowIsNull", window == null ? "Null": "Ok" }

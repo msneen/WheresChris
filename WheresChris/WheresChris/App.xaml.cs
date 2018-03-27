@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using StayTogether;
 using StayTogether.Helpers;
 using StayTogether.Models;
@@ -84,18 +85,27 @@ namespace WheresChris
 
                 _mainTabbedPage.CurrentPageChanged += async (sender, args) =>
                 {
-                    var currentPage = GetMainTab().CurrentPage;
-                    switch(currentPage.Title)
+                    try
                     {
-                        case "Join":
-                            var joinNavigationPage = GetPage("Join");
-                            var joinNavigationStack = joinNavigationPage.Navigation.NavigationStack;
-                            var index = joinNavigationStack.Count - 1;
-                            if(joinNavigationStack[index] is JoinPage joinPage)
-                            {
-                                await joinPage?.RefreshInvitations();
-                            }
-                            break;
+                        var currentPage = GetMainTab().CurrentPage;
+                        if(string.IsNullOrWhiteSpace(currentPage?.Title)) return;
+                        switch(currentPage.Title)
+                        {
+                            case "Join":
+                                var joinNavigationPage = GetPage("Join");
+                                var joinNavigationStack = joinNavigationPage?.Navigation?.NavigationStack;
+                                if(joinNavigationStack == null) return;
+                                var index = joinNavigationStack.Count - 1;
+                                if(joinNavigationStack[index] is JoinPage joinPage)
+                                {
+                                    await joinPage?.RefreshInvitations();
+                                }
+                                break;
+                        }
+                    }
+                    catch(System.Exception exx)
+                    {
+                        Crashes.TrackError(exx);
                     }
                 };
 

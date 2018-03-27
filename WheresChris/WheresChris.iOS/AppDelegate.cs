@@ -56,7 +56,7 @@ namespace WheresChris.iOS
             NotificationManager.RegisterNotifications(app);
             NotificationManager.InitializeNotifications(options, UIApplication.SharedApplication.KeyWindow);
 
-            Analytics.TrackEvent("AppDelegate_InitializingTimer");
+            Crashes.TrackError("AppDelegate_InitializingTimer");
             _interval = new Interval();
             _interval.SetInterval(TryToStartLocationService, 10000);
 
@@ -110,13 +110,13 @@ namespace WheresChris.iOS
             {
                 LocationManager.UserPhoneNumber = phoneNumber;
             }
-            //Analytics.TrackEvent("AppDelegate_InitializeBackgroundLocation_StartLocationUpdates");
+            //Crashes.TrackError("AppDelegate_InitializeBackgroundLocation_StartLocationUpdates");
             LocationManager.StartLocationUpdates();
 
-            //Analytics.TrackEvent("AppDelegate_InitializeBackgroundLocation_InitializeEvents");
+            //Crashes.TrackError("AppDelegate_InitializeBackgroundLocation_InitializeEvents");
             InitializeEvents(LocationManager);
 
-            //Analytics.TrackEvent("AppDelegate_InitializeBackgroundLocation_Finished");
+            //Crashes.TrackError("AppDelegate_InitializeBackgroundLocation_Finished");
         }
 
 	    public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
@@ -160,7 +160,7 @@ namespace WheresChris.iOS
             }
             catch (System.Exception ex)
             {
-                Analytics.TrackEvent("TryToStartLocationService", new Dictionary<string, string>
+                Crashes.TrackError("TryToStartLocationService", new Dictionary<string, string>
                 {
                     { "Error",  ex.Message}
                 });
@@ -226,7 +226,7 @@ namespace WheresChris.iOS
                     });
                 });
 
-            //Analytics.TrackEvent("IPhoneLocationEventsInitialized");
+            //Crashes.TrackError("IPhoneLocationEventsInitialized");
             _eventsInitialized = true;
         }
     }

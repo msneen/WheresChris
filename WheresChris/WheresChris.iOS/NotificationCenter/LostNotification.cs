@@ -15,7 +15,7 @@ namespace StayTogether.iOS.NotificationCenter
 
         public static void DisplayLostNotification(GroupMemberVm groupMemberVm)
         {
-            //Analytics.TrackEvent("IPhoneDisplayLostNotificationEntered");
+            //Crashes.TrackError("IPhoneDisplayLostNotificationEntered");
             if (string.IsNullOrWhiteSpace(groupMemberVm.PhoneNumber)) return;
 
             var previousNotifications = LastLocation.Where(n => n.Value.PhoneNumber == groupMemberVm.PhoneNumber);
@@ -44,7 +44,7 @@ namespace StayTogether.iOS.NotificationCenter
 
             UIApplication.SharedApplication.ScheduleLocalNotification(notification);
 
-            //Analytics.TrackEvent("IPhoneDisplayLostNotificationEntered", new Dictionary<string, string>
+            //Crashes.TrackError("IPhoneDisplayLostNotificationEntered", new Dictionary<string, string>
             //{
             //    { "Name", groupMemberVm.Name},
             //    {"PhoneNumber", groupMemberVm.PhoneNumber },
@@ -61,7 +61,7 @@ namespace StayTogether.iOS.NotificationCenter
             var name = GetValue("Name", ref dictionary);
             var phoneNumber = GetValue("PhoneNumber", ref dictionary);
 
-            //Analytics.TrackEvent("IPhoneDisplayLostOnNotifyEntered", new Dictionary<string, string>
+            //Crashes.TrackError("IPhoneDisplayLostOnNotifyEntered", new Dictionary<string, string>
             //{
             //    { "Name", name},
             //    {"PhoneNumber", phoneNumber }
