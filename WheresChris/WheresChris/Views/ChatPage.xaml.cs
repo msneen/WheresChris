@@ -17,6 +17,7 @@ namespace WheresChris.Views
     {        
 
         public ObservableCollection<ChatMessageVm> Items { get; set; }
+        private LocationSender _locationSender;
 
         public ChatPage()
         {
@@ -24,6 +25,7 @@ namespace WheresChris.Views
             Title = "Where's Chris - Chat";
             Items = new ObservableCollection<ChatMessageVm>();
             BindingContext = this;
+            StartLocationSenderAsync().ConfigureAwait(true);
             InitializeMessagingCenter();
             ChatMessage.Completed += async (sender, args) => { await ProcessChatMessage(); };
             ChatMessage.TextChanged += async (sender, args) =>
@@ -33,6 +35,11 @@ namespace WheresChris.Views
                     await ProcessChatMessage();
                 }
             };
+        }
+
+        private async Task StartLocationSenderAsync()
+        {
+            _locationSender = await LocationSender.GetInstanceAsync();
         }
 
         private void InitializeMessagingCenter()
