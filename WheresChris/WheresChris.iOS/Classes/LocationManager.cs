@@ -56,11 +56,11 @@ namespace WheresChris.iOS.Classes
             ClLocationManager.DesiredAccuracy = 1;
             ClLocationManager.LocationsUpdated += (sender, e) =>
             {
-                Crashes.TrackError("LocationManager_LocationsUpdated_started");
+                Analytics.TrackEvent("LocationManager_LocationsUpdated_started");
                 // fire our custom Location Updated event
                 if (e.Locations == null || e.Locations.Length <= -1) return;
 
-                Crashes.TrackError("LocationManager_LocationsUpdated", new Dictionary<string, string>
+                Analytics.TrackEvent("LocationManager_LocationsUpdated", new Dictionary<string, string>
                 {
                     {"Latitude", e.Locations[0].Coordinate.Latitude.ToString()},
                     {"Longitude", e.Locations[0].Coordinate.Longitude.ToString()},
@@ -71,7 +71,7 @@ namespace WheresChris.iOS.Classes
                 var medianLatitude = locationList.OrderBy(l => l.Coordinate.Latitude).ToArray()[count / 2].Coordinate.Latitude;
                 var medianLongitude = locationList.OrderBy(l => l.Coordinate.Longitude).ToArray()[count / 2].Coordinate.Longitude;
 
-                Crashes.TrackError("LocationManager_LocationsUpdated_MedianCalculated", new Dictionary<string, string>
+                Analytics.TrackEvent("LocationManager_LocationsUpdated_MedianCalculated", new Dictionary<string, string>
                 {
                     {"Latitude", medianLatitude.ToString()},
                     {"Longitude", medianLongitude.ToString()},
@@ -87,7 +87,7 @@ namespace WheresChris.iOS.Classes
                 });
 
                 //await SendPositionUpdate();//If I os doesn't work, this could be the problem
-                Crashes.TrackError("LocationManager_LocationsUpdated_SendPositionUpdate_Sent");
+                Analytics.TrackEvent("LocationManager_LocationsUpdated_SendPositionUpdate_Sent");
             };
 
             _locationSender = LocationSender.GetInstance();

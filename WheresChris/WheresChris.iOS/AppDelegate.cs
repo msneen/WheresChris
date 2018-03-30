@@ -56,7 +56,7 @@ namespace WheresChris.iOS
             NotificationManager.RegisterNotifications(app);
             NotificationManager.InitializeNotifications(options, UIApplication.SharedApplication.KeyWindow);
 
-            Crashes.TrackError("AppDelegate_InitializingTimer");
+            Analytics.TrackEvent("AppDelegate_InitializingTimer");
             _interval = new Interval();
             _interval.SetInterval(TryToStartLocationService, 10000);
 
@@ -160,7 +160,7 @@ namespace WheresChris.iOS
             }
             catch (System.Exception ex)
             {
-                Crashes.TrackError("TryToStartLocationService", new Dictionary<string, string>
+                Crashes.TrackError(ex, new Dictionary<string, string>
                 {
                     { "Error",  ex.Message}
                 });
