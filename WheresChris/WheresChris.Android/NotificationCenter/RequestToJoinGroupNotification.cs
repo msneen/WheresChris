@@ -10,6 +10,7 @@ using StayTogether.Helpers;
 using StayTogether.Models;
 using WheresChris.Droid;
 using WheresChris.Helpers;
+using WheresChris.NotificationCenter;
 using Xamarin.Forms;
 using Application = Android.App.Application;
 
@@ -29,10 +30,8 @@ namespace StayTogether.Droid.NotificationCenter
             var groupMemberJson = JsonConvert.SerializeObject(groupmembers);
             notificationIntent.PutExtra("groupmembers", groupMemberJson);
 
-            var memberInfo = groupmembers.Aggregate("", (current, member) => current + $"\n\r {ContactsHelper.NameOrPhone(member.PhoneNumber, member.Name)}");
-
             var title = "Request to join your Group";
-            var body = $"The following people would like to join your group: \n\r Swipe to Clear, Click to Invite \n\r {memberInfo}";
+            var body = $"People would like to join your group:";
 
             var notification = new Notification.Builder(Application.Context)
                 .SetSmallIcon(Resource.Drawable.ic_vol_type_speaker_dark)
@@ -46,7 +45,7 @@ namespace StayTogether.Droid.NotificationCenter
             var notificationManager = Application.Context.GetSystemService(Context.NotificationService) as NotificationManager;
             notificationManager?.Notify(NotificationId, notification);
 
-            void SendNotificationsAction() => SendInvitations(groupmembers).ConfigureAwait(true);
+            void SendNotificationsAction() => RequestToJoinGroupNotificationResponse.HandleRequestToJoinMyGroup(groupmembers);
             ToastHelper.Display(title, body, null, true, SendNotificationsAction).ConfigureAwait(true);
         }
 
@@ -57,14 +56,7 @@ namespace StayTogether.Droid.NotificationCenter
 
             var groupMembers = JsonConvert.DeserializeObject<List<GroupMemberSimpleVm>>(groupMembersJson);
 
-            SendInvitations(groupMembers).ConfigureAwait(true);
-        }
-
-        private static async Task SendInvitations(List<GroupMemberSimpleVm> groupMembersSimple)
-        {
-            var userPhoneNumber = SettingsHelper.GetPhoneNumber();
-            var groupMembers = groupMembersSimple.Cast<GroupMemberVm>().ToList();
-            await GroupActionsHelper.StartOrAddToGroup(groupMembers, userPhoneNumber);
+            RequestToJoinGroupNotificationResponse.HandleRequestToJoinMyGroup(groupMembers);
         }
     }
 }

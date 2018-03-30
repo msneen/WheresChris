@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Settings;
 using StayTogether.Classes;
@@ -36,6 +37,12 @@ namespace StayTogether.Group
         {
             var nickname = SettingsHelper.GetNickname();
             var adminMember = CreateAdminMember(position, phoneNumber, nickname);
+
+            var currentUser = contactList.FirstOrDefault(m => m.PhoneNumber == phoneNumber);
+            if(currentUser != null)
+            {
+                contactList.Remove(currentUser);
+            }
 
             contactList.Insert(0, adminMember);
 
