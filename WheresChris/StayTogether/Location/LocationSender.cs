@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR.Client;
 using Microsoft.AppCenter.Analytics;
@@ -201,15 +202,24 @@ Debugger.Break();
                 await SendUpdatePosition(mapPosition);
             });
 
-	        MessagingCenter.Subscribe<object, AdditionalMemberInvitationVm>(this, RequestAdditionalMembersJoinGroup, async (sender, additionalMemberInvitationVm) =>
+	        MessagingCenter.Subscribe<MessagingCenterSender, AdditionalMemberInvitationVm>(this, RequestAdditionalMembersJoinGroup, async (sender, additionalMemberInvitationVm) =>
 	        {
-	            if( (additionalMemberInvitationVm.Group?.GroupMembers?.Count ?? 0) < 1 && InvitedGroupMembers != null && InvitedGroupMembers.Count < 2)
+	            if( (additionalMemberInvitationVm.Group?.GroupMembers?.Count ?? 0) < 1 || InvitedGroupMembers != null || InvitedGroupMembers.Count < 2)
 	            {
 	                if(additionalMemberInvitationVm.Group == null)
 	                {
 	                    additionalMemberInvitationVm.Group = new GroupVm();
 	                }
-	                additionalMemberInvitationVm.Group.GroupMembers = InvitedGroupMembers;
+
+	                //remove the group leader
+	                var otherGroupLeader = InvitedGroupMembers.FirstOrDefault(l =>
+	                    l.PhoneNumber == additionalMemberInvitationVm.GroupLeaderPhoneNumber);
+	                if(otherGroupLeader != null)
+	                {
+	                    InvitedGroupMembers.Remove(otherGroupLeader);
+	                }
+
+	                additionalMemberInvitationVm.Group.GroupMembers = InvitedGroupMembers; 
 	            }
 	            await RequestAdditionalMembersAddedToGroup(additionalMemberInvitationVm);
 	        });

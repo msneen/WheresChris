@@ -25,6 +25,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)LocationSenderFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\BaseDataObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Invitation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NotificationCenter\InAnotherGroupNotificationResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ChatMessageSimpleVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ChatMessageVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ContactDisplayItemVm.cs" />

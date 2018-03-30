@@ -6,6 +6,7 @@ using StayTogether.Helpers;
 using StayTogether.Models;
 using WheresChris;
 using WheresChris.Droid;
+using WheresChris.NotificationCenter;
 using WheresChris.Views.Popup;
 using Xamarin.Forms;
 using Application = Android.App.Application;
@@ -42,7 +43,7 @@ namespace StayTogether.Droid.NotificationCenter
             notificationManager?.Notify(NotificationId, notification);
 
             //Display a toast as well as the local notification
-            void QuitMyGroupAndJoinAnotherAction() => HandlePersonInAnotherGroup(phoneNumber, name);
+            void QuitMyGroupAndJoinAnotherAction() => InAnotherGroupNotificationResponse.HandlePersonInAnotherGroup(phoneNumber, name);
             ToastHelper.Display(title, body, null, true, QuitMyGroupAndJoinAnotherAction).ConfigureAwait(true);
         }
 
@@ -53,32 +54,7 @@ namespace StayTogether.Droid.NotificationCenter
             var name = intent.GetStringExtra("name");
             var phoneNumber = intent.GetStringExtra("phonenumber");
 
-            HandlePersonInAnotherGroup(phoneNumber, name);
-        }
-
-        private static void HandlePersonInAnotherGroup(string phoneNumber, string name)
-        {
-            var displayName = ContactsHelper.NameOrPhone(phoneNumber, name);
-             var items = new ObservableCollection < PopupItem >
-            {
-             new PopupItem($"End my group and request to join {displayName}", () =>
-             {
-                 //quit my group and join another
-                 var additionalMemberInvitationVm = new AdditionalMemberInvitationVm
-                 {
-                     Group = new GroupVm
-                     {
-                         GroupCreatedDateTime = DateTime.Now,
-                     },
-                     GroupLeaderPhoneNumber = phoneNumber
-                 };
-                 MessagingCenter.Send<MessagingCenterSender, AdditionalMemberInvitationVm>(new MessagingCenterSender(),
-                     LocationSender.RequestAdditionalMembersJoinGroup, additionalMemberInvitationVm);                 
-             }),
-             new PopupItem("Ignore and try to invite them later", null),
-            };
-
-            ((App)Xamarin.Forms.Application.Current).ShowPopup(items);
+            InAnotherGroupNotificationResponse.HandlePersonInAnotherGroup(phoneNumber, name);
         }
     }
 }

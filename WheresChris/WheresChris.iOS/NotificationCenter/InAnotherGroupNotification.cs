@@ -5,6 +5,7 @@ using System.Text;
 using StayTogether.Helpers;
 using StayTogether.Models;
 using UIKit;
+using WheresChris.NotificationCenter;
 using Xamarin.Forms;
 
 namespace StayTogether.iOS.NotificationCenter
@@ -30,7 +31,7 @@ namespace StayTogether.iOS.NotificationCenter
             UIApplication.SharedApplication.ScheduleLocalNotification(notification);
 
             //Display a toast as well as the local notification
-            void QuitMyGroupAndJoinAnotherAction() => QuitMyGroupAndJoinAnother(phoneNumber);
+            void QuitMyGroupAndJoinAnotherAction() => InAnotherGroupNotificationResponse.HandlePersonInAnotherGroup(phoneNumber, name);
             ToastHelper.Display(title, body, null, true, QuitMyGroupAndJoinAnotherAction).ConfigureAwait(true);
         }
 
@@ -38,28 +39,14 @@ namespace StayTogether.iOS.NotificationCenter
         {
             var actions = new List<UIAlertAction>();
             var dictionary = notification.UserInfo;
-            //var name = GetValue("Name", ref dictionary);
+            var name = GetValue("Name", ref dictionary);
             var phoneNumber = GetValue("PhoneNumber", ref dictionary);
-            QuitMyGroupAndJoinAnother(phoneNumber);
+            InAnotherGroupNotificationResponse.HandlePersonInAnotherGroup(phoneNumber, name);
 
             var okAction = UIAlertAction.Create("Ok", UIAlertActionStyle.Default, null);
 
             actions.Add(okAction);
             return actions;
-        }
-
-        private static void QuitMyGroupAndJoinAnother(string phoneNumber)
-        {
-            var additionalMemberInvitationVm = new AdditionalMemberInvitationVm
-            {
-                Group = new GroupVm
-                {
-                    GroupCreatedDateTime = DateTime.Now,
-                },
-                GroupLeaderPhoneNumber = phoneNumber
-            };
-            MessagingCenter.Send<MessagingCenterSender, AdditionalMemberInvitationVm>(new MessagingCenterSender(),
-                LocationSender.RequestAdditionalMembersJoinGroup, additionalMemberInvitationVm);
         }
     }
 }
