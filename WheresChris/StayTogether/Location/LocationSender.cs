@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR.Client;
 using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Settings;
@@ -28,7 +29,19 @@ namespace StayTogether
 	    public static bool IsGeolocationAvailable()
 	    {
 	        var geoLocator = CrossGeolocator.Current;
-	        return geoLocator.IsGeolocationEnabled && geoLocator.IsGeolocationAvailable;
+	        var isEnabled = geoLocator.IsGeolocationEnabled && geoLocator.IsGeolocationAvailable;
+	        if(isEnabled) return true;
+	        try
+	        {
+	            var testLocation =
+	                AsyncHelper.RunSync<Plugin.Geolocator.Abstractions.Position>(() => geoLocator.GetPositionAsync());
+	            return testLocation.LocationValid();
+	        }
+	        catch(Exception ex)
+	        {
+	            Crashes.TrackError(ex);
+	            return false;
+	        }
 	    }
 	    public static async Task<LocationSender> GetInstanceAsync()
 	    {
