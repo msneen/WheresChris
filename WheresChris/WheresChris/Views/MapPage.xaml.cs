@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AppCenter.Crashes;
 using StayTogether;
 using StayTogether.Helpers;
 using StayTogether.Helpers.DistanceCalculator;
@@ -11,7 +12,6 @@ using WheresChris.Helpers;
 using WheresChris.Views.GroupViews;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using StayTogether.Helpers;
 using Distance = Xamarin.Forms.Maps.Distance;
 
 #if (__ANDROID__)
@@ -29,7 +29,7 @@ namespace WheresChris.Views
 	public partial class MapPage : ContentPage
 	{
         private bool _mapInitialized = false;
-        private Interval _positionInitializationInterval = new Interval();
+        private readonly Interval _positionInitializationInterval = new Interval();
 	    private Xamarin.Forms.Maps.Position? _mapPosition;
         private DateTime _lastPositionUpdateTime = DateTime.Now;
 	    private Xamarin.Forms.Maps.Position _mapCenterPosition;
@@ -38,49 +38,73 @@ namespace WheresChris.Views
 
 	    public MapPage ()
 		{
-            Title = "Where's Chris - Map";
-            InitializeComponent ();
-            GroupMap.MapType = MapType.Street;
+		    try
+		    {
+                Title = "Where's Chris - Map";
+                InitializeComponent ();
+                GroupMap.MapType = MapType.Street;
     
                      
-            InitializeMessagingCenterSubscriptions();
-            SetFormEnabled(false);
-
-//#if (__ANDROID__)
-		   // ViewARButton.IsVisible = true;
-//#endif
+                InitializeMessagingCenterSubscriptions();
+                SetFormEnabled(false);
+		    }
+		    catch(Exception ex)
+		    {
+		        Crashes.TrackError(ex);
+		    }
 		}
 
 
 
 	    private void SetMapInitialPosition()
 	    {
-	        var rollerCoasterPosition = new List<GroupMemberSimpleVm>
-            {
-                new GroupMemberSimpleVm
+	        try
+	        {
+	            var rollerCoasterPosition = new List<GroupMemberSimpleVm>
                 {
-                    Latitude = 32.7714,
-                    Longitude = -117.2517,
-                    PhoneNumber = "",
-                    Name = ""
-                }
-            };
-            UpdateMap(rollerCoasterPosition);
+                    new GroupMemberSimpleVm
+                    {
+                        Latitude = 32.7714,
+                        Longitude = -117.2517,
+                        PhoneNumber = "",
+                        Name = ""
+                    }
+                };
+                UpdateMap(rollerCoasterPosition);
+	        }
+	        catch(Exception ex)
+	        {
+	            Crashes.TrackError(ex);
+	        }
         }
 
 	    private Task SetFormEnabled(bool isSelected)
 	    {
-	        _inAGroup = isSelected;
-	        GroupInfo.IsVisible = _inAGroup;
-            return Task.CompletedTask;
+	        try
+	        {
+	            _inAGroup = isSelected;
+	            GroupInfo.IsVisible = _inAGroup;
+	        }
+	        catch(Exception ex)
+	        {
+	            Crashes.TrackError(ex);
+	        }
+	        return Task.CompletedTask;
 	    }
 
 
 	    protected override void OnAppearing()
 	    {
-	        if (_mapInitialized) return;
-            SetMapInitialPosition();
-            _positionInitializationInterval.SetInterval(InitializeMap().Wait, 500);
+	        try
+	        {
+	            if (_mapInitialized) return;
+	            SetMapInitialPosition();
+	            _positionInitializationInterval.SetInterval(InitializeMap().Wait, 500);
+	        }
+	        catch(Exception ex)
+	        {
+	            Crashes.TrackError(ex);
+	        }
         }
 
         /// <summary>
@@ -88,89 +112,106 @@ namespace WheresChris.Views
         /// </summary>
 	    private void InitializeMessagingCenterSubscriptions()
 	    {
-            MessagingCenter.Subscribe<LocationSender, List <GroupMemberSimpleVm >> (this, LocationSender.GroupPositionUpdateMsg, (sender, groupMemberSimpleVm) =>
-            {
-                Device.BeginInvokeOnMainThread(() =>
+	        try
+	        {
+                MessagingCenter.Subscribe<LocationSender, List <GroupMemberSimpleVm >> (this, LocationSender.GroupPositionUpdateMsg, (sender, groupMemberSimpleVm) =>
                 {
-                    if (!GroupMap.IsVisible) return;
-                    //AddMembersButton.TextColor = AddMembersButton.TextColor == Color.Blue ? Color.Black : Color.Blue;
-                    SetFormEnabled(true);
-                    UpdateMap(groupMemberSimpleVm);
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        if (!GroupMap.IsVisible) return;
+                        //AddMembersButton.TextColor = AddMembersButton.TextColor == Color.Blue ? Color.Black : Color.Blue;
+                        SetFormEnabled(true);
+                        UpdateMap(groupMemberSimpleVm);
+                    });
                 });
-            });
 
-            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupJoinedMsg,
-            (sender) =>
-            {
-                Device.BeginInvokeOnMainThread(() =>
+                MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupJoinedMsg,
+                (sender) =>
                 {
-                    SetFormEnabled(true);
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        SetFormEnabled(true);
+                    });
                 });
-            });
-            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupCreatedMsg,
-            (sender) =>
-            {
-                Device.BeginInvokeOnMainThread(() =>
+                MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupCreatedMsg,
+                (sender) =>
                 {
-                    SetFormEnabled(true);
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        SetFormEnabled(true);
+                    });
                 });
-            });
 
-            //If the group is disbanded, it means this user also left the group with everyone else
-            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupDisbandedMsg,
-            (sender) =>
-            {
-                Device.BeginInvokeOnMainThread(async () =>
+                //If the group is disbanded, it means this user also left the group with everyone else
+                MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupDisbandedMsg,
+                (sender) =>
                 {
-                    await SetFormEnabled(false);
-                    await ResetMap();
+                    Device.BeginInvokeOnMainThread(async () =>
+                    {
+                        await SetFormEnabled(false);
+                        await ResetMap();
+                    });
                 });
-            });
-            //This user left the group
-            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.ThisUserLeftGroupMsg,
-            (sender) =>
-            {
-                Device.BeginInvokeOnMainThread(async () =>
+                //This user left the group
+                MessagingCenter.Subscribe<LocationSender>(this, LocationSender.ThisUserLeftGroupMsg,
+                (sender) =>
                 {
-                    await SetFormEnabled(false);
-                    await ResetMap();
+                    Device.BeginInvokeOnMainThread(async () =>
+                    {
+                        await SetFormEnabled(false);
+                        await ResetMap();
+                    });
                 });
-            });
-            MessagingCenter.Subscribe<MessagingCenterSender, Plugin.Geolocator.Abstractions.Position>(this, LocationSender.PositionUpdatedMsg, (sender, position) =>
-            {
-                _mapPosition = PositionHelper.GetMapPosition(position);
-                _lastPositionUpdateTime = DateTime.Now;
-            });
-	        MessagingCenter.Subscribe<LocationSender, GroupMemberSimpleVm>(this, LocationSender.SomeoneLeftMsg,
-	            (sender, groupMemberSimpleVm) =>
-	            {
-	                Device.BeginInvokeOnMainThread(() =>
+                MessagingCenter.Subscribe<MessagingCenterSender, Plugin.Geolocator.Abstractions.Position>(this, LocationSender.PositionUpdatedMsg, (sender, position) =>
+                {
+                    _mapPosition = PositionHelper.GetMapPosition(position);
+                    _lastPositionUpdateTime = DateTime.Now;
+                });
+	            MessagingCenter.Subscribe<LocationSender, GroupMemberSimpleVm>(this, LocationSender.SomeoneLeftMsg,
+	                (sender, groupMemberSimpleVm) =>
 	                {
-	                    //Remove pin
-	                    var pins = GroupMap.Pins.ToList();
+	                    Device.BeginInvokeOnMainThread(() =>
+	                    {
+	                        //Remove pin
+	                        var pins = GroupMap.Pins.ToList();
 
-                        var userPin  = pins.FirstOrDefault(x=>x.Title == ContactsHelper.NameOrPhone(groupMemberSimpleVm.PhoneNumber,
-                                                                  groupMemberSimpleVm.Name));
-	                    if(userPin == null) return;
-	                    pins.Remove(userPin);
-	                    GroupMap.Pins = pins;
+                            var userPin  = pins.FirstOrDefault(x=>x.Title == ContactsHelper.NameOrPhone(groupMemberSimpleVm.PhoneNumber,
+                                                                      groupMemberSimpleVm.Name));
+	                        if(userPin == null) return;
+	                        pins.Remove(userPin);
+	                        GroupMap.Pins = pins;
+	                    });
 	                });
-	            });
+	        }
+	        catch(Exception ex)
+	        {
+	            Crashes.TrackError(ex);
+	        }
         }
 
-        private async Task InitializeMap()
+        private async Task<bool> InitializeMap()
         {        
-            var justMeList = await GetMyPositionList();
-            if (justMeList == null)
+
+            try
             {
-                _mapInitialized = false;
-                _positionInitializationInterval.SetInterval(InitializeMap().Wait, 3000);
-                return;
-            };
+                var justMeList = await GetMyPositionList();
+                if (justMeList == null)
+                {
+                    _mapInitialized = false;
+                    _positionInitializationInterval.SetInterval(InitializeMap().Wait, 3000);
+                    return true;
+                };
                          
-             UpdateMap(justMeList);
-             HideSpinnerShowMap();
-            _mapInitialized = true;
+                 UpdateMap(justMeList);
+                 HideSpinnerShowMap();
+                _mapInitialized = true;
+                return true;
+            }
+            catch(Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
+            return false;
         }
 
 	    private async Task ResetMap()
@@ -181,148 +222,214 @@ namespace WheresChris.Views
 
 	    private async Task<List<GroupMemberSimpleVm>> GetMyPositionList()
 	    {
-	        var hasLocationPermissions = await PermissionHelper.HasOrRequestLocationPermission();
-	        if (!hasLocationPermissions) return null;
-
-	        if (DateTime.Now.Subtract(new TimeSpan(0, 0, 10)) > _lastPositionUpdateTime)
+	        try
 	        {
-                _mapPosition = await PositionHelper.GetMapPosition();
-                _lastPositionUpdateTime = DateTime.Now;
-	        }
-            var userPosition = _mapPosition;
+	            var hasLocationPermissions = await PermissionHelper.HasOrRequestLocationPermission();
+	            if (!hasLocationPermissions) return null;
 
-            if (!userPosition.HasValue) return null;
-	        if (!userPosition.Value.LocationValid()) return null;
-
-	        var userPhoneNumber = SettingsHelper.GetPhoneNumber();
-	        var justMeList = new List<GroupMemberSimpleVm>
-	        {
-	            new GroupMemberSimpleVm
+	            if (DateTime.Now.Subtract(new TimeSpan(0, 0, 10)) > _lastPositionUpdateTime)
 	            {
-	                Latitude = userPosition.Value.Latitude,
-	                Longitude = userPosition.Value.Longitude,
-	                PhoneNumber = userPhoneNumber,
-	                Name = "Me"
+                    _mapPosition = await PositionHelper.GetMapPosition();
+                    _lastPositionUpdateTime = DateTime.Now;
 	            }
-	        };
-	        return justMeList;
+                var userPosition = _mapPosition;
+
+                if (!userPosition.HasValue) return null;
+	            if (!userPosition.Value.LocationValid()) return null;
+
+	            var userPhoneNumber = SettingsHelper.GetPhoneNumber();
+	            var justMeList = new List<GroupMemberSimpleVm>
+	            {
+	                new GroupMemberSimpleVm
+	                {
+	                    Latitude = userPosition.Value.Latitude,
+	                    Longitude = userPosition.Value.Longitude,
+	                    PhoneNumber = userPhoneNumber,
+	                    Name = "Me"
+	                }
+	            };
+	            return justMeList;
+	        }
+	        catch(Exception ex)
+	        {
+	            Crashes.TrackError(ex);
+	        }
+	        return null;
 	    }
 
 	    private void UpdateMap(List<GroupMemberSimpleVm> groupMembers)
-	    {            
-            var userPhoneNumber = SettingsHelper.GetPhoneNumber();
-            var customPins = new List<TKCustomMapPin>();
+	    {    
+	        try
+	        {
+                var userPhoneNumber = SettingsHelper.GetPhoneNumber();
+                var customPins = new List<TKCustomMapPin>();
 
-            foreach (var groupMember in groupMembers)
-            {
-                var position = new Position(groupMember.Latitude, groupMember.Longitude);
-                if (PositionHelper.LocationValid(position.ToGeolocatorPosition()))
+                foreach (var groupMember in groupMembers)
                 {
-                    customPins.Add(new TKCustomMapPin
+                    var position = new Position(groupMember.Latitude, groupMember.Longitude);
+                    if (position.ToGeolocatorPosition().LocationValid())
                     {
-                        Title = ContactsHelper.NameOrPhone(groupMember.PhoneNumber, groupMember.Name),
-                        Position = position,
-                        ShowCallout = true,
-                        DefaultPinColor = groupMember.PhoneNumber == userPhoneNumber ? Color.Blue : Color.Red
-                    });
+                        customPins.Add(new TKCustomMapPin
+                        {
+                            Title = ContactsHelper.NameOrPhone(groupMember.PhoneNumber, groupMember.Name),
+                            Position = position,
+                            ShowCallout = true,
+                            DefaultPinColor = groupMember.PhoneNumber == userPhoneNumber ? Color.Blue : Color.Red
+                        });
+                    }
                 }
-            }
 
-            _mapCenterPosition = PositionHelper.GetMapCenter(groupMembers);
-	        if (!PositionHelper.LocationValid(_mapCenterPosition)) return;
+                _mapCenterPosition = PositionHelper.GetMapCenter(groupMembers);
+	            if (!_mapCenterPosition.LocationValid()) return;
 
-	        _radius = PositionHelper.GetRadius(groupMembers, _mapCenterPosition);
+	            _radius = PositionHelper.GetRadius(groupMembers, _mapCenterPosition);
 
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                GroupMap.MapType = MapType.Street; //This doesn't seem to work on android                              
-                GroupMap.MapRegion = MapSpan.FromCenterAndRadius(_mapCenterPosition.ToTkPosition(), Distance.FromMiles(_radius).ToTkDistance());
-                GroupMap.Pins = customPins;
-            });
-            return;
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    GroupMap.MapType = MapType.Street;                              
+                    GroupMap.MapRegion = MapSpan.FromCenterAndRadius(_mapCenterPosition.ToTkPosition(), Distance.FromMiles(_radius).ToTkDistance());
+                    GroupMap.Pins = customPins;
+                });
+	        }
+	        catch(Exception ex)
+	        {
+	            Crashes.TrackError(ex);
+	        }
+
 	    }
 
 	    private async Task AddMembers()
 	    {
-	        var addMemberPage = new AddMemberPage();
-	        await Navigation.PushAsync(addMemberPage);
+	        try
+	        {
+	            var addMemberPage = new AddMemberPage();
+	            await Navigation.PushAsync(addMemberPage);
+	        }
+	        catch(Exception ex)
+	        {
+	            Crashes.TrackError(ex);
+	        }
 	    }
 
 	    private async Task ViewMembers()
 	    {
-	        var memberPage = new MemberPage();
-	        await memberPage.RefreshMembers();
-	        await Navigation.PushAsync(memberPage);
+	        try
+	        {
+	            var memberPage = new MemberPage();
+	            await memberPage.RefreshMembers();
+	            await Navigation.PushAsync(memberPage);
+	        }
+	        catch(Exception ex)
+	        {
+	            Crashes.TrackError(ex);
+	        }
 	    }
 
 	    private async Task LeaveGroup()
 	    {
-            MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.LeaveGroupMsg);
-            MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.EndGroupMsg);
-            MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.ThisUserLeftGroupMsg);
-	        await InitializeMap();
+	        try
+	        {
+                MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.LeaveGroupMsg);
+                MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.EndGroupMsg);
+                MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.ThisUserLeftGroupMsg);
+	            await InitializeMap();
+	        }
+	        catch(Exception ex)
+	        {
+	            Crashes.TrackError(ex);
+	        }
 	    }
 
         private void HideSpinnerShowMap()
         {
-            Spinner.IsRunning = false;
-            Spinner.IsVisible = false;
+            try
+            {
+                Spinner.IsRunning = false;
+                Spinner.IsVisible = false;
+            }
+            catch(Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         private void ViewARButton_OnClicked(object sender, EventArgs e)
 	    {
+	        try
+	        {
 #if (__ANDROID__)
-            var userPhoneNumber = SettingsHelper.GetPhoneNumber();
-            Intent i = new Intent();
-            i.SetAction(Intent.ActionView);
-	        i.SetFlags(ActivityFlags.NewTask);
-	        var uri =
-	            Android.Net.Uri.Parse(
-	                string.Format("http://whereschrisardata.azurewebsites.net/api/GroupData?code=MG80/ufNZ3YbsUw6Q/tJelkgtcSoEaD7OdB1hHUPq6zZdrM2M3Xb/A==&phone={0}", userPhoneNumber));
-            i.SetDataAndType(uri, "application/mixare-json");
-	        Android.App.Application.Context.StartActivity(i);
+                var userPhoneNumber = SettingsHelper.GetPhoneNumber();
+                Intent i = new Intent();
+                i.SetAction(Intent.ActionView);
+	            i.SetFlags(ActivityFlags.NewTask);
+	            var uri =
+	                Android.Net.Uri.Parse(
+	                    $"http://whereschrisardata.azurewebsites.net/api/GroupData?code=MG80/ufNZ3YbsUw6Q/tJelkgtcSoEaD7OdB1hHUPq6zZdrM2M3Xb/A==&phone={userPhoneNumber}");
+                i.SetDataAndType(uri, "application/mixare-json");
+	            Android.App.Application.Context.StartActivity(i);
 #endif
 #if (__IOS__)
-	        NSUrl request = new NSUrl("mixare://");
-            var isOpened = UIApplication.SharedApplication.OpenUrl(request);
+	            NSUrl request = new NSUrl("mixare://");
+                var isOpened = UIApplication.SharedApplication.OpenUrl(request);
 #endif
+	        }
+	        catch(Exception ex)
+	        {
+	            Crashes.TrackError(ex);
+	        }
+
         }
 
 	    private void MyLocation_OnTapped(object sender, EventArgs e)
 	    {
-	        if(Math.Abs(_radius) < 0.00001) return;
-
-	        var centerPosition = _mapCenterPosition;
-	        if(centerPosition.LocationValid() && _mapPosition.HasValue)
+	        try
 	        {
-	            centerPosition = _mapPosition.Value;
+	            if(Math.Abs(_radius) < 0.00001) return;
+
+	            var centerPosition = _mapCenterPosition;
+	            if(centerPosition.LocationValid() && _mapPosition.HasValue)
+	            {
+	                centerPosition = _mapPosition.Value;
+	            }
+
+	            if(!centerPosition.LocationValid()) return;
+
+	            GroupMap.MapRegion = MapSpan.FromCenterAndRadius(centerPosition.ToTkPosition(), Distance.FromMiles(_radius).ToTkDistance());	    
 	        }
-
-	        if(!centerPosition.LocationValid()) return;
-
-	        GroupMap.MapRegion = MapSpan.FromCenterAndRadius(centerPosition.ToTkPosition(), Distance.FromMiles(_radius).ToTkDistance());
-	    }
+	        catch(Exception ex)
+	        {
+	            Crashes.TrackError(ex);
+	        }
+}
 
 	    private async Task GroupInfo_OnTapped(object sender, EventArgs e)
 	    {
-	        if(_inAGroup)
+	        try
 	        {
-	            var action = await DisplayActionSheet("Group", "Cancel", null, "Add", "Members", "Leave");
-	            switch(action)
+	            if(_inAGroup)
 	            {
-                    case "Add":
-                        await AddMembers();
-                        break;
-                    case "Members":
-                        await ViewMembers();
-                        break;
-                    case "Leave":
-                        await LeaveGroup();
-                        break;
-                    default:
-                        break;
+	                var action = await DisplayActionSheet("Group", "Cancel", null, "Add", "Members", "Leave");
+	                switch(action)
+	                {
+                        case "Add":
+                            await AddMembers();
+                            break;
+                        case "Members":
+                            await ViewMembers();
+                            break;
+                        case "Leave":
+                            await LeaveGroup();
+                            break;
+                        default:
+                            break;
+	                }
 	            }
 	        }
+	        catch(Exception ex)
+	        {
+	            Crashes.TrackError(ex);
+	        }
+
 	    }
 	}
 }
