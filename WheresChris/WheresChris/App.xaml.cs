@@ -29,9 +29,9 @@ namespace WheresChris
         {
             InitializeComponent();
 
-            SetMainPageAsync().ConfigureAwait(true);
+            AsyncHelper.RunSync(SetMainPageAsync);
 
-            StartLocationSenderAsync().ConfigureAwait(true);
+            AsyncHelper.RunSync(StartLocationSenderAsync);
 
             MessagingCenter.Send(new MessagingCenterSender(), LocationSender.LeaveOrEndGroupMsg);
 
@@ -71,7 +71,7 @@ namespace WheresChris
 
         public static void AttemptLoadPagesNeedingPermissions()
         {
-            AttemptLoadPagesNeedingPermissionsAsync().ConfigureAwait(true);
+            AsyncHelper.RunSync(AttemptLoadPagesNeedingPermissionsAsync);
         }
 
         public static async Task SetMainPageAsync()
