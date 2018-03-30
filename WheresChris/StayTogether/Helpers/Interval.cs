@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using Microsoft.AppCenter.Crashes;
 
 namespace StayTogether.Helpers
 {
@@ -25,9 +26,9 @@ namespace StayTogether.Helpers
                 var action = (Action) state;
                 action();
             }
-            catch (Exception)
+            catch (Exception ex)
             {               
-                throw;
+                Crashes.TrackError(ex);
             }
         }
 

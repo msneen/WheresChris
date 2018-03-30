@@ -22,13 +22,20 @@ namespace StayTogether.Helpers
 
         public static async Task Display(NotificationOptions options, Action action = null)
         {
-            var notification = DependencyService.Get<IToastNotificator>();
-            notification.CancelAllDelivered();
+            await CancelToasts();
+            var notification = DependencyService.Get<IToastNotificator>();            
             var result = await notification.Notify(options);
             if(options.IsClickable && result.Action == NotificationAction.Clicked)
             {
                 action?.Invoke();
             }
+        }
+
+        public static Task CancelToasts()
+        {
+            var notification = DependencyService.Get<IToastNotificator>();
+            notification.CancelAllDelivered();
+            return Task.CompletedTask;
         }
     }
 }
