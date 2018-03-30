@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AppCenter.Crashes;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Settings;
 using StayTogether.Classes;
+using StayTogether.Helpers;
 using StayTogether.Location;
 using WheresChris.Helpers;
 
@@ -33,21 +35,33 @@ namespace StayTogether.Group
             return adminMember;
         }
 
-        public static GroupVm InitializeGroupVm(List<GroupMemberVm> contactList, Position position, string phoneNumber, int expireInHours)
+        public static GroupVm InitializeGroupVm(List<GroupMemberVm> contactList, Position position, string phoneNumber, int expireInHours = 5)
         {
-            var nickname = SettingsHelper.GetNickname();
-            var adminMember = CreateAdminMember(position, phoneNumber, nickname);
+            try
+            {      
+                if(contactList == null || contactList.Count == 0) throw new System.Exception("ContactList cannot be null or empty");
+                if(!position.LocationValid()) throw new System.Exception("Location is Invalid");
+                if(string.IsNullOrWhiteSpace(phoneNumber)) throw new System.Exception("Phone number cannot be empty");
 
-            var currentUser = contactList.FirstOrDefault(m => m.PhoneNumber == phoneNumber);
-            if(currentUser != null)
-            {
-                contactList.Remove(currentUser);
+                var nickname = SettingsHelper.GetNickname();
+                var adminMember = CreateAdminMember(position, phoneNumber, nickname);
+
+                var currentUser = contactList.FirstOrDefault(m => m.PhoneNumber == phoneNumber);
+                if(currentUser != null)
+                {
+                    contactList.Remove(currentUser);
+                }
+
+                contactList.Insert(0, adminMember);
+
+                var groupVm = CreateGroupVm(adminMember, contactList, expireInHours);
+                return groupVm;
             }
-
-            contactList.Insert(0, adminMember);
-
-            var groupVm = CreateGroupVm(adminMember, contactList, expireInHours);
-            return groupVm;
+            catch(Exception ex)
+            {
+                Crashes.TrackError(ex);
+                return null;
+            }
         }
     }
 }

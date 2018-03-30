@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AppCenter.Crashes;
 using Plugin.Geolocator;
 using StayTogether;
 using StayTogether.Classes;
@@ -23,14 +25,27 @@ namespace WheresChris.Helpers
 
         public static async Task StartOrAddToGroup(List<GroupMemberVm> selectedGroupMemberVms, string userPhoneNumber, int expirationHours = 0)
         {
-            if (!selectedGroupMemberVms.Any()) return;
-            if (string.IsNullOrWhiteSpace(userPhoneNumber)) return;
+            try
+            {
+                if (!selectedGroupMemberVms.Any()) throw new System.Exception("SelectedGroupMemberVms must be populated");
+                if (string.IsNullOrWhiteSpace(userPhoneNumber))  throw new System.Exception("userPhoneNumber must be populated");
 
-            var userMapPosition = await PositionHelper.GetMapPosition();
-            var userPosition = PositionConverter.Convert(userMapPosition.Value);
-            var groupVm = GroupHelper.InitializeGroupVm(selectedGroupMemberVms, userPosition, userPhoneNumber, expirationHours);
-            MessagingCenter.Send<object, GroupVm>(new MessagingCenterSender(), LocationSender.StartOrAddGroupMsg, groupVm);
-        }
+                var userMapPosition = await PositionHelper.GetMapPosition();
+                if(!userMapPosition.HasValue || !userMapPosition.Value.LocationValid())throw new System.Exception("userMapPosition is invalid");
+
+                var userPosition = PositionConverter.Convert(userMapPosition.Value);
+                if(!userPosition.LocationValid())throw new System.Exception("userPosition is invalid");
+
+                var groupVm = GroupHelper.InitializeGroupVm(selectedGroupMemberVms, userPosition, userPhoneNumber, expirationHours);
+                if(groupVm == null || groupVm.GroupMembers.Count < 1 || string.IsNullOrWhiteSpace(groupVm.PhoneNumber))throw new System.Exception("GroupVm is invalid");
+
+                MessagingCenter.Send<object, GroupVm>(new MessagingCenterSender(), LocationSender.StartOrAddGroupMsg, groupVm);
+            }
+            catch(Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
+       }
 
         public static List<GroupMemberVm> GetSelectedGroupMembers(IList<ContactDisplayItemVm> items)
         {

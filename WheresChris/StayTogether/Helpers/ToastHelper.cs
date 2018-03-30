@@ -15,7 +15,7 @@ namespace StayTogether.Helpers
                 Title = title,
                 Description = body,
                 IsClickable = isClickable,
-                CustomArgs = customArgs
+                CustomArgs = customArgs,
             };
             await Display(options, action);
         }

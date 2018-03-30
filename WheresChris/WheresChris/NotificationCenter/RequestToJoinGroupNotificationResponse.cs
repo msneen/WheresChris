@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AppCenter.Crashes;
 using StayTogether;
 using StayTogether.Classes;
 using StayTogether.Helpers;
@@ -24,15 +25,27 @@ namespace WheresChris.NotificationCenter
             {
                 new PopupItem($"The following people would like to join your group: \n\r{memberInfo}", () =>
                 {
-                    
-                    var userPhoneNumber = SettingsHelper.GetPhoneNumber();//this should be the other leader's phone number
-
-                    var groupMembers = groupMembersSimple.Select(member => member as GroupMemberVm).ToList();
-                    AsyncHelper.RunSync(async () =>
+                    try
                     {
-                        await GroupActionsHelper.StartOrAddToGroup(groupMembers, userPhoneNumber);
-                    });
-                                  
+                        var userPhoneNumber = SettingsHelper.GetPhoneNumber();//this should be the other leader's phone number
+
+                        var groupMembers = groupMembersSimple.Select(member => member as GroupMemberVm).ToList();
+                        AsyncHelper.RunSync(async () =>
+                        {
+                            try
+                            {
+                                await GroupActionsHelper.StartOrAddToGroup(groupMembers, userPhoneNumber);
+                            }
+                            catch(Exception ex)
+                            {
+                                Crashes.TrackError(ex);
+                            }
+                        });
+                    }
+                    catch(Exception ex)
+                    {
+                        Crashes.TrackError(ex);
+                    }                                 
                 }),
                 new PopupItem("Ignore and try to invite them later", null),
             };
