@@ -83,7 +83,7 @@ namespace WheresChris.Droid
 
 		private void TryToStartLocationService()
 		{
-             _backgroundServiceInterval.SetInterval(StartLocationService, 60000);
+             _backgroundServiceInterval.SetInterval(StartLocationService, 6000);
 		}
 
 
