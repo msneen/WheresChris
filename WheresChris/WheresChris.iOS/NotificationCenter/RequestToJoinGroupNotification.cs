@@ -11,6 +11,7 @@ using StayTogether.iOS.NotificationCenter;
 using StayTogether.Models;
 using UIKit;
 using WheresChris.Helpers;
+using WheresChris.NotificationCenter;
 
 namespace WheresChris.iOS.NotificationCenter
 {
@@ -44,7 +45,7 @@ namespace WheresChris.iOS.NotificationCenter
            
             var okAction =  UIAlertAction.Create("OK", UIAlertActionStyle.Default, alertAction =>
             {
-                SendInvitations(groupMembers).ConfigureAwait(true);
+                SendInvitations(groupMembers);
             });
             var ignoreAction =  UIAlertAction.Create("Ignore", UIAlertActionStyle.Default, alertAction =>
             {
@@ -55,11 +56,9 @@ namespace WheresChris.iOS.NotificationCenter
             return actions;
         }
 
-        private static async Task SendInvitations(List<GroupMemberSimpleVm> groupMembersSimple)
+        private static void SendInvitations(List<GroupMemberSimpleVm> groupMembersSimple)
         {
-            var userPhoneNumber = SettingsHelper.GetPhoneNumber();
-            var groupMembers = groupMembersSimple.Cast<GroupMemberVm>().ToList();
-            await GroupActionsHelper.StartOrAddToGroup(groupMembers, userPhoneNumber);
+            RequestToJoinGroupNotificationResponse.HandleRequestToJoinMyGroup(groupMembersSimple);
         }
     }
 }
