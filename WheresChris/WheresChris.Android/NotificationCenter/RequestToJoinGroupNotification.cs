@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Android.App;
 using Android.Content;
 using Newtonsoft.Json;
-using StayTogether.Classes;
 using StayTogether.Helpers;
 using StayTogether.Models;
 using WheresChris.Droid;
-using WheresChris.Helpers;
 using WheresChris.NotificationCenter;
-using Xamarin.Forms;
 using Application = Android.App.Application;
 
 namespace StayTogether.Droid.NotificationCenter

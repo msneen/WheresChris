@@ -119,7 +119,8 @@ namespace WheresChris.Droid
 		{
             MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.LeaveGroupMsg);
             MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.EndGroupMsg);
-        }
+		    ToastHelper.CancelToasts();
+		}
 
 		protected override void OnPause()
 		{
