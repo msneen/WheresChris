@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Plugin.Toasts;
 using StayTogether;
+using StayTogether.Helpers;
 using WheresChris.Helpers;
 using WheresChris.Models;
 using Xamarin.Forms;
@@ -15,9 +16,16 @@ namespace WheresChris.Views
     public partial class MainPage : ContentPage
     {
         private Invitation Invitation;
+        private static readonly Interval InitializeInterval = new Interval();
+
         public MainPage()
         {
             InitializeComponent();
+            InitializeInterval.SetInterval(InitializePage, 1000);
+        }
+
+        private void InitializePage()
+        {
             SaveButton.Clicked += SaveButton_OnClicked;
             InitializeMessagingCenterSubscriptions();
             InitializePhoneAndNickname();

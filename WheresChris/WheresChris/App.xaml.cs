@@ -23,7 +23,7 @@ namespace WheresChris
     {
         public static PopupMenu Popup;
         private static TabbedPage _mainTabbedPage;
-        private LocationSender _locationSender;
+
 
         public App()
         {
@@ -31,18 +31,11 @@ namespace WheresChris
 
             AsyncHelper.RunSync(SetMainPageAsync);
 
-            AsyncHelper.RunSync(StartLocationSenderAsync);
-
-            MessagingCenter.Send(new MessagingCenterSender(), LocationSender.LeaveOrEndGroupMsg);
-
-            InitializeMessagingCenter();
-            
-            Popup = new PopupMenu();
         }
 
-        private void InitializeMessagingCenter()
+        private static void InitializeMessagingCenter()
         {
-            MessagingCenter.Subscribe<LocationSender, ChatMessageSimpleVm>(this, LocationSender.ChatReceivedMsg,
+            MessagingCenter.Subscribe<LocationSender, ChatMessageSimpleVm>(new MessagingCenterSender(), LocationSender.ChatReceivedMsg,
                 (sender, chatMessageVm) =>
                 {
                     Device.BeginInvokeOnMainThread(async () =>
@@ -64,9 +57,13 @@ namespace WheresChris
         private static int _permisionRequestIntervalTime = 5000;
         private static int _addPagesIntervalTime = 5000;
 
-        private async Task StartLocationSenderAsync()
+        private static async Task StartLocationSenderAsync()
         {
-            _locationSender = await LocationSender.GetInstanceAsync();
+            await LocationSender.GetInstanceAsync()
+                .ContinueWith((t) =>
+                {
+                    MessagingCenter.Send(new MessagingCenterSender(), LocationSender.LeaveOrEndGroupMsg);
+                });
         }
 
         public static void AttemptLoadPagesNeedingPermissions()
@@ -83,7 +80,7 @@ namespace WheresChris
 
                 AddPage(new MainPage(), "Main");
 
-                await AttemptLoadPagesNeedingPermissionsAsync();
+                PermissionRequest.SetInterval(AttemptLoadPagesNeedingPermissions, 1000);//await AttemptLoadPagesNeedingPermissionsAsync();
 
 
                 AddPage(new AboutPage(), "About");
@@ -93,26 +90,28 @@ namespace WheresChris
                     try
                     {
                         var currentPage = GetMainTab().CurrentPage;
-                        if(string.IsNullOrWhiteSpace(currentPage?.Title)) return;
-                        switch(currentPage.Title)
+                        if (string.IsNullOrWhiteSpace(currentPage?.Title)) return;
+                        switch (currentPage.Title)
                         {
                             case "Join":
                                 var joinNavigationPage = GetPage("Join");
                                 var joinNavigationStack = joinNavigationPage?.Navigation?.NavigationStack;
-                                if(joinNavigationStack == null) return;
+                                if (joinNavigationStack == null) return;
                                 var index = joinNavigationStack.Count - 1;
-                                if(joinNavigationStack[index] is JoinPage joinPage)
+                                if (joinNavigationStack[index] is JoinPage joinPage)
                                 {
                                     await joinPage?.RefreshInvitations();
                                 }
                                 break;
                         }
                     }
-                    catch(System.Exception exx)
+                    catch (System.Exception exx)
                     {
                         Crashes.TrackError(exx);
                     }
                 };
+
+                PermissionRequest.SetInterval(FinishInitializing, 2000);
 
             }
             catch (System.Exception ex)
@@ -122,6 +121,15 @@ namespace WheresChris
                     {"App.xaml.cs_SetMainPage_Error" , ex.Message}
                 });
             }
+        }
+
+        public static void FinishInitializing()
+        {
+            AsyncHelper.RunSync(StartLocationSenderAsync);
+
+            InitializeMessagingCenter();
+
+            Popup = new PopupMenu();
         }
 
         private static async Task AttemptLoadPagesNeedingPermissionsAsync()

@@ -67,7 +67,7 @@ namespace WheresChris.Helpers
 
         public static Task<bool> HasGpsEnabled()
         {
-            return Task.FromResult(LocationSender.IsGeolocationAvailable());
+            return Task.FromResult(LocationSender.IsGeolocationAvailable().Result);
         }
 
         public static async Task<bool> HastContactPermission()

@@ -68,9 +68,7 @@ namespace WheresChris.Droid
 		        SetTheme(Resource.Style.MyTheme);
 		        base.OnCreate(bundle);
 
-                LoadApplication(new App());
-
-		        MessageCenterListener.Initialize();
+                LoadApplication(new App());		        
 
                 TryToStartLocationService();
             }
@@ -96,6 +94,8 @@ namespace WheresChris.Droid
 			if (_locationServiceStarted) return;
 
             StartService(new Intent(this, typeof(LocationSenderService)));
+
+		    MessageCenterListener.Initialize();
 
 			_locationServiceStarted = true;
 		}

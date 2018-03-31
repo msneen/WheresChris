@@ -70,26 +70,26 @@ namespace StayTogether
 	    private string _phoneNumber;
         private string _groupId = ""; //Creator of group's phone number
 
-	    public static bool IsGeolocationAvailable()
+	    public static Task<bool> IsGeolocationAvailable()
 	    {
 	        var geoLocator = CrossGeolocator.Current;
 	        var isEnabled = geoLocator.IsGeolocationEnabled && geoLocator.IsGeolocationAvailable;
-	        if(isEnabled) return true;
+	        if(isEnabled) return Task.FromResult(true);
 	        try
 	        {
 	            var testLocation =
 	                AsyncHelper.RunSync<Plugin.Geolocator.Abstractions.Position>(() => geoLocator.GetPositionAsync());
-	            return testLocation.LocationValid();
+	            return Task.FromResult(testLocation.LocationValid());
 	        }
 	        catch(Exception ex)
 	        {
 	            Crashes.TrackError(ex);
-	            return false;
+	            return Task.FromResult(false);
 	        }
 	    }
 	    public static async Task<LocationSender> GetInstanceAsync()
 	    {
-	        if(!IsGeolocationAvailable()) return null;
+	        if(!await IsGeolocationAvailable()) return null;
 
             //Make m new instance if null when requested
 	        if (_instance == null)
@@ -114,7 +114,7 @@ namespace StayTogether
 
 	    public static LocationSender GetInstance()
 	    {
-	        if(!IsGeolocationAvailable()) return null;
+	        if(!IsGeolocationAvailable().Result) return null;
             //Make m new instance if null when requested
             if (_instance == null)
             {
@@ -161,7 +161,7 @@ Debugger.Break();
         
 	    public async Task InitializeAsync()
 	    {
-	        if (!IsInitialized && IsGeolocationAvailable())
+	        if (!IsInitialized && await IsGeolocationAvailable())
 	        {
 	            await InitializeSignalRAsync();
 	        }
@@ -169,7 +169,7 @@ Debugger.Break();
 
 	    public void Initialize()
 	    {
-	        if(!IsGeolocationAvailable()) return;
+	        if(!IsGeolocationAvailable().Result) return;
 	        InitializeAsync().Wait();
 	    }
 
@@ -243,7 +243,7 @@ Debugger.Break();
         {
             try
             {
-                if(!IsGeolocationAvailable()) return;
+                if(! await IsGeolocationAvailable()) return;
                 // Connect to the server
                 _hubConnection = new HubConnection("https://staytogetherserver.azurewebsites.net/"); //mike
                 //_hubConnection = new HubConnection("http://162.231.59.41/StayTogetherServer/");//mike
