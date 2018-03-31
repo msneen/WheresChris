@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Plugin.Toasts;
 using Xamarin.Forms;
@@ -15,7 +16,7 @@ namespace StayTogether.Helpers
                 Title = title,
                 Description = body,
                 IsClickable = isClickable,
-                CustomArgs = customArgs,
+                CustomArgs = customArgs,                
             };
             await Display(options, action);
         }
@@ -23,7 +24,11 @@ namespace StayTogether.Helpers
         public static async Task Display(NotificationOptions options, Action action = null)
         {
             await CancelToasts();
-            var notification = DependencyService.Get<IToastNotificator>();            
+            var notification = DependencyService.Get<IToastNotificator>();
+            var delivered = await notification.GetDeliveredNotifications();
+            var already = delivered.FirstOrDefault(n => n.Title == options.Title && n.Description == options.Description);
+            if(already != null) return;
+
             var result = await notification.Notify(options);
             if(options.IsClickable && result.Action == NotificationAction.Clicked)
             {
