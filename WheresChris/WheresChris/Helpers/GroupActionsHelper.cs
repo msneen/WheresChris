@@ -23,7 +23,7 @@ namespace WheresChris.Helpers
             await StartOrAddToGroup(selectedGroupMemberVms, userPhoneNumber, expirationHours);
         }
 
-        public static async Task StartOrAddToGroup(List<GroupMemberVm> selectedGroupMemberVms, string userPhoneNumber, int expirationHours = 0)
+        public static async Task StartOrAddToGroup(List<GroupMemberVm> selectedGroupMemberVms, string userPhoneNumber, int expirationHours = 0, bool force = false)
         {
             try
             {
@@ -38,7 +38,7 @@ namespace WheresChris.Helpers
 
                 var groupVm = GroupHelper.InitializeGroupVm(selectedGroupMemberVms, userPosition, userPhoneNumber, expirationHours);
                 if(groupVm == null || groupVm.GroupMembers.Count < 1 || string.IsNullOrWhiteSpace(groupVm.PhoneNumber))throw new System.Exception("GroupVm is invalid");
-
+                groupVm.RemoveMembersFromOtherGroups = force;
                 MessagingCenter.Send<MessagingCenterSender, GroupVm>(new MessagingCenterSender(), LocationSender.StartOrAddGroupMsg, groupVm);
             }
             catch(Exception ex)

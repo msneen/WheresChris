@@ -42,7 +42,7 @@ namespace WheresChris.NotificationCenter
                         {
                             try
                             {
-                                await GroupActionsHelper.StartOrAddToGroup(groupMembers, userPhoneNumber);
+                                await GroupActionsHelper.StartOrAddToGroup(groupMembers, userPhoneNumber, force:true);
                             }
                             catch(Exception ex)
                             {

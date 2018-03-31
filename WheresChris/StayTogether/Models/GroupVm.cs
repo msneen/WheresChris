@@ -20,5 +20,7 @@ namespace StayTogether
         public DateTime LastContactDateTime { get; set; }
 
         public List<GroupMemberVm> GroupMembers { get; set; }
+
+        public bool RemoveMembersFromOtherGroups { get; set; }
     }
 }
