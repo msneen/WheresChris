@@ -83,7 +83,11 @@ namespace StayTogether
 	        }
 	        catch(Exception ex)
 	        {
-	            Crashes.TrackError(ex);
+	            Crashes.TrackError(ex, new Dictionary<string, string>
+	            {
+	                {"Source", ex.Source },
+	                { "stackTrace",ex.StackTrace}
+	            });
 	            return Task.FromResult(false);
 	        }
 	    }
@@ -179,7 +183,7 @@ Debugger.Break();
 	        {
                 await ConfirmGroupInvitation(groupMemberSimpleVm.PhoneNumber, groupMemberSimpleVm.Name);                  
             });
-            MessagingCenter.Subscribe<object, GroupVm>(this, StartOrAddGroupMsg, async (sender, groupVm) =>
+            MessagingCenter.Subscribe<MessagingCenterSender, GroupVm>(this, StartOrAddGroupMsg, async (sender, groupVm) =>
             {
                 await StartOrAddToGroup(groupVm);
             });
@@ -322,9 +326,13 @@ Debugger.Break();
 
 	    private async Task RequestAdditionalMembersAddedToGroup(AdditionalMemberInvitationVm additionalMemberInvitationVm)
 	    {
-	        await EndGroup();
-	        //Request to add these members to another group, and end the group we are in
-	        await InvokeChatHubProxy("requestJoinGroup", additionalMemberInvitationVm.Group, additionalMemberInvitationVm.GroupLeaderPhoneNumber);
+	        await EndGroup()
+                .ContinueWith((async (task) =>
+	            {
+	                //Request to add these members to another group, and end the group we are in
+	                await InvokeChatHubProxy("requestJoinGroup", additionalMemberInvitationVm.Group, additionalMemberInvitationVm.GroupLeaderPhoneNumber);
+	            }));
+
 
 	    }
 

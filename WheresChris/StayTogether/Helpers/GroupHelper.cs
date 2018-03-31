@@ -60,7 +60,11 @@ namespace StayTogether.Group
             }
             catch(Exception ex)
             {
-                Crashes.TrackError(ex);
+                Crashes.TrackError(ex, new Dictionary<string, string>
+                {
+                    {"Source", ex.Source },
+                    { "stackTrace",ex.StackTrace}
+                });
                 return null;
             }
         }

@@ -50,7 +50,11 @@ namespace WheresChris.Views
 		    }
 		    catch(Exception ex)
 		    {
-		        Crashes.TrackError(ex);
+		        Crashes.TrackError(ex, new Dictionary<string, string>
+		        {
+		            {"Source", ex.Source },
+		            { "stackTrace",ex.StackTrace}
+		        });
 		    }
 		}
 
@@ -74,7 +78,11 @@ namespace WheresChris.Views
 	        }
 	        catch(Exception ex)
 	        {
-	            Crashes.TrackError(ex);
+	            Crashes.TrackError(ex, new Dictionary<string, string>
+	            {
+	                {"Source", ex.Source },
+	                { "stackTrace",ex.StackTrace}
+	            });
 	        }
         }
 
@@ -87,7 +95,11 @@ namespace WheresChris.Views
 	        }
 	        catch(Exception ex)
 	        {
-	            Crashes.TrackError(ex);
+	            Crashes.TrackError(ex, new Dictionary<string, string>
+	            {
+	                {"Source", ex.Source },
+	                { "stackTrace",ex.StackTrace}
+	            });
 	        }
 	        return Task.CompletedTask;
 	    }
@@ -103,7 +115,11 @@ namespace WheresChris.Views
 	        }
 	        catch(Exception ex)
 	        {
-	            Crashes.TrackError(ex);
+	            Crashes.TrackError(ex, new Dictionary<string, string>
+	            {
+	                {"Source", ex.Source },
+	                { "stackTrace",ex.StackTrace}
+	            });
 	        }
         }
 
@@ -185,7 +201,11 @@ namespace WheresChris.Views
 	        }
 	        catch(Exception ex)
 	        {
-	            Crashes.TrackError(ex);
+	            Crashes.TrackError(ex, new Dictionary<string, string>
+	            {
+	                {"Source", ex.Source },
+	                { "stackTrace",ex.StackTrace}
+	            });
 	        }
         }
 
@@ -209,7 +229,11 @@ namespace WheresChris.Views
             }
             catch(Exception ex)
             {
-                Crashes.TrackError(ex);
+                Crashes.TrackError(ex, new Dictionary<string, string>
+                {
+                    {"Source", ex.Source },
+                    { "stackTrace",ex.StackTrace}
+                });
             }
             return false;
         }
@@ -252,7 +276,11 @@ namespace WheresChris.Views
 	        }
 	        catch(Exception ex)
 	        {
-	            Crashes.TrackError(ex);
+	            Crashes.TrackError(ex, new Dictionary<string, string>
+	            {
+	                {"Source", ex.Source },
+	                { "stackTrace",ex.StackTrace}
+	            });
 	        }
 	        return null;
 	    }
@@ -293,7 +321,11 @@ namespace WheresChris.Views
 	        }
 	        catch(Exception ex)
 	        {
-	            Crashes.TrackError(ex);
+	            Crashes.TrackError(ex, new Dictionary<string, string>
+	            {
+	                {"Source", ex.Source },
+	                { "stackTrace",ex.StackTrace}
+	            });
 	        }
 
 	    }
@@ -307,7 +339,11 @@ namespace WheresChris.Views
 	        }
 	        catch(Exception ex)
 	        {
-	            Crashes.TrackError(ex);
+	            Crashes.TrackError(ex, new Dictionary<string, string>
+	            {
+	                {"Source", ex.Source },
+	                { "stackTrace",ex.StackTrace}
+	            });
 	        }
 	    }
 
@@ -321,7 +357,11 @@ namespace WheresChris.Views
 	        }
 	        catch(Exception ex)
 	        {
-	            Crashes.TrackError(ex);
+	            Crashes.TrackError(ex, new Dictionary<string, string>
+	            {
+	                {"Source", ex.Source },
+	                { "stackTrace",ex.StackTrace}
+	            });
 	        }
 	    }
 
@@ -336,7 +376,11 @@ namespace WheresChris.Views
 	        }
 	        catch(Exception ex)
 	        {
-	            Crashes.TrackError(ex);
+	            Crashes.TrackError(ex, new Dictionary<string, string>
+	            {
+	                {"Source", ex.Source },
+	                { "stackTrace",ex.StackTrace}
+	            });
 	        }
 	    }
 
@@ -349,7 +393,11 @@ namespace WheresChris.Views
             }
             catch(Exception ex)
             {
-                Crashes.TrackError(ex);
+                Crashes.TrackError(ex, new Dictionary<string, string>
+                {
+                    {"Source", ex.Source },
+                    { "stackTrace",ex.StackTrace}
+                });
             }
         }
 
@@ -375,7 +423,11 @@ namespace WheresChris.Views
 	        }
 	        catch(Exception ex)
 	        {
-	            Crashes.TrackError(ex);
+	            Crashes.TrackError(ex, new Dictionary<string, string>
+	            {
+	                {"Source", ex.Source },
+	                { "stackTrace",ex.StackTrace}
+	            });
 	        }
 
         }
@@ -398,7 +450,11 @@ namespace WheresChris.Views
 	        }
 	        catch(Exception ex)
 	        {
-	            Crashes.TrackError(ex);
+	            Crashes.TrackError(ex, new Dictionary<string, string>
+	            {
+	                {"Source", ex.Source },
+	                { "stackTrace",ex.StackTrace}
+	            });
 	        }
 }
 
@@ -427,7 +483,11 @@ namespace WheresChris.Views
 	        }
 	        catch(Exception ex)
 	        {
-	            Crashes.TrackError(ex);
+	            Crashes.TrackError(ex, new Dictionary<string, string>
+	            {
+	                {"Source", ex.Source },
+	                { "stackTrace",ex.StackTrace}
+	            });
 	        }
 
 	    }

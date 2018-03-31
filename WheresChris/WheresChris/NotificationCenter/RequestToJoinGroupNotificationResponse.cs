@@ -46,13 +46,21 @@ namespace WheresChris.NotificationCenter
                             }
                             catch(Exception ex)
                             {
-                                Crashes.TrackError(ex);
+                                Crashes.TrackError(ex, new Dictionary<string, string>
+                                {
+                                    {"Source", ex.Source },
+                                    { "stackTrace",ex.StackTrace}
+                                });
                             }
                         });
                     }
                     catch(Exception ex)
                     {
-                        Crashes.TrackError(ex);
+                        Crashes.TrackError(ex, new Dictionary<string, string>
+                        {
+                            {"Source", ex.Source },
+                            { "stackTrace",ex.StackTrace}
+                        });
                     }                                 
                 }),
                 new PopupItem("Ignore and try to invite them later", null),

@@ -162,7 +162,8 @@ namespace WheresChris.iOS
             {
                 Crashes.TrackError(ex, new Dictionary<string, string>
                 {
-                    { "Error",  ex.Message}
+                    {"Source", ex.Source },
+                    { "stackTrace",ex.StackTrace}
                 });
             }
         }

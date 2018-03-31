@@ -39,11 +39,15 @@ namespace WheresChris.Helpers
                 var groupVm = GroupHelper.InitializeGroupVm(selectedGroupMemberVms, userPosition, userPhoneNumber, expirationHours);
                 if(groupVm == null || groupVm.GroupMembers.Count < 1 || string.IsNullOrWhiteSpace(groupVm.PhoneNumber))throw new System.Exception("GroupVm is invalid");
 
-                MessagingCenter.Send<object, GroupVm>(new MessagingCenterSender(), LocationSender.StartOrAddGroupMsg, groupVm);
+                MessagingCenter.Send<MessagingCenterSender, GroupVm>(new MessagingCenterSender(), LocationSender.StartOrAddGroupMsg, groupVm);
             }
             catch(Exception ex)
             {
-                Crashes.TrackError(ex);
+                Crashes.TrackError(ex, new Dictionary<string, string>
+                {
+                    {"Source", ex.Source },
+                    { "stackTrace",ex.StackTrace}
+                });
             }
        }
 

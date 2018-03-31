@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Microsoft.AppCenter.Crashes;
 
@@ -28,7 +29,11 @@ namespace StayTogether.Helpers
             }
             catch (Exception ex)
             {               
-                Crashes.TrackError(ex);
+                Crashes.TrackError(ex, new Dictionary<string, string>
+                {
+                    {"Source", ex.Source },
+                    { "stackTrace",ex.StackTrace}
+                });
             }
         }
 

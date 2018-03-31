@@ -107,7 +107,11 @@ namespace WheresChris
                     }
                     catch (System.Exception exx)
                     {
-                        Crashes.TrackError(exx);
+                        Crashes.TrackError(exx, new Dictionary<string, string>
+                        {
+                            {"Source", exx.Source },
+                            { "stackTrace",exx.StackTrace}
+                        });
                     }
                 };
 
