@@ -35,7 +35,7 @@ namespace StayTogether.Droid.NotificationCenter
             var notificationManager = Application.Context.GetSystemService(Context.NotificationService) as NotificationManager;
             notificationManager?.Notify(NotificationId, notification);
 
-            ToastHelper.Display(title, body).ConfigureAwait(true);
+            ToastHelper.Display("T " + title, body).ConfigureAwait(true);
         }
     }
 }

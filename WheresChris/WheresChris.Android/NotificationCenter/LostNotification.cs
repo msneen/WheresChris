@@ -46,7 +46,7 @@ namespace StayTogether.Droid.NotificationCenter
             notificationManager?.Notify(NotificationId, notification);
 
             void SendNotificationsAction() => ShowLostPersonOnMap(groupMemberVm.PhoneNumber, groupMemberVm.Name,groupMemberVm.Latitude, groupMemberVm.Longitude).ConfigureAwait(true);
-            ToastHelper.Display(title, body, null, true, SendNotificationsAction).ConfigureAwait(true);
+            ToastHelper.Display("T " + title, body, null, true, SendNotificationsAction).ConfigureAwait(true);
         }
 
         public async void OnNotify(Intent intent)

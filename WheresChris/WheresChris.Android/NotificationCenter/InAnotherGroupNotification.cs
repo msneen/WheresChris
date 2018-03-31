@@ -1,14 +1,8 @@
-using System;
-using System.Collections.ObjectModel;
 using Android.App;
 using Android.Content;
 using StayTogether.Helpers;
-using StayTogether.Models;
-using WheresChris;
 using WheresChris.Droid;
 using WheresChris.NotificationCenter;
-using WheresChris.Views.Popup;
-using Xamarin.Forms;
 using Application = Android.App.Application;
 
 namespace StayTogether.Droid.NotificationCenter
@@ -44,7 +38,7 @@ namespace StayTogether.Droid.NotificationCenter
 
             //Display a toast as well as the local notification
             void QuitMyGroupAndJoinAnotherAction() => InAnotherGroupNotificationResponse.HandlePersonInAnotherGroup(phoneNumber, name);
-            ToastHelper.Display(title, body, null, true, QuitMyGroupAndJoinAnotherAction).ConfigureAwait(true);
+            ToastHelper.Display("T " + title, body, null, true, QuitMyGroupAndJoinAnotherAction).ConfigureAwait(true);
         }
 
         public void OnNotify(Intent intent)
