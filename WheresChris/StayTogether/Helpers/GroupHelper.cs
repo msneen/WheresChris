@@ -45,6 +45,7 @@ namespace StayTogether.Group
 
                 var nickname = SettingsHelper.GetNickname();
                 var adminMember = CreateAdminMember(position, phoneNumber, nickname);
+                if(adminMember == null)throw new System.Exception("adminMember cannot be null");
 
                 var currentUser = contactList.FirstOrDefault(m => m.PhoneNumber == phoneNumber);
                 if(currentUser != null)

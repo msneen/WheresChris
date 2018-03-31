@@ -29,7 +29,15 @@ namespace WheresChris.NotificationCenter
                     {
                         var userPhoneNumber = SettingsHelper.GetPhoneNumber();//this should be the other leader's phone number
 
-                        var groupMembers = groupMembersSimple.Select(member => member as GroupMemberVm).ToList();
+                        //This groupMember is null
+                        var groupMembers = groupMembersSimple.Select(member => new GroupMemberVm
+                        {
+                            Latitude = member.Latitude,
+                            Longitude = member.Longitude,
+                            Name = member.Name,
+                            PhoneNumber = member.PhoneNumber
+                        }).ToList();
+
                         AsyncHelper.RunSync(async () =>
                         {
                             try

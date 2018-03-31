@@ -23,9 +23,52 @@ namespace StayTogether
     public delegate void EventHandler<in TLostEventArgs>(object sender, TLostEventArgs e);
     public delegate void EventHandler(object sender, EventArgs e);
 
+
 	public class LocationSender
 	{
 	    private static LocationSender _instance;
+	    private static readonly Interval RestartTimer = new Interval();
+
+        public const string MemberAlreadyInGroupMsg = "MEMBERINGROUP";
+	    public const string SomeoneIsLostMsg = "SOMEONEISLOST";
+	    public const string GroupJoinedMsg = "GROUPJOINED";
+	    public const string GroupDisbandedMsg = "GROUPDISBANDED";
+	    public const string GroupCreatedMsg = "GROUPCREATED";
+	    public const string SomeoneAddedToGroupMsg = "SOMEONEADDEDTOGROUP";
+	    public const string SomeoneLeftMsg = "SOMEONELEFT";
+	    public const string ThisUserLeftGroupMsg = "ILEFTGROUP";
+	    public const string SomeoneAlreadyInAnotherGroupMsg = "SOMEONEALREADYINANOTHERGROUP";
+	    public const string GroupInvitationReceivedMsg = "GROUPINVITATIONRECEIVED";
+	    public const string LocationSentMsg = "LOCATIONSENT";
+	    public const string GroupPositionUpdateMsg = "GROUPPOSITIONUPDATE";
+	    public const string PhoneNumberMissingMsg = "PHONENUMBERMISSING";
+	    public const string ChatReceivedMsg = "CHATRECEIVED";
+	    public const string StartOrAddGroupMsg = "STARTORADDGROUP";
+	    public const string LeaveGroupMsg = "LEAVEGROUP";
+	    public const string EndGroupMsg = "ENDGROUP";
+	    public const string SendChatMsg = "SENDCHAT";
+	    public const string GroupInvitationsMsg = "GROUPINVITATIONSMSG";
+	    public const string GetInvitationsMsg = "GETINVITATIONS";             
+        public const string ConfirmGroupInvitationMsg = "CONFIRMGROUPiNVITATION";
+	    public const string PositionUpdatedMsg = "POSITIONUPDATED";
+	    public const string RequestAdditionalMembersJoinGroup = "REQUESTADDITIONALMEMBERSJOINGROUP";//THIS ORIGINATES THE CALL
+	    public const string AdditionalMembersRequestJoinGroup = "ADDITIONALMEMBERSREQUESTJOINGROUP";//This is the signal r call to the group leader when someone requests to add members
+	    public const string SendTelemetryMsg = "SENDTELEMETRYMESSAGE";
+	    public const string LeaveOrEndGroupMsg = "LEAVEORENDGROUPMESSAGE";
+
+        public bool InAGroup { get; set; }
+        public bool GroupLeader { get; set; }
+        public bool IsInitialized { get; set; }
+        public bool HasBeenConnected { get; set; }
+        public ConnectionState ConnectionState { get; set; }
+        public List<GroupMemberSimpleVm> GroupMembers { get; set; }
+	    public List<GroupMemberVm> InvitedGroupMembers { get; set; } = new List<GroupMemberVm>();
+
+        private HubConnection _hubConnection;
+	    private IHubProxy _chatHubProxy;
+	    private IGeolocator _geoLocator;
+	    private string _phoneNumber;
+        private string _groupId = ""; //Creator of group's phone number
 
 	    public static bool IsGeolocationAvailable()
 	    {
@@ -93,45 +136,6 @@ namespace StayTogether
             return _instance;
         }
 
-
-        public const string MemberAlreadyInGroupMsg = "MEMBERINGROUP";
-	    public const string SomeoneIsLostMsg = "SOMEONEISLOST";
-	    public const string GroupJoinedMsg = "GROUPJOINED";
-	    public const string GroupDisbandedMsg = "GROUPDISBANDED";
-	    public const string GroupCreatedMsg = "GROUPCREATED";
-	    public const string SomeoneAddedToGroupMsg = "SOMEONEADDEDTOGROUP";
-	    public const string SomeoneLeftMsg = "SOMEONELEFT";
-	    public const string ThisUserLeftGroupMsg = "ILEFTGROUP";
-	    public const string SomeoneAlreadyInAnotherGroupMsg = "SOMEONEALREADYINANOTHERGROUP";
-	    public const string GroupInvitationReceivedMsg = "GROUPINVITATIONRECEIVED";
-	    public const string LocationSentMsg = "LOCATIONSENT";
-	    public const string GroupPositionUpdateMsg = "GROUPPOSITIONUPDATE";
-	    public const string PhoneNumberMissingMsg = "PHONENUMBERMISSING";
-	    public const string ChatReceivedMsg = "CHATRECEIVED";
-	    public const string StartOrAddGroupMsg = "STARTORADDGROUP";
-	    public const string LeaveGroupMsg = "LEAVEGROUP";
-	    public const string EndGroupMsg = "ENDGROUP";
-	    public const string SendChatMsg = "SENDCHAT";
-	    public const string GroupInvitationsMsg = "GROUPINVITATIONSMSG";
-	    public const string GetInvitationsMsg = "GETINVITATIONS";             
-        public const string ConfirmGroupInvitationMsg = "CONFIRMGROUPiNVITATION";
-	    public const string PositionUpdatedMsg = "POSITIONUPDATED";
-	    public const string RequestAdditionalMembersJoinGroup = "REQUESTADDITIONALMEMBERSJOINGROUP";//THIS ORIGINATES THE CALL
-	    public const string AdditionalMembersRequestJoinGroup = "ADDITIONALMEMBERSREQUESTJOINGROUP";//This is the signal r call to the group leader when someone requests to add members
-	    public const string SendTelemetryMsg = "SENDTELEMETRYMESSAGE";
-	    public const string LeaveOrEndGroupMsg = "LEAVEORENDGROUPMESSAGE";
-
-        public bool InAGroup { get; set; }
-        public bool GroupLeader { get; set; }
-        public bool IsInitialized { get; set; }
-        public List<GroupMemberSimpleVm> GroupMembers { get; set; }
-	    public List<GroupMemberVm> InvitedGroupMembers { get; set; } = new List<GroupMemberVm>();
-
-        private HubConnection _hubConnection;
-	    private IHubProxy _chatHubProxy;
-	    private IGeolocator _geoLocator;
-	    private string _phoneNumber;
-        private string _groupId = ""; //Creator of group's phone number
         
 
         public LocationSender ()
@@ -264,8 +268,26 @@ Debugger.Break();
 
                 _chatHubProxy.On<GroupMemberVm, string>("GroupMessage", ChatMessageReceived);
 
-                // Start the connection
-                await _hubConnection.Start();
+                _hubConnection.Closed += () =>
+                {
+                    
+                    //restart the connection in 5 seconds.
+                    RestartTimer.SetInterval(StartConnection, 5000);
+                };
+                _hubConnection.Reconnected += () =>
+                {
+                    
+                };
+                _hubConnection.StateChanged += change =>
+                {
+                    ConnectionState = change.NewState;
+                    if(change.NewState == ConnectionState.Connected)
+                    {
+                        HasBeenConnected = true;
+                    }
+                };
+                               
+                await StartConnectionAsync();
 
                 await SetUpLocationEvents();
 
@@ -286,6 +308,17 @@ Debugger.Break();
                 Console.WriteLine("LocationSender Loaded");
             }
         }
+
+	    private void StartConnection()
+	    {
+	        AsyncHelper.RunSync(StartConnectionAsync);
+	    }
+
+	    private async Task StartConnectionAsync()
+	    {
+// Start the connection
+	        await _hubConnection.Start();
+	    }
 
 	    private async Task RequestAdditionalMembersAddedToGroup(AdditionalMemberInvitationVm additionalMemberInvitationVm)
 	    {
@@ -340,19 +373,28 @@ Debugger.Break();
         }
 
         private bool CanSend()
-	    {
-	        if (_phoneNumber.IsValidPhoneNumber() && this.IsInitialized) return true;
+        {
+            if(!HasBeenConnected && !this.IsInitialized)
+            {
+                this.Initialize();
+            }
+            if(ConnectionState != ConnectionState.Connected) return false;
+
+	        if (_phoneNumber.IsValidPhoneNumber() ) return true;
 
             if (string.IsNullOrWhiteSpace(_phoneNumber))
             {
                 GetPhoneNumber();
-                if (_phoneNumber.IsValidPhoneNumber() && this.IsInitialized) return true;
-                if (!IsInitialized && !string.IsNullOrWhiteSpace(_phoneNumber))
+                if(_phoneNumber.IsValidPhoneNumber())
                 {
-                    Initialize();
+                    return true;
                 }
-            }
-            MessagingCenter.Send<LocationSender>(this, PhoneNumberMissingMsg);
+                else
+                {
+                    MessagingCenter.Send<LocationSender>(this, PhoneNumberMissingMsg);
+                    return false;
+                }
+            }            
             return false;
 	    }
 
