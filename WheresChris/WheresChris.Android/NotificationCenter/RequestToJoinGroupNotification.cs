@@ -40,7 +40,7 @@ namespace StayTogether.Droid.NotificationCenter
             notificationManager?.Notify(NotificationId, notification);
 
             void SendNotificationsAction() => RequestToJoinGroupNotificationResponse.HandleRequestToJoinMyGroup(groupmembers);
-            ToastHelper.Display("T " + title, body, null, true, SendNotificationsAction).ConfigureAwait(true);
+            ToastHelper.Display(title, body, null, true, SendNotificationsAction).ConfigureAwait(true);
         }
 
         public void OnNotify(Intent intent)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Plugin.Toasts;
 using Xamarin.Forms;
+using StayTogether.Extensions;
 
 namespace StayTogether.Helpers
 {
@@ -23,17 +24,29 @@ namespace StayTogether.Helpers
 
         public static async Task Display(NotificationOptions options, Action action = null)
         {
-            await CancelToasts();
+            //await CancelToasts();
+            options.AllowTapInNotificationCenter = true;
+            var color = (Color) Application.Current.Resources["Primary"];
+            
+            options.AndroidOptions = new AndroidOptions
+            {
+                HexColor = color.GetHexString()
+            };
             var notification = DependencyService.Get<IToastNotificator>();
             var delivered = await notification.GetDeliveredNotifications();
             var already = delivered.FirstOrDefault(n => n.Title == options.Title && n.Description == options.Description);
             if(already != null) return;
 
-            var result = await notification.Notify(options);
-            if(options.IsClickable && result.Action == NotificationAction.Clicked)
+            notification.Notify((INotificationResult result) =>
             {
-                action?.Invoke();
-            }
+                if(options.IsClickable && result.Action == NotificationAction.Clicked)
+                {
+                    action?.Invoke();
+                }
+            }   
+            ,options);
+            
+
         }
 
         public static Task CancelToasts()
