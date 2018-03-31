@@ -28,7 +28,7 @@ namespace WheresChris.Views
         {
             SaveButton.Clicked += SaveButton_OnClicked;
             InitializeMessagingCenterSubscriptions();
-            InitializePhoneAndNickname();
+            AsyncHelper.RunSync(InitializePhoneAndNickname);
             Invitation = InvitationHelper.LoadInvitation();
             if (Invitation?.Members != null && Invitation.Members.Count > 0)
             {
@@ -40,19 +40,16 @@ namespace WheresChris.Views
             }
         }
 
-        private void InitializePhoneAndNickname()
+        private async Task InitializePhoneAndNickname()
         {
             PhoneNumber.Text = SettingsHelper.GetPhoneNumber();
-            if (string.IsNullOrWhiteSpace(PhoneNumber.Text))
+            if(string.IsNullOrWhiteSpace(PhoneNumber.Text))
             {
-                Device.BeginInvokeOnMainThread(async ()=>
-                {
-                    var phoneNumber = await SettingsHelper.GetPhoneNumberFromService();
-                    PhoneNumber.Text = phoneNumber;
-                });
-            }
-            
 
+                var phoneNumber = await SettingsHelper.GetPhoneNumberFromService();
+
+                PhoneNumber.Text = phoneNumber;
+            }
             Nickname.Text = SettingsHelper.GetNickname();
 
             DisableIfValid(PhoneNumber);
@@ -68,6 +65,8 @@ namespace WheresChris.Views
                 InviteButton.IsEnabled = false;
                 JoinButton.IsEnabled = false;
             }
+               
+            
         }
 
         private static void DisableIfValid(Entry textbox)
