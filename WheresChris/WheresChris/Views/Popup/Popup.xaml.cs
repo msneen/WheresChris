@@ -17,6 +17,8 @@ namespace WheresChris.Views.Popup
 
         public Popup(ObservableCollection<PopupItem> items)
         {
+            this.BackgroundColor = new Color(0,0,0, 0.1);
+            
             InitializeComponent();
 
             Items = items;
