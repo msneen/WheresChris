@@ -10,51 +10,22 @@
             IsPullToRefreshEnabled="true"
             CachingStrategy="RecycleElement">
         <ListView.Header>
-          <StackLayout Padding="10" 
+            <StackLayout Padding="10" 
                        Orientation="Horizontal"
                        HorizontalOptions="FillAndExpand"
                        BackgroundColor="#dadada">
-            <Label Text="Invites"
+                <Label Text="Invites"
                    HorizontalTextAlignment="Center"
                    HorizontalOptions="FillAndExpand"
                    TextColor="Black"
                    FontAttributes="Bold"/>
                 <Button x:Name="RefreshButton" Text="Refresh" IsVisible="False" Clicked="RefreshButton_OnClicked" Style="{StaticResource buttonStyle}" />
-        </StackLayout>
-    </ListView.Header>
-    <!--Built in Cells-->
-    <ListView.ItemTemplate>
-      <DataTemplate>
-        <TextCell Text="{Binding Name}"/>
-      </DataTemplate>
-    </ListView.ItemTemplate>
-    
-    <!--Custom View Cells-->
-    <!--
-    <ListView.ItemTemplate>
-      <DataTemplate>
-        <ViewCell>
-          <StackLayout>
-            <Label Text="{Binding Text}" 
-                   Style="{DynamicResource ListItemTextStyle}" />
-            <Label Text="{Binding Detail}" 
-                   Style="{DynamicResource ListItemDetailTextStyle}"/>
-          </StackLayout>
-        </ViewCell>
-      </DataTemplate>
-    </ListView.ItemTemplate>
-    -->
-    <!--<ListView.Footer>
-      <StackLayout Padding="10"
-                   Orientation="Horizontal"
-                   HorizontalOptions="FillAndExpand"
-                   BackgroundColor="#dadada">
-        <Label Text="Footer" 
-               HorizontalTextAlignment="Center" 
-               HorizontalOptions="FillAndExpand" 
-               TextColor="Black"
-               FontAttributes="Bold"/>
-      </StackLayout>
-    </ListView.Footer>-->
-  </ListView>
+            </StackLayout>
+        </ListView.Header>
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <TextCell Text="{Binding Name}"/>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
 </ContentPage>

@@ -48,12 +48,10 @@ namespace WheresChris.Views
 
         void Handle_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            if (e.SelectedItem == null)
-                return;
+            if (e.SelectedItem == null) return;
 
             //await DisplayAlert("Selected", e.SelectedItem.ToString(), "OK");
-            var selectedItem = e.SelectedItem as ContactDisplayItemVm;
-            if (selectedItem != null)
+            if (e.SelectedItem is ContactDisplayItemVm selectedItem)
             {
                 var groupMemberSimpleVm = new GroupMemberSimpleVm
                 {
