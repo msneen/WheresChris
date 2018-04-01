@@ -82,9 +82,9 @@ namespace WheresChris.Helpers
         }
 
         private static bool _gpsNotificationWasDisplayed;
-        public static async Task<PermissionStatus> RequestGpsEnable()
+        public static Task<PermissionStatus> RequestGpsEnable()
         {
-            if(_gpsNotificationWasDisplayed) return PermissionStatus.Unknown;
+            if(_gpsNotificationWasDisplayed) return Task.FromResult(PermissionStatus.Unknown);
 
             var title = "Locations are disabled";
             var body = "Please enable Location services on your device";
@@ -92,10 +92,10 @@ namespace WheresChris.Helpers
 
             Plugin.LocalNotifications.CrossLocalNotifications.Current.Show(title, body, id);
 
-            await ToastHelper.Display(title, body);
+            ToastHelper.Display(title, body);
             _gpsNotificationWasDisplayed = true;
 
-            return PermissionStatus.Unknown;
+            return Task.FromResult( PermissionStatus.Unknown);
         }
 
         public static async Task<PermissionStatus> RequestPhonePermission()

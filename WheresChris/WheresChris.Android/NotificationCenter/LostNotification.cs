@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
+using Android.Support.V4.App;
 using Java.Lang;
 using Plugin.ExternalMaps;
 using Plugin.ExternalMaps.Abstractions;
@@ -15,7 +16,6 @@ namespace StayTogether.Droid.NotificationCenter
     {
         public static readonly int NotificationId = 500;
         public static readonly string ShowLostMemberOnMap = "show_member_on_map";
-
 
         public static void DisplayLostNotification(GroupMemberVm groupMemberVm)
         {
@@ -33,20 +33,11 @@ namespace StayTogether.Droid.NotificationCenter
             var title = $"{ContactsHelper.NameOrPhone(groupMemberVm.PhoneNumber, groupMemberVm.Name)} is lost by {lostDistance} feet";
             var body = "View On Map";
 
-            var notification = new Notification.Builder(Application.Context)
-                .SetSmallIcon(Resource.Drawable.ic_vol_type_speaker_dark)
-                .SetContentTitle(title)
-                .SetContentText(body)
-                .SetContentIntent(PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.UpdateCurrent | PendingIntentFlags.OneShot))
-                .Build();
+            NotificationStrategyController.Notify(title, body, NotificationId, notificationIntent);
 
-            notification.Flags = NotificationFlags.AutoCancel;
-
-            var notificationManager = Application.Context.GetSystemService(Context.NotificationService) as NotificationManager;
-            notificationManager?.Notify(NotificationId, notification);
-
-            void SendNotificationsAction() => ShowLostPersonOnMap(groupMemberVm.PhoneNumber, groupMemberVm.Name,groupMemberVm.Latitude, groupMemberVm.Longitude).ConfigureAwait(true);
-            ToastHelper.Display(title, body, null, true, SendNotificationsAction).ConfigureAwait(true);
+            void SendNotificationsAction() => ShowLostPersonOnMap(groupMemberVm.PhoneNumber, groupMemberVm.Name, groupMemberVm.Latitude, groupMemberVm.Longitude).ConfigureAwait(true);
+            ToastHelper.Display(title, body, null, true, SendNotificationsAction);
+            //AsyncHelper.RunSync(() => ToastHelper.Display(title, body, null, true, SendNotificationsAction));
         }
 
         public async void OnNotify(Intent intent)

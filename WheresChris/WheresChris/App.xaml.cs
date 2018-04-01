@@ -38,7 +38,7 @@ namespace WheresChris
             MessagingCenter.Subscribe<LocationSender, ChatMessageSimpleVm>(new MessagingCenterSender(), LocationSender.ChatReceivedMsg,
                 (sender, chatMessageVm) =>
                 {
-                    Device.BeginInvokeOnMainThread(async () =>
+                    Device.BeginInvokeOnMainThread(() =>
                     {
                         var myPhoneNumber = SettingsHelper.GetPhoneNumber();
                         if(chatMessageVm.Member.PhoneNumber == myPhoneNumber) return;
@@ -47,7 +47,7 @@ namespace WheresChris
                         var body = chatMessageVm.Message;
 
                         void SendNotificationsAction() => SetCurrentTab("Chat");
-                        await ToastHelper.Display(title, body, null, true, SendNotificationsAction);
+                        ToastHelper.Display(title, body, null, true, SendNotificationsAction);
                     });
                 });
         }

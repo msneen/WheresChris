@@ -1,5 +1,6 @@
 using Android.App;
 using Android.Content;
+using Android.Support.V4.App;
 using StayTogether.Helpers;
 using WheresChris.Droid;
 using WheresChris.NotificationCenter;
@@ -24,22 +25,14 @@ namespace StayTogether.Droid.NotificationCenter
             var title = "Invited Person in another Group";
             var body = $"{displayNameNumber} is in another group";
 
-            var notification = new Notification.Builder(Application.Context)
-                .SetSmallIcon(Resource.Drawable.ic_vol_type_speaker_dark)
-                .SetContentTitle(title)
-                .SetContentText(body)
-                .SetContentIntent(PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.UpdateCurrent | PendingIntentFlags.OneShot))
-                .Build();
-
-            notification.Flags = NotificationFlags.AutoCancel;
-
-            var notificationManager = Application.Context.GetSystemService(Context.NotificationService) as NotificationManager;
-            notificationManager?.Notify(NotificationId, notification);
+            NotificationStrategyController.Notify(title, body, NotificationId, notificationIntent);
 
             //Display a toast as well as the local notification
             void QuitMyGroupAndJoinAnotherAction() => InAnotherGroupNotificationResponse.HandlePersonInAnotherGroup(phoneNumber, name);
-            ToastHelper.Display(title, body, null, true, QuitMyGroupAndJoinAnotherAction).ConfigureAwait(true);
+            ToastHelper.Display(title, body, null, true, QuitMyGroupAndJoinAnotherAction);
+            //AsyncHelper.RunSync(() => ToastHelper.Display(title, body, null, true, QuitMyGroupAndJoinAnotherAction));            
         }
+
 
         public void OnNotify(Intent intent)
         {

@@ -31,7 +31,7 @@ namespace WheresChris.Views.Popup
                 
                 var choice = Items.FirstOrDefault(i => i.Text == action);
                 if(choice == null) return;
-
+                
                 PerformeSelectedAction(choice);
             });
             

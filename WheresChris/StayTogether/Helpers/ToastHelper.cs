@@ -10,7 +10,7 @@ namespace StayTogether.Helpers
 {
     public class ToastHelper
     {
-        public static async Task Display(string title, string body, IDictionary<string, string> customArgs = null, bool isClickable = false, Action action = null)
+        public static void Display(string title, string body, IDictionary<string, string> customArgs = null, bool isClickable = false, Action action = null)
         {
             var options = new NotificationOptions()
             {
@@ -19,25 +19,23 @@ namespace StayTogether.Helpers
                 IsClickable = isClickable,
                 CustomArgs = customArgs,                
             };
-            await Display(options, action);
+            Display(options, action);
         }
 
-        public static async Task Display(NotificationOptions options, Action action = null)
+        public static void Display(NotificationOptions options, Action action = null)
         {
-            //await CancelToasts();
-            options.AllowTapInNotificationCenter = true;
+            //options.AllowTapInNotificationCenter = false;
+            options.ClearFromHistory = true;
             var color = (Color) Application.Current.Resources["Primary"];
             
             options.AndroidOptions = new AndroidOptions
             {
                 HexColor = color.GetHexString()
             };
-            var notification = DependencyService.Get<IToastNotificator>();
-            //var delivered = await notification.GetDeliveredNotifications();
-            //var already = delivered.FirstOrDefault(n => n.Title == options.Title && n.Description == options.Description);
-            //if(already != null) return;
+            
+            var notifier = DependencyService.Get<IToastNotificator>();
 
-            notification.Notify((INotificationResult result) =>
+            notifier.Notify((INotificationResult result) =>
             {
                 if(options.IsClickable && result.Action == NotificationAction.Clicked)
                 {
@@ -45,8 +43,6 @@ namespace StayTogether.Helpers
                 }
             }   
             ,options);
-            
-
         }
 
         public static Task CancelToasts()

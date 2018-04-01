@@ -1,5 +1,6 @@
 using Android.App;
 using Android.Content;
+using Android.Support.V4.App;
 using StayTogether.Droid.Services;
 using StayTogether.Helpers;
 using StayTogether.Models;
@@ -30,21 +31,11 @@ namespace StayTogether.Droid.NotificationCenter
             var title = $"Group Invitation from {ContactsHelper.NameOrPhone(phoneNumber, name)}";
             var body = $"{ContactsHelper.NameOrPhone(phoneNumber, name)} invited to you join a group.  Click here to join!";
 
-            var notification = new Notification.Builder(Application.Context)
-                .SetSmallIcon(Resource.Drawable.ic_vol_type_speaker_dark)
-                .SetContentTitle(title)
-                .SetContentText(body)
-                .SetContentIntent(PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.UpdateCurrent | PendingIntentFlags.OneShot))
-                .Build();
-
-            notification.Flags = NotificationFlags.AutoCancel;
-
-            var notificationManager = Application.Context.GetSystemService(Context.NotificationService) as NotificationManager;
-
-            notificationManager.Notify(NotificationId, notification);
+            NotificationStrategyController.Notify(title, body, NotificationId, notificationIntent);
 
             void SendNotificationsAction() => ConfirmInvitation(name, phoneNumber);
-            ToastHelper.Display(title, body, null, true, SendNotificationsAction).ConfigureAwait(true);
+            ToastHelper.Display(title, body, null, true, SendNotificationsAction);
+            //AsyncHelper.RunSync(() => ToastHelper.Display(title, body, null, true, SendNotificationsAction));           
         }
 
 
