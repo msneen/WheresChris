@@ -273,7 +273,7 @@ namespace WheresChris
         {
             Device.BeginInvokeOnMainThread(async () =>
             {
-                await Current.NavigationProxy.PushModalAsync(new Popup(items));   
+                await Current.NavigationProxy.PushModalAsync(new Popup(items)); 
             });         
         }
 

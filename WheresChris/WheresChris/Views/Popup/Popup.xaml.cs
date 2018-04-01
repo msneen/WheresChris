@@ -23,33 +23,23 @@ namespace WheresChris.Views.Popup
 
             Items = items;
 
-            //Remove this example after debugging
-            if(items == null)
+            Device.BeginInvokeOnMainThread(async () =>
             {
-                Items = new ObservableCollection<PopupItem>
-                {
-                    new PopupItem("Text1", async () => { await DisplayAlert("Item Tapped", "An item was tapped.", "OK"); }), //Remove this example after debugging
-                    new PopupItem("Text2", () => { Debug.WriteLine("Text2"); }),
-                    new PopupItem("Text3", () => { Debug.WriteLine("Text3"); }),
-                };
-            }
+                var choices = Items.Select(i => i.Text).ToArray();
+                var action = await DisplayActionSheet("Pick One", "Cancel", null, choices);
+                if(string.IsNullOrWhiteSpace(action)) return;
+                
+                var choice = Items.FirstOrDefault(i => i.Text == action);
+                if(choice == null) return;
 
-            MyListView.ItemsSource = Items;
+                PerformeSelectedAction(choice);
+            });
+            
         }
 
-        void Handle_ItemTapped(object sender, ItemTappedEventArgs e)
+        private static void PerformeSelectedAction(PopupItem clickedItem)
         {
-            if (e.Item == null)
-                return;
-
-            //await DisplayAlert("Item Tapped", "An item was tapped.", "OK");//remove me
-
-            var clickedItem = (PopupItem) e.Item;
             clickedItem?.ClickAction?.Invoke();
-
-            //Deselect Item
-            ((ListView)sender).SelectedItem = null;
-
             Application.Current.MainPage.Navigation.PopModalAsync(true);
         }
     }
