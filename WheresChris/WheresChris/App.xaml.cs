@@ -271,7 +271,10 @@ namespace WheresChris
         /// <param name="items"></param>
         public void ShowPopup(ObservableCollection<PopupItem> items)
         {
-            Current.NavigationProxy.PushModalAsync(new Popup(items));
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                await Current.NavigationProxy.PushModalAsync(new Popup(items));   
+            });         
         }
 
 

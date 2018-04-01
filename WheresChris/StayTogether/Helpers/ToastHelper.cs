@@ -33,9 +33,9 @@ namespace StayTogether.Helpers
                 HexColor = color.GetHexString()
             };
             var notification = DependencyService.Get<IToastNotificator>();
-            var delivered = await notification.GetDeliveredNotifications();
-            var already = delivered.FirstOrDefault(n => n.Title == options.Title && n.Description == options.Description);
-            if(already != null) return;
+            //var delivered = await notification.GetDeliveredNotifications();
+            //var already = delivered.FirstOrDefault(n => n.Title == options.Title && n.Description == options.Description);
+            //if(already != null) return;
 
             notification.Notify((INotificationResult result) =>
             {
