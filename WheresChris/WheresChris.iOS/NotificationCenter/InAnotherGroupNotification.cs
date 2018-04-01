@@ -32,7 +32,7 @@ namespace StayTogether.iOS.NotificationCenter
 
             //Display a toast as well as the local notification
             void QuitMyGroupAndJoinAnotherAction() => InAnotherGroupNotificationResponse.HandlePersonInAnotherGroup(phoneNumber, name);
-            ToastHelper.Display(title, body, null, true, QuitMyGroupAndJoinAnotherAction).ConfigureAwait(true);
+            ToastHelper.Display(title, body, null, true, QuitMyGroupAndJoinAnotherAction);
         }
 
         public static List<UIAlertAction> OnNotify(UILocalNotification notification)

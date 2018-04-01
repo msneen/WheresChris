@@ -47,7 +47,7 @@ namespace WheresChris.Views
             MessagingCenter.Subscribe<LocationSender, ChatMessageSimpleVm>(this, LocationSender.ChatReceivedMsg,
                 (sender, chatMessageVm) =>
                 {
-                    Device.BeginInvokeOnMainThread(async () =>
+                    Device.BeginInvokeOnMainThread(() =>
                     {
                         Items.Add(new ChatMessageVm
                         {
@@ -59,13 +59,19 @@ namespace WheresChris.Views
                 });
 
 
-            MessagingCenter.Subscribe<MessagingCenterSender>(this, LocationSender.LeaveGroupMsg, async (sender) =>
+            MessagingCenter.Subscribe<MessagingCenterSender>(this, LocationSender.LeaveGroupMsg, (sender) =>
             {
-               Items.Clear();
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    Items.Clear();
+                });
             });
-            MessagingCenter.Subscribe<MessagingCenterSender>(this, LocationSender.EndGroupMsg, async (sender) =>
+            MessagingCenter.Subscribe<MessagingCenterSender>(this, LocationSender.EndGroupMsg, (sender) =>
             {
-                Items.Clear();
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    Items.Clear();
+                });
             });
         }
 

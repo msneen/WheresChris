@@ -29,7 +29,7 @@ namespace WheresChris
         {
             InitializeComponent();
 
-            AsyncHelper.RunSync(SetMainPageAsync);
+            SetMainPage();
 
         }
 
@@ -71,16 +71,16 @@ namespace WheresChris
             AsyncHelper.RunSync(AttemptLoadPagesNeedingPermissionsAsync);
         }
 
-        public static async Task SetMainPageAsync()
+        public static void SetMainPage()
         {
             try
             {
-                _mainTabbedPage = new TabbedPage();               
+                _mainTabbedPage = new TabbedPage();
                 Current.MainPage = _mainTabbedPage;
 
                 AddPage(new MainPage(), "Main");
 
-                PermissionRequest.SetInterval(AttemptLoadPagesNeedingPermissions, 1000);//await AttemptLoadPagesNeedingPermissionsAsync();
+                PermissionRequest.SetInterval(AttemptLoadPagesNeedingPermissions, 5000);//await AttemptLoadPagesNeedingPermissionsAsync();
 
 
                 AddPage(new AboutPage(), "About");
@@ -115,7 +115,7 @@ namespace WheresChris
                     }
                 };
 
-                PermissionRequest.SetInterval(FinishInitializing, 2000);
+                PermissionRequest.SetInterval(FinishInitializing, 5000);
 
             }
             catch (System.Exception ex)
@@ -226,6 +226,7 @@ namespace WheresChris
 
         public static Page GetCurrentTab()
         {
+
             var tabbedPage = Current.MainPage as TabbedPage;
             return tabbedPage?.CurrentPage;
         }
@@ -237,8 +238,10 @@ namespace WheresChris
 
         public static void SetCurrentTab(string title)
         {
-            GetMainTab().CurrentPage = GetPage(title);
-
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                GetMainTab().CurrentPage = GetPage(title);
+            });
         }
 
         public static Page GetPage(string title)

@@ -28,7 +28,7 @@ namespace WheresChris.Views
         {
             SaveButton.Clicked += SaveButton_OnClicked;
             InitializeMessagingCenterSubscriptions();
-            AsyncHelper.RunSync(InitializePhoneAndNickname);
+            InitializePhoneAndNickname();
             Invitation = InvitationHelper.LoadInvitation();
             if (Invitation?.Members != null && Invitation.Members.Count > 0)
             {
@@ -40,33 +40,35 @@ namespace WheresChris.Views
             }
         }
 
-        private async Task InitializePhoneAndNickname()
+        private void InitializePhoneAndNickname()
         {
-            PhoneNumber.Text = SettingsHelper.GetPhoneNumber();
-            if(string.IsNullOrWhiteSpace(PhoneNumber.Text))
+            Device.BeginInvokeOnMainThread(async () =>
             {
+                PhoneNumber.Text = SettingsHelper.GetPhoneNumber();
+                if(string.IsNullOrWhiteSpace(PhoneNumber.Text))
+                {
 
-                var phoneNumber = await SettingsHelper.GetPhoneNumberFromService();
+                    var phoneNumber = await SettingsHelper.GetPhoneNumberFromService();
 
-                PhoneNumber.Text = phoneNumber;
-            }
-            Nickname.Text = SettingsHelper.GetNickname();
+                    PhoneNumber.Text = phoneNumber;
+                }
+                Nickname.Text = SettingsHelper.GetNickname();
 
-            DisableIfValid(PhoneNumber);
-            DisableIfValid(Nickname);
-            if (PhoneNumber.IsEnabled == false && Nickname.IsEnabled == false)
-            {
-                SaveButton.IsVisible = false;
-                InviteButton.IsEnabled = true;
-                JoinButton.IsEnabled = true;
-            }
-            else
-            {
-                InviteButton.IsEnabled = false;
-                JoinButton.IsEnabled = false;
-            }
-               
-            
+                DisableIfValid(PhoneNumber);
+                DisableIfValid(Nickname);
+                if(PhoneNumber.IsEnabled == false && Nickname.IsEnabled == false)
+                {
+                    SaveButton.IsVisible = false;
+                    InviteButton.IsEnabled = true;
+                    JoinButton.IsEnabled = true;
+                }
+                else
+                {
+                    InviteButton.IsEnabled = false;
+                    JoinButton.IsEnabled = false;
+                }
+
+            });
         }
 
         private static void DisableIfValid(Entry textbox)
@@ -88,21 +90,26 @@ namespace WheresChris.Views
 
         public void StartGroup(object sender, EventArgs e)
         {
-            App.SetCurrentTab("Invite");
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                App.SetCurrentTab("Invite");
+            });
         }
 
         public void JoinGroup(object sender, EventArgs e)
         {
-            App.SetCurrentTab("Join");
-
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                App.SetCurrentTab("Join");
+            });
         }
 
         private void SaveButton_OnClicked(object sender, EventArgs e)
         {
             TrySavePhoneNumber();
-            if (AskForPhoneNumber().ConfigureAwait(true).GetAwaiter().GetResult()) return;
+            if (AskForPhoneNumber()) return;
             TrySaveNickname();
-            if ( AskForNickname().ConfigureAwait(true).GetAwaiter().GetResult()) return;
+            if ( AskForNickname()) return;
             SaveButton.IsVisible = false;
             InviteButton.IsEnabled = true;
             JoinButton.IsEnabled = true;
@@ -119,41 +126,34 @@ namespace WheresChris.Views
 
         private void TrySaveNickname()
         {
-            if (Nickname.IsEnabled && !string.IsNullOrWhiteSpace(Nickname.Text))
-            {
-                SettingsHelper.SaveNickname(Nickname.Text);
-                Nickname.IsEnabled = false;
-            }
+            if(!Nickname.IsEnabled || string.IsNullOrWhiteSpace(Nickname.Text)) return;
+
+            SettingsHelper.SaveNickname(Nickname.Text);
+            Nickname.IsEnabled = false;
         }
 
-        private async Task<bool> AskForNickname()
+        private bool AskForNickname()
         {
-            if (string.IsNullOrWhiteSpace(Nickname.Text))
-            {
-                await (new ToastNotification()).Notify(new NotificationOptions
-                {
-                    Title = "Nickname",
-                    Description = "Please enter your Nickname"
-                });
-                Nickname.Focus();
-                return true;
-            }
-            return false;
+            if(!string.IsNullOrWhiteSpace(Nickname.Text)) return false;
+
+            var title = "Nickname";
+            var description = "Please enter your Nickname";
+            ToastHelper.Display(title, description);
+
+            Nickname.Focus();
+            return true;
         }
 
-        private async Task<bool> AskForPhoneNumber()
+        private bool AskForPhoneNumber()
         {
-            if (string.IsNullOrWhiteSpace(PhoneNumber.Text))
-            {
-                await (new ToastNotification()).Notify(new NotificationOptions
-                {
-                    Title = "Phone Number",
-                    Description = "Please enter your PhoneNumber"
-                });
-                PhoneNumber.Focus();
-                return true;
-            }
-            return false;
+            if(!string.IsNullOrWhiteSpace(PhoneNumber.Text)) return false;
+
+            var title = "Phone Number";
+            var description = "Please enter your PhoneNumber";
+            ToastHelper.Display(title,description);
+
+            PhoneNumber.Focus();
+            return true;
         }
 
         private async Task SendLastInvitmtion(object sender, EventArgs e)
