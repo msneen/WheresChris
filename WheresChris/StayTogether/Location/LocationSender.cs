@@ -873,10 +873,6 @@ Debugger.Break();
                     GroupMembers = null;
                     MessagingCenter.Send<LocationSender>(this, ThisUserLeftGroupMsg);
                 }
-                else
-                {
-                    await SendTelemetry($"Cannot Leave Group.  InAGroup={InAGroup} GroupLeader={GroupLeader}");
-                }
             }
             catch (Exception ex)
             {
