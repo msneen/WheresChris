@@ -365,18 +365,30 @@ Debugger.Break();
 
 	    private async Task InvokeChatHubProxy(string method, params object[] args)
 	    {
-	        if (CanSend())
+	        var startTime = DateTime.Now;
+	        while(DateTime.Now.Subtract(startTime) < TimeSpan.FromSeconds(20))
 	        {
-	            await _chatHubProxy.Invoke(method, args);
+	            if(CanSend())
+	            {
+	                await _chatHubProxy.Invoke(method, args);
+	                return;
+	            }
+	            await Task.Delay(1000);
 	        }
 	    }
 
         public async Task<T> InvokeChatHubProxy<T>(string method, params object[] args) where T:new()
         {
-            if (CanSend())
+            var startTime = DateTime.Now;
+            while(DateTime.Now.Subtract(startTime) < TimeSpan.FromSeconds(20))
             {
-                return await _chatHubProxy.Invoke<T>(method, args);
+                if(CanSend())
+                {
+                    return await _chatHubProxy.Invoke<T>(method, args);
+                }
+                await Task.Delay(1000);
             }
+            
             return new T();
         }
 
