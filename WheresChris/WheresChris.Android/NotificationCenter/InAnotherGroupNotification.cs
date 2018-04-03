@@ -38,6 +38,8 @@ namespace StayTogether.Droid.NotificationCenter
         {
             if (!MemberInAnotherGroup.Equals(intent.Action)) return;
 
+            NotificationStrategyController.Cancel(NotificationId);
+
             var name = intent.GetStringExtra("name");
             var phoneNumber = intent.GetStringExtra("phonenumber");
 

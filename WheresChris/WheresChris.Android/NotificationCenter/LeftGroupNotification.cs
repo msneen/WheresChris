@@ -28,7 +28,6 @@ namespace StayTogether.Droid.NotificationCenter
             NotificationStrategyController.Notify(title, body, NotificationId, notificationIntent);
 
             ToastHelper.Display(title, body);
-            //AsyncHelper.RunSync(() => ToastHelper.Display(title, body));
         }
     }
 }

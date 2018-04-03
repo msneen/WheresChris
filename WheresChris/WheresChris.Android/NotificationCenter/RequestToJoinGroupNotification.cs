@@ -30,10 +30,14 @@ namespace StayTogether.Droid.NotificationCenter
 
             NotificationStrategyController.Notify(title, body, NotificationId, notificationIntent);
 
-            void SendNotificationsAction() => RequestToJoinGroupNotificationResponse.HandleRequestToJoinMyGroup(groupmembers);
+            void SendNotificationsAction()
+            {
+                NotificationStrategyController.Cancel(NotificationId);
+                RequestToJoinGroupNotificationResponse.HandleRequestToJoinMyGroup(groupmembers);
+            }
+
             ToastHelper.Display(title, body, null, true, SendNotificationsAction);
-            //AsyncHelper.RunSync(() => ToastHelper.Display(title, body, null, true, SendNotificationsAction));
-            
+           
         }
 
         public void OnNotify(Intent intent)

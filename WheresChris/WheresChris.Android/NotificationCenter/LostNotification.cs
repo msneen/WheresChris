@@ -54,6 +54,8 @@ namespace StayTogether.Droid.NotificationCenter
 
         private static async Task ShowLostPersonOnMap(string phoneNumber, string name, double latitude, double longitude)
         {
+            NotificationStrategyController.Cancel(NotificationId);
+
             var nameOrPhone = ContactsHelper.NameOrPhone(phoneNumber, name);
             await CrossExternalMaps.Current.NavigateTo(nameOrPhone, latitude, longitude, NavigationType.Default);
         }

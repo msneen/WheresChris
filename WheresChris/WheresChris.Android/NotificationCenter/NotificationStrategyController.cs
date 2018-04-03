@@ -58,6 +58,12 @@ namespace StayTogether.Droid.NotificationCenter
             notificationManager?.Notify(notificationId, notification);
         }
 
+        public static void Cancel(int notificationId)
+        {
+            var notificationManager = Application.Context.GetSystemService(Context.NotificationService) as NotificationManager;
+            notificationManager?.Cancel(notificationId);
+        }
+
         public static void SetChannelForOreoandAbove(NotificationManager notificationManager, string channelId, string channelName)
         {
             try

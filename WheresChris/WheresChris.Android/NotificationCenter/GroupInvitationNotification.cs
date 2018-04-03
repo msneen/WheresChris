@@ -34,8 +34,7 @@ namespace StayTogether.Droid.NotificationCenter
             NotificationStrategyController.Notify(title, body, NotificationId, notificationIntent);
 
             void SendNotificationsAction() => ConfirmInvitation(name, phoneNumber);
-            ToastHelper.Display(title, body, null, true, SendNotificationsAction);
-            //AsyncHelper.RunSync(() => ToastHelper.Display(title, body, null, true, SendNotificationsAction));           
+            ToastHelper.Display(title, body, null, true, SendNotificationsAction);          
         }
 
 
@@ -51,6 +50,9 @@ namespace StayTogether.Droid.NotificationCenter
 
         private static void ConfirmInvitation(string name, string phoneNumber)
         {
+
+            NotificationStrategyController.Cancel(NotificationId);
+            
             var groupMemberSimpleVm = new GroupMemberSimpleVm
             {
                 Name = name,
