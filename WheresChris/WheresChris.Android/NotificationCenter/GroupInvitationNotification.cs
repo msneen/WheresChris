@@ -51,6 +51,7 @@ namespace StayTogether.Droid.NotificationCenter
 
         private static void ConfirmInvitation(string name, string phoneNumber)
         {
+            NotificationStrategyController.Cancel(GroupInvitationNotification.NotificationId);
             GroupInvitationNotificationResponse.HandleGroupInvitation(name, phoneNumber);
         }
     }

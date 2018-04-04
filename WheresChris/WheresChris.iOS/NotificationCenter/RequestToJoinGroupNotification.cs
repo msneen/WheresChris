@@ -58,7 +58,7 @@ namespace WheresChris.iOS.NotificationCenter
 
         private static void SendInvitations(List<GroupMemberSimpleVm> groupMembersSimple)
         {
-            RequestToJoinGroupNotificationResponse.HandleRequestToJoinMyGroup(groupMembersSimple);
+            RequestToJoinGroupNotificationResponse.ConfirmReqestToJoinMyGroup(groupMembersSimple);
         }
     }
 }

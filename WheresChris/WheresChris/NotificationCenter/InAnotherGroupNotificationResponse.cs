@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 using StayTogether;
 using StayTogether.Models;
 using WheresChris.Views.Popup;
@@ -18,23 +16,28 @@ namespace WheresChris.NotificationCenter
             {
                 new PopupItem($"End my group and request to join {displayName}", () =>
                 {
-                    //quit my group and join another
-                    var additionalMemberInvitationVm = new AdditionalMemberInvitationVm
-                    {
-                        Group = new GroupVm
-                        {
-                            GroupCreatedDateTime = DateTime.Now,
-                            PhoneNumber = phoneNumber
-                        },
-                        GroupLeaderPhoneNumber = phoneNumber
-                    };
-                    MessagingCenter.Send<MessagingCenterSender, AdditionalMemberInvitationVm>(new MessagingCenterSender(),
-                        LocationSender.RequestAdditionalMembersJoinGroup, additionalMemberInvitationVm);                 
+                    ConfirmEndMyGroupAndJoinAnother(phoneNumber);
                 }),
                 new PopupItem("Ignore and try to invite them later", null),
             };
 
             ((App)Xamarin.Forms.Application.Current).ShowPopup(items);
+        }
+
+        public static void ConfirmEndMyGroupAndJoinAnother(string phoneNumber)
+        {
+//quit my group and join another
+            var additionalMemberInvitationVm = new AdditionalMemberInvitationVm
+            {
+                Group = new GroupVm
+                {
+                    GroupCreatedDateTime = DateTime.Now,
+                    PhoneNumber = phoneNumber
+                },
+                GroupLeaderPhoneNumber = phoneNumber
+            };
+            MessagingCenter.Send<MessagingCenterSender, AdditionalMemberInvitationVm>(new MessagingCenterSender(),
+                LocationSender.RequestAdditionalMembersJoinGroup, additionalMemberInvitationVm);
         }
     }
 }

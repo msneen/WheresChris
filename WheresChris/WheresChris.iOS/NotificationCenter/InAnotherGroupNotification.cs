@@ -41,9 +41,11 @@ namespace StayTogether.iOS.NotificationCenter
             var dictionary = notification.UserInfo;
             var name = GetValue("Name", ref dictionary);
             var phoneNumber = GetValue("PhoneNumber", ref dictionary);
-            InAnotherGroupNotificationResponse.HandlePersonInAnotherGroup(phoneNumber, name);
-
-            var okAction = UIAlertAction.Create("Ok", UIAlertActionStyle.Default, null);
+           
+            var okAction = UIAlertAction.Create("Ok", UIAlertActionStyle.Default, alertAction =>
+            {
+                InAnotherGroupNotificationResponse.ConfirmEndMyGroupAndJoinAnother(phoneNumber);
+            });
 
             actions.Add(okAction);
             return actions;

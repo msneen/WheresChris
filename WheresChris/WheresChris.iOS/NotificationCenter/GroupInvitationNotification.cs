@@ -4,6 +4,7 @@ using System.Text;
 using StayTogether.Models;
 using UIKit;
 using WheresChris.iOS;
+using WheresChris.NotificationCenter;
 using Xamarin.Forms;
 
 namespace StayTogether.iOS.NotificationCenter
@@ -37,14 +38,7 @@ namespace StayTogether.iOS.NotificationCenter
             var declineAction = UIAlertAction.Create("Decline", UIAlertActionStyle.Default, null);
             var joinAction = UIAlertAction.Create("Confirm Joining Group", UIAlertActionStyle.Default, alertAction =>
             {
-                var nameOrPhone = ContactsHelper.NameOrPhone(phoneNumber, name);
-
-                var groupMemberSimpleVm = new GroupMemberSimpleVm
-                {
-                    Name = name,
-                    PhoneNumber = phoneNumber
-                };
-                MessagingCenter.Send<MessagingCenterSender, GroupMemberSimpleVm>(new MessagingCenterSender(), LocationSender.ConfirmGroupInvitationMsg, groupMemberSimpleVm);
+                GroupInvitationNotificationResponse.ConfirmGroupInvitation(name, phoneNumber);
             });
 
             actions.Add(declineAction);
