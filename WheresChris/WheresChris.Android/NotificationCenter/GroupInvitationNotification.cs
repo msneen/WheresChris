@@ -6,6 +6,7 @@ using StayTogether.Helpers;
 using StayTogether.Models;
 using WheresChris.Droid;
 using WheresChris.Droid.Services;
+using WheresChris.NotificationCenter;
 using WheresChris.Views;
 using Xamarin.Forms;
 using Application = Android.App.Application;
@@ -50,16 +51,7 @@ namespace StayTogether.Droid.NotificationCenter
 
         private static void ConfirmInvitation(string name, string phoneNumber)
         {
-
-            NotificationStrategyController.Cancel(NotificationId);
-            
-            var groupMemberSimpleVm = new GroupMemberSimpleVm
-            {
-                Name = name,
-                PhoneNumber = phoneNumber
-            };
-            MessagingCenter.Send<MessagingCenterSender, GroupMemberSimpleVm>(new MessagingCenterSender(),
-                LocationSender.ConfirmGroupInvitationMsg, groupMemberSimpleVm);
+            GroupInvitationNotificationResponse.HandleGroupInvitation(name, phoneNumber);
         }
     }
 }
