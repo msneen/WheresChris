@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using StayTogether;
 using StayTogether.Classes;
+using StayTogether.Helpers;
 using WheresChris.Helpers;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -54,6 +55,8 @@ namespace WheresChris.Views.GroupViews
         }
         private void TapGestureRecognizer_OnTapped(object sender, EventArgs e)
         {
+            if(ContactsListView == null) return;
+
             if (ContactsListView.IsEnabled)
             {
                 var selectedColor = Color.LightSkyBlue;
@@ -63,14 +66,18 @@ namespace WheresChris.Views.GroupViews
                     selectedColor = (Color)themeColor;
                 }
                 var contactDisplayItemVm = (ContactDisplayItemVm)((RelativeLayout)sender).BindingContext;
+                if(contactDisplayItemVm == null) return;
+
                 contactDisplayItemVm.Selected = !contactDisplayItemVm.Selected;
                 var color = contactDisplayItemVm.Selected ? selectedColor : ContactsListView.BackgroundColor;
                 ((RelativeLayout)sender).BackgroundColor = color;
 
                 var action = ((AddMemberPageViewModel)BindingContext).AddSelectedContact(contactDisplayItemVm);
+                if(action == null) return;
+
                 if(action == InvitePageViewModel.InviteeAction.Removed)
                 {
-                    ViewInviteeList().ConfigureAwait(true);
+                    AsyncHelper.RunSync(ViewInviteeList);
                 }
             }
         }
