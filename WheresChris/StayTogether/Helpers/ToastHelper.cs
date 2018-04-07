@@ -10,6 +10,9 @@ namespace StayTogether.Helpers
 {
     public class ToastHelper
     {
+        private static string _lastTitle = "";
+        private static string _lastBody = "";
+
         public static void Display(string title, string body, IDictionary<string, string> customArgs = null, bool isClickable = false, Action action = null)
         {
             var options = new NotificationOptions()
@@ -17,13 +20,15 @@ namespace StayTogether.Helpers
                 Title = title,
                 Description = body,
                 IsClickable = isClickable,
-                CustomArgs = customArgs,                
+                CustomArgs = customArgs,
             };
             Display(options, action);
         }
 
         public static void Display(NotificationOptions options, Action action = null)
         {
+            if(DebounceNotification(options)) return;
+
             //options.AllowTapInNotificationCenter = false;
             options.ClearFromHistory = true;
             var color = (Color) Application.Current.Resources["Primary"];
@@ -50,6 +55,13 @@ namespace StayTogether.Helpers
             var notification = DependencyService.Get<IToastNotificator>();
             notification.CancelAllDelivered();
             return Task.CompletedTask;
+        }
+        private static bool DebounceNotification(NotificationOptions options)
+        {
+            if(_lastTitle == options.Title && options.Description == _lastBody) return true;
+            _lastTitle = options.Title;
+            _lastBody = options.Description;
+            return false;
         }
     }
 }
