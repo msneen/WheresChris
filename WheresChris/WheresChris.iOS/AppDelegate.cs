@@ -18,7 +18,9 @@ using UserNotifications;
 using WheresChris.Helpers;
 using WheresChris.iOS.Classes;
 using WheresChris.iOS.NotificationCenter;
+using WheresChris.ViewModels;
 using Xamarin.Forms;
+using Device = Xamarin.Forms.Device;
 
 
 namespace WheresChris.iOS
@@ -224,6 +226,15 @@ namespace WheresChris.iOS
                     Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
                     {
                         RequestToJoinGroupNotification.RequestToJoinThisGroup(groupMemberSimpleListVm);
+                    });
+                });
+
+            MessagingCenter.Subscribe<LocationSender, ChatMessageSimpleVm>(this, LocationSender.ChatReceivedMsg,
+                (sender, chatMessageVm) =>
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        ChatMessageReceivedNotification.DisplayChatMessageReceivedNotification(chatMessageVm);
                     });
                 });
 

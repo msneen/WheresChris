@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using StayTogether.Models;
+﻿using System.Collections.Generic;
 using UIKit;
-using WheresChris.iOS;
 using WheresChris.NotificationCenter;
-using Xamarin.Forms;
 
 namespace StayTogether.iOS.NotificationCenter
 {

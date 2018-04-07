@@ -31,25 +31,12 @@ namespace WheresChris
 
             SetMainPage();
 
+            InitializeMessagingCenter();
         }
 
-        private static void InitializeMessagingCenter()
+        private void InitializeMessagingCenter()
         {
-            MessagingCenter.Subscribe<LocationSender, ChatMessageSimpleVm>(new MessagingCenterSender(), LocationSender.ChatReceivedMsg,
-                (sender, chatMessageVm) =>
-                {
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        var myPhoneNumber = SettingsHelper.GetPhoneNumber();
-                        if(chatMessageVm.Member.PhoneNumber == myPhoneNumber) return;
 
-                        var title = "New Chat Message";
-                        var body = chatMessageVm.Message;
-
-                        void SendNotificationsAction() => SetCurrentTab("Chat");
-                        ToastHelper.Display(title, body, null, true, SendNotificationsAction);
-                    });
-                });
         }
 
         private static readonly Interval PermissionRequest = new Interval();
@@ -131,7 +118,7 @@ namespace WheresChris
         {
             AsyncHelper.RunSync(StartLocationSenderAsync);
 
-            InitializeMessagingCenter();
+            
 
             Popup = new PopupMenu();
         }

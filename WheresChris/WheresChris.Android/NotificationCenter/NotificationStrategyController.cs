@@ -1,3 +1,4 @@
+using System.Runtime.Remoting.Messaging;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -31,6 +32,8 @@ namespace StayTogether.Droid.NotificationCenter
                     return new InAnotherGroupNotification();
                 case "request_to_join_this_group":
                     return new RequestToJoinGroupNotification();
+                case "chatmessage":
+                    return new ChatMessageReceivedNotification();
                 default:
                     return null;
             }

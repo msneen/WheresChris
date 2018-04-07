@@ -1,14 +1,7 @@
-using Android.App;
 using Android.Content;
-using Android.Support.V4.App;
-using StayTogether.Droid.Services;
 using StayTogether.Helpers;
-using StayTogether.Models;
 using WheresChris.Droid;
-using WheresChris.Droid.Services;
 using WheresChris.NotificationCenter;
-using WheresChris.Views;
-using Xamarin.Forms;
 using Application = Android.App.Application;
 
 namespace StayTogether.Droid.NotificationCenter

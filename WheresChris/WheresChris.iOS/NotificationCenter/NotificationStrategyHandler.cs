@@ -42,6 +42,9 @@ namespace StayTogether.iOS.NotificationCenter
                 case 10106:
                     notificationActions = RequestToJoinGroupNotification.OnNotify(notification);
                     break;
+                case 10107:
+                    notificationActions = ChatMessageReceivedNotification.OnNotify(notification);
+                    break;
                 default:
                     notificationActions.Add(UIAlertAction.Create("OK", UIAlertActionStyle.Default, null));
                     break;

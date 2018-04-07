@@ -20,6 +20,10 @@ namespace StayTogether.Helpers
                 Description = body,
                 IsClickable = isClickable,
                 CustomArgs = customArgs,
+                AndroidOptions = new AndroidOptions
+                {
+                    ForceOpenAppOnNotificationTap = true
+                },                             
             };
             Display(options, action);
         }

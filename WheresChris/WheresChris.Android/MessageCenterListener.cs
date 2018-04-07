@@ -4,6 +4,7 @@ using StayTogether;
 using StayTogether.Classes;
 using StayTogether.Droid.NotificationCenter;
 using StayTogether.Models;
+using WheresChris.ViewModels;
 using Xamarin.Forms;
 
 namespace WheresChris.Droid
@@ -78,6 +79,15 @@ namespace WheresChris.Droid
                     Device.BeginInvokeOnMainThread(() =>
                     {
                         RequestToJoinGroupNotification.RequestToJoinThisGroup(groupMemberSimpleListVm);
+                    });
+                });
+
+            MessagingCenter.Subscribe<LocationSender, ChatMessageSimpleVm>(this, LocationSender.ChatReceivedMsg,
+                (sender, chatMessageVm) =>
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        ChatMessageReceivedNotification.DisplayChatReceivedNotification(chatMessageVm);
                     });
                 });
 
