@@ -90,6 +90,10 @@ namespace WheresChris.Droid
                         ChatMessageReceivedNotification.DisplayChatReceivedNotification(chatMessageVm);
                     });
                 });
+            MessagingCenter.Subscribe<MessagingCenterSender>(this, LocationSender.ChatNotificationCancelMsg, (sender) =>
+            {
+                Device.BeginInvokeOnMainThread(ChatMessageReceivedNotification.CancelNotification);                
+            });
 
             Console.WriteLine("MessageCenterListener Loaded");
         }

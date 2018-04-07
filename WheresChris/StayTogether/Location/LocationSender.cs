@@ -43,6 +43,7 @@ namespace StayTogether
 	    public const string GroupPositionUpdateMsg = "GROUPPOSITIONUPDATE";
 	    public const string PhoneNumberMissingMsg = "PHONENUMBERMISSING";
 	    public const string ChatReceivedMsg = "CHATRECEIVED";
+	    public const string ChatNotificationCancelMsg = "CHATNOTIFICATIONCANCEL";
 	    public const string StartOrAddGroupMsg = "STARTORADDGROUP";
 	    public const string LeaveGroupMsg = "LEAVEGROUP";
 	    public const string EndGroupMsg = "ENDGROUP";

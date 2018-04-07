@@ -116,6 +116,7 @@ namespace WheresChris.Views
             ShrinkListbox();
             var last = ChatListView.ItemsSource.Cast<object>().LastOrDefault();
             ChatListView.ScrollTo(last, ScrollToPosition.MakeVisible, true);
+            MessagingCenter.Send<MessagingCenterSender>(new MessagingCenterSender(), LocationSender.ChatNotificationCancelMsg);
         }
 
         private bool _listboxShrunk;

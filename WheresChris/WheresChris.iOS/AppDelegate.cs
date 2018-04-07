@@ -238,6 +238,11 @@ namespace WheresChris.iOS
                     });
                 });
 
+            MessagingCenter.Subscribe<MessagingCenterSender>(this, LocationSender.ChatNotificationCancelMsg, (sender) =>
+            {
+                Device.BeginInvokeOnMainThread(ChatMessageReceivedNotification.CancelNotification);                
+            });
+
             //Crashes.TrackError("IPhoneLocationEventsInitialized");
             _eventsInitialized = true;
         }

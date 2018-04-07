@@ -44,5 +44,11 @@ namespace StayTogether.Droid.NotificationCenter
         {
             ChatMessageReceivedResponse.HandleChatMessageReceived();
         }
+
+        public static void CancelNotification()
+        {
+            var notificationManager = Application.Context.GetSystemService(Context.NotificationService) as NotificationManager;
+            notificationManager?.Cancel(NotificationId);
+        }
     }
 }
