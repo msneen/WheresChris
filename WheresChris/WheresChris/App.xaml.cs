@@ -14,7 +14,10 @@ using WheresChris.Views.Popup;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xam.Plugin;
+using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
+using Application = Xamarin.Forms.Application;
 using Device = Xamarin.Forms.Device;
+using TabbedPage = Xamarin.Forms.TabbedPage;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace WheresChris
@@ -28,6 +31,8 @@ namespace WheresChris
         public App()
         {
             InitializeComponent();
+
+            Xamarin.Forms.Application.Current.On<Xamarin.Forms.PlatformConfiguration.Android>().UseWindowSoftInputModeAdjust(WindowSoftInputModeAdjust.Resize | WindowSoftInputModeAdjust.Pan);
 
             SetMainPage();
 
@@ -78,17 +83,19 @@ namespace WheresChris
                     {
                         var currentPage = GetMainTab().CurrentPage;
                         if (string.IsNullOrWhiteSpace(currentPage?.Title)) return;
-                        switch (currentPage.Title)
+
+                        var currentNavigationPage = GetPage(currentPage?.Title);
+                        var currentNavigationStack = currentNavigationPage?.Navigation?.NavigationStack;
+                        if (currentNavigationStack == null) return;
+                        var index = currentNavigationStack.Count - 1;
+                                                 
+                        switch(currentNavigationStack[index])
                         {
-                            case "Join":
-                                var joinNavigationPage = GetPage("Join");
-                                var joinNavigationStack = joinNavigationPage?.Navigation?.NavigationStack;
-                                if (joinNavigationStack == null) return;
-                                var index = joinNavigationStack.Count - 1;
-                                if (joinNavigationStack[index] is JoinPage joinPage)
-                                {
-                                    await joinPage?.RefreshInvitations();
-                                }
+                            case JoinPage joinPage:
+                                await joinPage?.RefreshInvitations();
+                                break;
+                            case ChatPage chatPage:
+                                await chatPage?.InitializeChat();
                                 break;
                         }
                     }

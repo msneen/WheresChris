@@ -5,40 +5,42 @@
              Title="{Binding Title}">
     <ScrollView>
         <StackLayout>
-        <ListView ItemsSource="{Binding Items, Mode=TwoWay}" x:Name="ChatListView"
-                CachingStrategy="RecycleElement"
-                HorizontalOptions="FillAndExpand"
-                VerticalOptions="FillAndExpand">
-            <!--Custom View Cells-->
-        <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
-                        <ViewCell.View>
-                            <StackLayout Orientation="Horizontal">
-                                <Label Text="{Binding Name}" FontSize="8" LineBreakMode="NoWrap" />
-                                <Label Text="{Binding Message}" LineBreakMode="WordWrap" />
-                            </StackLayout>
-                        </ViewCell.View>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
+            <ListView ItemsSource="{Binding Items, Mode=TwoWay}" x:Name="ChatListView"
+                    CachingStrategy="RecycleElement"
+                    HorizontalOptions="FillAndExpand"
+                    VerticalOptions="StartAndExpand">
+                <!--Custom View Cells-->
+                <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <ViewCell.View>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Text="{Binding Name}" FontSize="8" LineBreakMode="NoWrap" />
+                                        <Label Text="{Binding Message}" LineBreakMode="WordWrap" />
+                                    </StackLayout>
+                                </ViewCell.View>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
     
-      </ListView>
-        <RelativeLayout Padding="5,0,0,0" VerticalOptions="End" HeightRequest="70">
+              </ListView>
+                <RelativeLayout Padding="5,0,0,0" VerticalOptions="End" HeightRequest="70">
 
-                <Frame OutlineColor="Black" BackgroundColor="Black" Padding="1,1,1,1" CornerRadius="5" HeightRequest="65" HasShadow="False"                        
-                   RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
-                   RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.68,Constant=0}">
+                        <Frame OutlineColor="Black" BackgroundColor="Black" Padding="1,1,1,1" CornerRadius="5" HeightRequest="65" HasShadow="False"                        
+                           RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
+                           RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.68,Constant=0}">
 
-                    <Frame x:Name="FrameIntContainer" Padding="5,5,5,5" HasShadow="False" HorizontalOptions="FillAndExpand" CornerRadius="5" OutlineColor="Black" BackgroundColor="White" >
-                        <Editor x:Name="ChatMessage" HeightRequest="55" BackgroundColor="Transparent" Keyboard="Chat"/>
-                    </Frame>
-                </Frame>
+                            <Frame x:Name="FrameIntContainer" Padding="5,5,5,5" HasShadow="False" HorizontalOptions="FillAndExpand" CornerRadius="5" OutlineColor="Black" BackgroundColor="White" >
+                                <Editor x:Name="ChatMessage" HeightRequest="55" BackgroundColor="Transparent" Keyboard="Chat"/>
+                            </Frame>
+                        </Frame>
             
-            <Button x:Name="SendButton" Text="Send" HeightRequest="70" Clicked="SendButton_OnClickedButton_OnClicked" Style="{StaticResource buttonStyle}"
-                        RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.7, Constant=0}"
-                        RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.3,Constant=0}" />
-        </RelativeLayout>
-    </StackLayout>
+                    <Button x:Name="SendButton" Text="Send" HeightRequest="70" Clicked="SendButton_OnClickedButton_OnClicked" Style="{StaticResource buttonStyle}"
+                                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.7, Constant=0}"
+                                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.3,Constant=0}" />
+                </RelativeLayout>
+            
+        
+        </StackLayout>
     </ScrollView>
 </ContentPage>

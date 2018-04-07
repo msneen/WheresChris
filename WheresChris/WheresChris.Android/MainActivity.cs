@@ -20,6 +20,8 @@ using StayTogether.Models;
 using TK.CustomMap.Droid;
 using WheresChris.Droid.Services;
 using Xamarin.Forms;
+using Xamarin.Forms.Platform.Android;
+using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
 using Permission = Android.Content.PM.Permission;
 
 namespace WheresChris.Droid
@@ -67,9 +69,10 @@ namespace WheresChris.Droid
 
                 SetTheme(Resource.Style.MyTheme);
 		        base.OnCreate(bundle);
+		        InitializeUI();
 
-                LoadApplication(new App());		        
-
+                LoadApplication(new App());		
+                		        		            
                 TryToStartLocationService();
             }
 		    catch (Exception ex)
@@ -168,5 +171,26 @@ namespace WheresChris.Droid
 		    base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 			PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 		}
+
+	    private void InitializeUI()
+	    {
+	        try
+	        {
+	            Window.DecorView.SystemUiVisibility = 0;
+
+	            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+	            {
+	                Window.DecorView.SetFitsSystemWindows(true);
+
+	                var statusBarHeightInfo = typeof(FormsAppCompatActivity).GetField("_statusBarHeight", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+
+	                if (statusBarHeightInfo != null)
+	                    statusBarHeightInfo.SetValue(this, 0);
+
+	                Window.SetStatusBarColor(new Android.Graphics.Color(Android.Support.V4.Content.ContextCompat.GetColor(this, Resource.Color.primary_material_dark)));
+	            }
+	        }
+	        catch (Exception ex) { }
+	    }
 	}
 }

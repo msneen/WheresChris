@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Plugin.Toasts;
 using StayTogether;
@@ -18,6 +19,7 @@ namespace WheresChris.Views
 
         public ObservableCollection<ChatMessageVm> Items { get; set; }
         private LocationSender _locationSender;
+        private Interval _resizeInterval = new Interval();
 
         public ChatPage()
         {
@@ -35,6 +37,12 @@ namespace WheresChris.Views
                     await ProcessChatMessage();
                 }
             };
+        }
+
+        public Task InitializeChat()
+        {
+            ChatMessage.Focus();
+            return Task.CompletedTask;
         }
 
         private async Task StartLocationSenderAsync()
@@ -78,6 +86,7 @@ namespace WheresChris.Views
         private async Task SendButton_OnClickedButton_OnClicked(object sender, EventArgs e)
         {
             await ProcessChatMessage();
+            ExpandListbox();
         }
 
         private async Task ProcessChatMessage()
@@ -87,6 +96,41 @@ namespace WheresChris.Views
 
             await ChatHelper.SendChatMessage(message);
             ChatMessage.Text = string.Empty;
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            ChatMessage.Focused += InputFocused;
+            //ChatMessage.Unfocused += InputUnfocused;
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            ChatMessage.Focused -= InputFocused;
+            //ChatMessage.Unfocused -= InputUnfocused;
+        }
+        void InputFocused(object sender, EventArgs args)
+        {
+            ShrinkListbox();
+            var last = ChatListView.ItemsSource.Cast<object>().LastOrDefault();
+            ChatListView.ScrollTo(last, ScrollToPosition.MakeVisible, true);
+        }
+
+        private bool _listboxShrunk;
+        private void ShrinkListbox()
+        {
+            if(_listboxShrunk) return;
+            ChatListView.HeightRequest = ChatListView.Height - 360;
+            _listboxShrunk = true;
+        }
+
+        private void ExpandListbox()
+        {
+            if(!_listboxShrunk) return;
+            ChatListView.HeightRequest = -1;
+            _listboxShrunk = false;
         }
     }
 }
