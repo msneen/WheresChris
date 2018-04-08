@@ -7,7 +7,7 @@ using StayTogether.Classes;
 using WheresChris.Helpers;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-
+using StayTogether.Helpers;
 namespace WheresChris.Views.GroupViews
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
@@ -54,10 +54,18 @@ namespace WheresChris.Views.GroupViews
             {
                 var item = new ContactDisplayItemVm
                 {
-                    Name = ContactsHelper.NameOrPhone(groupMemberVm.PhoneNumber, groupMemberVm.Name)
+                    Name = ContactsHelper.NameOrPhone(groupMemberVm.PhoneNumber, groupMemberVm.Name),
+                    BackgroundColor = GetColor(groupMemberVm)//this is actually font color
                 };
                 Items.Add(item);
             }
+        }
+
+        private Color GetColor(GroupMemberVm groupMember)
+        {
+            var phoneNumber = SettingsHelper.GetPhoneNumber();
+            if(groupMember.PhoneNumber == phoneNumber) return Color.Blue;
+            return groupMember.InvitationConfirmed ? Color.Blue : Color.Red;
         }
     }
 }

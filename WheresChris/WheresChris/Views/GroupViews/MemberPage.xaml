@@ -4,9 +4,11 @@
              x:Class="WheresChris.Views.GroupViews.MemberPage"
              Title="{Binding Title}">
   <ListView ItemsSource="{Binding Items}"
+            x:Name="MemberListView"
+            
             HasUnevenRows="true"
             IsPullToRefreshEnabled="true"
-            CachingStrategy="RetainElement">
+            CachingStrategy="RetainElement" x:FieldModifier="private">
     <ListView.Header>
       <StackLayout Padding="10" 
                    Orientation="Horizontal"
@@ -23,7 +25,7 @@
     <!--Built in Cells-->
         <ListView.ItemTemplate>
             <DataTemplate>
-                <TextCell Text="{Binding Name}"/>
+                <TextCell Text="{Binding Name}" TextColor="{Binding BackgroundColor}"/>
             </DataTemplate>
         </ListView.ItemTemplate>
     </ListView>
