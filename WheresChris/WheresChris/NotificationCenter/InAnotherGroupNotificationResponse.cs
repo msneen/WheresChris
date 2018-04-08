@@ -26,7 +26,7 @@ namespace WheresChris.NotificationCenter
 
         public static void ConfirmEndMyGroupAndJoinAnother(string phoneNumber)
         {
-//quit my group and join another
+            //quit my group and join another
             var additionalMemberInvitationVm = new AdditionalMemberInvitationVm
             {
                 Group = new GroupVm

@@ -327,14 +327,16 @@ Debugger.Break();
 
 	    private async Task RequestAdditionalMembersAddedToGroup(AdditionalMemberInvitationVm additionalMemberInvitationVm)
 	    {
-	        await EndGroup()
+	        await LeaveGroup()
+                .ContinueWith(async (t)=>
+	            {
+	                await EndGroup();
+	            })
                 .ContinueWith((async (task) =>
 	            {
 	                //Request to add these members to another group, and end the group we are in
 	                await InvokeChatHubProxy("requestJoinGroup", additionalMemberInvitationVm.Group, additionalMemberInvitationVm.GroupLeaderPhoneNumber);
 	            }));
-
-
 	    }
 
 	    private Task OnRequestJoinGroup(List<GroupMemberSimpleVm> groupMembers)

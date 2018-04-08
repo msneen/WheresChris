@@ -71,12 +71,20 @@ namespace WheresChris.Views
         public void AddPhoneNumbeContact(string phoneNumber)
         {
             if(!IsEnabled) return;
-            if(string.IsNullOrWhiteSpace(phoneNumber)) return;
-            if(!ContactsHelper.IsValidPhoneNumber(phoneNumber)) return;
-            _selectedContacts.Add(new ContactDisplayItemVm
+            var selectedContact = GetContact(phoneNumber);
+            if(selectedContact == null) return;
+            _selectedContacts.Add(selectedContact);
+        }
+
+        public ContactDisplayItemVm GetContact(string phoneNumber)
+        {
+            if(string.IsNullOrWhiteSpace(phoneNumber)) return null;
+            if(!ContactsHelper.IsValidPhoneNumber(phoneNumber)) return null;
+            var selectedContact = new ContactDisplayItemVm
             {
                 PhoneNumber = phoneNumber
-            });
+            };
+            return selectedContact;
         }
 
         public async Task<List<GroupMemberVm>> AddToGroup()

@@ -3,29 +3,74 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="WheresChris.Views.JoinPage"
              Title="{Binding Title}">
-	<ListView ItemsSource="{Binding Items}"
-            ItemTapped="Handle_ItemTapped"
-            ItemSelected="Handle_ItemSelected"
-            HasUnevenRows="true"
-            IsPullToRefreshEnabled="true"
-            CachingStrategy="RecycleElement">
-        <ListView.Header>
-            <StackLayout Padding="10" 
-                       Orientation="Horizontal"
+    <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+        <ListView ItemsSource="{Binding Items}"
+                ItemTapped="Handle_ItemTapped"
+                ItemSelected="Handle_ItemSelected"
+                HasUnevenRows="true"
+                IsPullToRefreshEnabled="true"
+                CachingStrategy="RecycleElement"
+                HeightRequest="160">
+            <ListView.Header>
+                <StackLayout Padding="10" 
+                           Orientation="Horizontal"
+                           HorizontalOptions="FillAndExpand"
+                           BackgroundColor="#dadada">
+                    <Label Text="Invites"
+                       HorizontalTextAlignment="Center"
                        HorizontalOptions="FillAndExpand"
-                       BackgroundColor="#dadada">
-                <Label Text="Invites"
-                   HorizontalTextAlignment="Center"
-                   HorizontalOptions="FillAndExpand"
-                   TextColor="Black"
-                   FontAttributes="Bold"/>
-                <Button x:Name="RefreshButton" Text="Refresh" IsVisible="False" Clicked="RefreshButton_OnClicked" Style="{StaticResource buttonStyle}" />
-            </StackLayout>
-        </ListView.Header>
-        <ListView.ItemTemplate>
-            <DataTemplate>
-                <TextCell Text="{Binding Name}"/>
-            </DataTemplate>
-        </ListView.ItemTemplate>
-    </ListView>
+                       TextColor="Black"
+                       FontAttributes="Bold"/>
+                    <Button x:Name="RefreshButton" Text="Refresh" IsVisible="False" Clicked="RefreshButton_OnClicked" Style="{StaticResource buttonStyle}" />
+                </StackLayout>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextCell Text="{Binding Name}"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <!--join by contact-->
+
+        <RelativeLayout Padding="5,0,0,0" VerticalOptions="Start">
+            <Entry x:Name="SearchEntry" AutomationId="SearchEntry" TextChanged="SearchEntry_OnTextChanged" Placeholder="Name or Phone Number"
+                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0, Constant=10}"
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.9,Constant=0}"/>
+            <Button x:Name="SearchButton"  AutomationId="SearchButton" Text="Request Join " IsEnabled="False" Clicked="SearchButton_OnClicked" Style="{StaticResource buttonStyle}"
+                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.9, Constant=0}"
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.1,Constant=0}" />
+        </RelativeLayout>
+        <ListView 
+            x:Name="ContactsListView"   
+            ItemsSource="{Binding Items, Mode=TwoWay}"
+            HasUnevenRows="true"
+            IsPullToRefreshEnabled="false"          
+            CachingStrategy="RecycleElement"
+            HorizontalOptions="FillAndExpand"
+            VerticalOptions="FillAndExpand"  
+            RowHeight="50">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <RelativeLayout BackgroundColor="{Binding BackgroundColor, Mode=TwoWay}" HeightRequest="50">
+                            <RelativeLayout.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="TapGestureRecognizer_OnTapped"></TapGestureRecognizer>
+                            </RelativeLayout.GestureRecognizers>
+                            <Label Text="{Binding Name}" Margin="0,15,0,0"
+                                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.03, Constant=0}"
+                                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.67,Constant=0}"/>
+                            <Label Text="{Binding PhoneNumber}" Margin="0,15,0,0"
+                                    RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.7, Constant=0}"
+                                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.3,Constant=0}"/>
+                        </RelativeLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <RelativeLayout Padding="5,0,0,0" VerticalOptions="End" HorizontalOptions="FillAndExpand">
+            <Button x:Name="RequestJoinButton" AutomationId="RequestJoinButton" Text="Invite" Clicked="RequestJoinButton_OnClicked" Style="{StaticResource buttonStyle}"  
+                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.0, Constant=0}"
+                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=1.0,Constant=0}"/>
+        </RelativeLayout>
+    </StackLayout>
 </ContentPage>
