@@ -45,6 +45,9 @@ namespace StayTogether.iOS.NotificationCenter
                 case 10107:
                     notificationActions = ChatMessageReceivedNotification.OnNotify(notification);
                     break;
+                case 10108:
+                    notificationActions = GroupDisbandedNotification.OnNotify(notification);
+                    break;
                 default:
                     notificationActions.Add(UIAlertAction.Create("OK", UIAlertActionStyle.Default, null));
                     break;

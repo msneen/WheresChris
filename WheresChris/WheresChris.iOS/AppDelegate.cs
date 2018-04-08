@@ -243,6 +243,12 @@ namespace WheresChris.iOS
                 Device.BeginInvokeOnMainThread(ChatMessageReceivedNotification.CancelNotification);                
             });
 
+            MessagingCenter.Subscribe<LocationSender>(this, LocationSender.GroupDisbandedMsg,
+                (sender) =>
+                {
+                    Device.BeginInvokeOnMainThread( GroupDisbandedNotification.DisplayGroupDisbandedNotification);
+                });
+
             //Crashes.TrackError("IPhoneLocationEventsInitialized");
             _eventsInitialized = true;
         }

@@ -336,6 +336,7 @@
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="NotificationCenter\ChatMessageReceivedNotification.cs" />
+    <Compile Include="NotificationCenter\GroupDisbandedNotification.cs" />
     <Compile Include="NotificationCenter\GroupInvitationNotification.cs" />
     <Compile Include="NotificationCenter\InAnotherGroupNotification.cs" />
     <Compile Include="NotificationCenter\LeftGroupNotification.cs" />

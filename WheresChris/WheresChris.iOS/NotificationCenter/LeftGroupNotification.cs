@@ -26,10 +26,6 @@ namespace StayTogether.iOS.NotificationCenter
         public static List<UIAlertAction> OnNotify(UILocalNotification notification)
         {
             var actions = new List<UIAlertAction>();
-            //var dictionary = notification.UserInfo;
-            //var name = GetValue("Name", ref dictionary);
-            //var phoneNumber = GetValue("PhoneNumber", ref dictionary);
-
             var okAction = UIAlertAction.Create("Ok", UIAlertActionStyle.Default, null);
 
             actions.Add(okAction);

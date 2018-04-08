@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
-using CloudKit;
-using Foundation;
 using UIKit;
-using UserNotifications;
 using WheresChris.Helpers;
 using WheresChris.NotificationCenter;
 using WheresChris.ViewModels;
