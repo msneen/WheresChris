@@ -17,7 +17,7 @@ namespace WheresChris.Views
 		public AboutPage()
 		{
 			InitializeComponent();
-		    Title = "Where's Chris - About";            
+		    Title = "Where's Chris";            
 		    DisplayVersionNumber();
                        
 		    VersionGestureRecognizer.Tapped += (sender, eventArgs) =>

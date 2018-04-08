@@ -18,11 +18,11 @@ namespace WheresChris.Views
     {
         public JoinPage()
         {
-            Title = "Where's Chris - Join Group";
+            Title = "Where's Chris";
             InitializeComponent();
             BindingContext = new JoinPageViewModel
             {
-                Title = "Where's Chris - Join Group"
+                Title = "Where's Chris"
             };
             InitializeMessagingCenterSubscriptions();
         }

@@ -24,7 +24,7 @@ namespace WheresChris.Views
         public ChatPage()
         {
             InitializeComponent();
-            Title = "Where's Chris - Chat";
+            Title = "Where's Chris";
             Items = new ObservableCollection<ChatMessageVm>();
             BindingContext = this;
             StartLocationSenderAsync().ConfigureAwait(true);
@@ -91,7 +91,7 @@ namespace WheresChris.Views
 
         private async Task ProcessChatMessage()
         {
-            var message = ChatMessage.Text.Trim();
+            var message = ChatMessage?.Text?.Trim();
             if(string.IsNullOrWhiteSpace(message)) return;
 
             await ChatHelper.SendChatMessage(message);

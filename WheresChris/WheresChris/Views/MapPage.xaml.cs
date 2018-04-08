@@ -40,7 +40,7 @@ namespace WheresChris.Views
 		{
 		    try
 		    {
-                Title = "Where's Chris - Map";
+                Title = "Where's Chris";
                 InitializeComponent ();
                 GroupMap.MapType = MapType.Street;
     

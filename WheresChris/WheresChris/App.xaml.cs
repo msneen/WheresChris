@@ -8,7 +8,6 @@ using StayTogether;
 using StayTogether.Helpers;
 using StayTogether.Models;
 using WheresChris.Helpers;
-using WheresChris.ViewModels;
 using WheresChris.Views;
 using WheresChris.Views.Popup;
 using Xamarin.Forms;

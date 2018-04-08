@@ -21,12 +21,12 @@ namespace WheresChris.Views
 
         public InvitePage()
         {
-            Title = "Where's Chris - Invite";
+            Title = "Where's Chris";
             InitializeComponent ();
             InitializeMessagingCenterSubscriptions();
             BindingContext = new InvitePageViewModel
             {
-                Title = "Where's Chris - Invite"
+                Title = "Where's Chris"
             };
             InitializeExpirationPicker();
             _contactInterval.SetInterval(LoadContacts, 5000);                      

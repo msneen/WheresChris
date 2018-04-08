@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Plugin.Toasts;
-using StayTogether;
 using StayTogether.Helpers;
 using WheresChris.Helpers;
 using WheresChris.Models;

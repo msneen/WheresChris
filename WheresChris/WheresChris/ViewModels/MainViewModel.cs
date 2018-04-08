@@ -4,7 +4,7 @@
     {
         public MainViewModel()
         {
-            Title = "Where's Chris - Main";
+            Title = "Where's Chris";
             Name = "Main";
         }
     }
