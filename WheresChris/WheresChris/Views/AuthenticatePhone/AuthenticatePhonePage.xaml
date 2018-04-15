@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WheresChris.Views.AuthenticatePhone.AuthenticatePhonePage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Frame x:Name="RegistrationForm" AutomationId="RegistrationForm">
+                <Entry x:Name="EmailAddress" AutomationId="EmailAddress" Placeholder="Email Address"/>
+                <Entry x:Name="PhoneNumber" AutomationId="PhoneNumber" Placeholder="Phone Number" IsEnabled="False"/>
+                <Button x:Name="AuthenticatePhoneButton" AutomationId="AuthenticatePhoneButton" Text="Authenticate"  Clicked="AuthenticatePhoneButton_OnClicked" Style="{StaticResource buttonStyle}"/>
+            </Frame>
+            <Frame x:Name="ConfirmationForm" AutomationId="ConfirmationForm" IsVisible="False">
+                <Entry x:Name="AuthyToken" AutomationId="AuthyToken" Placeholder="code"/>
+                <Button x:Name="ConfirmCodeButton" AutomationId="ConfirmCodeButton" Text="Confirm"  Clicked="ConfirmCodeButton_OnClicked" Style="{StaticResource buttonStyle}"/>
+            </Frame>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
