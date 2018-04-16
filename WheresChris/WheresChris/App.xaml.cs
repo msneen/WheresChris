@@ -65,14 +65,13 @@ namespace WheresChris
 
                 AddPage(new MainPage(), "Main");
 
-                PermissionRequest.SetInterval(AttemptLoadPagesNeedingPermissions, 5000);//await AttemptLoadPagesNeedingPermissionsAsync();
-
                 AddPage(new AboutPage(), "About");
 
-                InitializeTabbedPageLoads();
-
-                PermissionRequest.SetInterval(FinishInitializing, 5000);
-
+                var authyAuthenticated = PermissionHelper.IsAuthyAuthenticated();
+                if(authyAuthenticated)
+                {
+                    PermissionRequest.SetInterval(AttemptLoadPagesNeedingPermissions, 5000);
+                }
             }
             catch (System.Exception ex)
             {
@@ -120,6 +119,8 @@ namespace WheresChris
 
         public static void FinishInitializing()
         {
+            InitializeTabbedPageLoads();
+
             AsyncHelper.RunSync(StartLocationSenderAsync);
           
             Popup = new PopupMenu();
@@ -137,14 +138,7 @@ namespace WheresChris
             else
             {
                 var gpsEnabled = await PermissionHelper.HasGpsEnabled();
-                var authyAuthenticated = PermissionHelper.IsAuthyAuthenticated();
-                if(!authyAuthenticated)
-                {
-                    _permisionRequestIntervalTime = 60000;
-                    _addPagesIntervalTime = 60000;
-                    PermissionRequest.SetInterval(AttemptLoadPagesNeedingPermissions, _permisionRequestIntervalTime);
-                }
-                else if(!gpsEnabled)
+                if(!gpsEnabled)
                 {
                     _permisionRequestIntervalTime = 15000;
                     _addPagesIntervalTime = 15000;
@@ -172,6 +166,8 @@ namespace WheresChris
             InsertPageBeforeAbout(new MapPage(), "Map");
             InsertPageBeforeAbout(new ChatPage(), "Chat");
             InsertPageBeforeAbout(new JoinPage(), "Join");
+
+            PermissionRequest.SetInterval(FinishInitializing, 5000);
         }
 
         private static void AddPage(Page page, string title)

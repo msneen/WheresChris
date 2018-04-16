@@ -25,7 +25,7 @@ namespace WheresChris.Views.AuthenticatePhone
 	        {
 	            Device.BeginInvokeOnMainThread(() =>
 	            {
-	                Navigation.PopAsync();
+	                Navigation.PopModalAsync();
 	            });
 	        }
 #if (DEBUG)
@@ -92,7 +92,7 @@ namespace WheresChris.Views.AuthenticatePhone
 	            ConfirmationForm.IsVisible = false;
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    Navigation.PopAsync(true);
+                    Navigation.PopModalAsync(true);
                 });
 	        }
 	        catch(Exception ex)

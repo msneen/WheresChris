@@ -28,8 +28,13 @@ namespace WheresChris.Views
             //SaveButton.Clicked += SaveButton_OnClicked;
             InitializeMessagingCenterSubscriptions();
             InitializePhoneAndNickname();
+            LoadLastInvitation();
+        }
+
+        private void LoadLastInvitation()
+        {
             Invitation = InvitationHelper.LoadInvitation();
-            if (Invitation?.Members != null && Invitation.Members.Count > 0)
+            if(Invitation?.Members != null && Invitation.Members.Count > 0)
             {
                 LastInviteButton.IsVisible = true;
             }
@@ -80,7 +85,11 @@ namespace WheresChris.Views
                         await AuthyValidateUser()
                         .ContinueWith((tsk) =>
                         {
-                            InitializePhoneAndNickname();
+                            //InitializePhoneAndNickname();
+                            if(PermissionHelper.IsAuthyAuthenticated())
+                            {
+                                App.AttemptLoadPagesNeedingPermissions();
+                            }
                         });
                     });
                     
@@ -150,7 +159,7 @@ namespace WheresChris.Views
         public async Task AuthyValidateUser()
         {
             var authenticatePhonePage = new AuthenticatePhonePage();
-            await Navigation.PushAsync(authenticatePhonePage);
+            await Navigation.PushModalAsync(authenticatePhonePage);
         }
 
         private void TrySavePhoneNumber()
