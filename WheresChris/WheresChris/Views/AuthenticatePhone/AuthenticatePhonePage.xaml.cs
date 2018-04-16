@@ -33,10 +33,12 @@ namespace WheresChris.Views.AuthenticatePhone
 #endif
             _authyClient = new AuthyClient("OKkpKcWSzDvBs4Fbfm6nSpp905BFHAOD", _testMode);
 
-	        var userAuthy = SettingsHelper.GetAuthyUser();
-	        if(!string.IsNullOrWhiteSpace(userAuthy?.UserId))
+	        _authyUser = SettingsHelper.GetAuthyUser();
+	        if(!string.IsNullOrWhiteSpace(_authyUser?.UserId))
 	        {
 	            RegistrationForm.IsVisible = false;
+	            EmailAddress.Text = _authyUser.Email;
+
 	            ConfirmationForm.IsVisible = true;
 	        }
 	        else
@@ -53,13 +55,14 @@ namespace WheresChris.Views.AuthenticatePhone
 	        if(string.IsNullOrWhiteSpace(PhoneNumber.Text)) return;
 	        if(string.IsNullOrWhiteSpace(EmailAddress.Text)) return;
 
-            _authyUser = new AuthyUser(EmailAddress.Text, PhoneNumber.Text);
-	        _authyUser.UserId = _authyClient.RegisterUser
+            _authyUser = _authyUser ?? new AuthyUser(EmailAddress.Text, PhoneNumber.Text);
+	        var authyResult = _authyClient.RegisterUser
                                     (_authyUser.Email, 
                                     _authyUser.PhoneNumber.Replace($"+{_authyUser.CountryCode}", string.Empty), 
                                     Convert.ToInt32(_authyUser.CountryCode)
-                                    ).UserId;
-            
+                                    );
+
+	        _authyUser.UserId = authyResult.UserId;           
             SettingsHelper.SaveAuthyUser(_authyUser);
 	        RegistrationForm.IsVisible = false;
 	        ConfirmationForm.IsVisible = true;
@@ -83,7 +86,7 @@ namespace WheresChris.Views.AuthenticatePhone
 	            }
 	            var result = _authyClient.VerifyToken(_authyUser.UserId, AuthyToken.Text);
 	            _authyUser.TokenResult = result;
-	            AuthyTokenResult = result;
+	            AuthyTokenResult = result; 
 	            SettingsHelper.SaveAuthyUser(_authyUser);
 
 	            ConfirmationForm.IsVisible = false;
