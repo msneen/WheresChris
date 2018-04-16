@@ -34,14 +34,8 @@ namespace WheresChris
             Xamarin.Forms.Application.Current.On<Xamarin.Forms.PlatformConfiguration.Android>().UseWindowSoftInputModeAdjust(WindowSoftInputModeAdjust.Resize | WindowSoftInputModeAdjust.Pan);
 
             SetMainPage();
-
-            InitializeMessagingCenter();
         }
 
-        private void InitializeMessagingCenter()
-        {
-
-        }
 
         private static readonly Interval PermissionRequest = new Interval();
         private static readonly Interval AddPagesInterval = new Interval();
@@ -73,40 +67,9 @@ namespace WheresChris
 
                 PermissionRequest.SetInterval(AttemptLoadPagesNeedingPermissions, 5000);//await AttemptLoadPagesNeedingPermissionsAsync();
 
-
                 AddPage(new AboutPage(), "About");
 
-                _mainTabbedPage.CurrentPageChanged += async (sender, args) =>
-                {
-                    try
-                    {
-                        var currentPage = GetMainTab().CurrentPage;
-                        if (string.IsNullOrWhiteSpace(currentPage?.Title)) return;
-
-                        var currentNavigationPage = GetPage(currentPage?.Title);
-                        var currentNavigationStack = currentNavigationPage?.Navigation?.NavigationStack;
-                        if (currentNavigationStack == null) return;
-                        var index = currentNavigationStack.Count - 1;
-                                                 
-                        switch(currentNavigationStack[index])
-                        {
-                            case JoinPage joinPage:
-                                await joinPage?.RefreshInvitations();
-                                break;
-                            case ChatPage chatPage:
-                                await chatPage?.InitializeChat();
-                                break;
-                        }
-                    }
-                    catch (System.Exception exx)
-                    {
-                        Crashes.TrackError(exx, new Dictionary<string, string>
-                        {
-                            {"Source", exx.Source },
-                            { "stackTrace",exx.StackTrace}
-                        });
-                    }
-                };
+                InitializeTabbedPageLoads();
 
                 PermissionRequest.SetInterval(FinishInitializing, 5000);
 
@@ -120,12 +83,45 @@ namespace WheresChris
             }
         }
 
+        private static void InitializeTabbedPageLoads()
+        {
+            _mainTabbedPage.CurrentPageChanged += async (sender, args) =>
+            {
+                try
+                {
+                    var currentPage = GetMainTab().CurrentPage;
+                    if(string.IsNullOrWhiteSpace(currentPage?.Title)) return;
+
+                    var currentNavigationPage = GetPage(currentPage?.Title);
+                    var currentNavigationStack = currentNavigationPage?.Navigation?.NavigationStack;
+                    if(currentNavigationStack == null) return;
+                    var index = currentNavigationStack.Count - 1;
+
+                    switch(currentNavigationStack[index])
+                    {
+                        case JoinPage joinPage:
+                            await joinPage?.RefreshInvitations();
+                            break;
+                        case ChatPage chatPage:
+                            await chatPage?.InitializeChat();
+                            break;
+                    }
+                }
+                catch(System.Exception exx)
+                {
+                    Crashes.TrackError(exx, new Dictionary<string, string>
+                    {
+                        {"Source", exx.Source},
+                        {"stackTrace", exx.StackTrace}
+                    });
+                }
+            };
+        }
+
         public static void FinishInitializing()
         {
             AsyncHelper.RunSync(StartLocationSenderAsync);
-
-            
-
+          
             Popup = new PopupMenu();
         }
 
@@ -141,7 +137,14 @@ namespace WheresChris
             else
             {
                 var gpsEnabled = await PermissionHelper.HasGpsEnabled();
-                if(!gpsEnabled)
+                var authyAuthenticated = PermissionHelper.IsAuthyAuthenticated();
+                if(!authyAuthenticated)
+                {
+                    _permisionRequestIntervalTime = 60000;
+                    _addPagesIntervalTime = 60000;
+                    PermissionRequest.SetInterval(AttemptLoadPagesNeedingPermissions, _permisionRequestIntervalTime);
+                }
+                else if(!gpsEnabled)
                 {
                     _permisionRequestIntervalTime = 15000;
                     _addPagesIntervalTime = 15000;

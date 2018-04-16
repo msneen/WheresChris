@@ -65,6 +65,7 @@ namespace WheresChris.Helpers
         {
             CrossSettings.Current.AddOrUpdateValue("phonenumber", string.Empty);
             CrossSettings.Current.AddOrUpdateValue("nickname", string.Empty);
+            CrossSettings.Current.AddOrUpdateValue("AuthyUser", string.Empty);
         }
 
         public static void SaveAuthyUser(AuthyUser user)
