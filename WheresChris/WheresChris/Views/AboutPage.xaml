@@ -34,6 +34,7 @@
                 </Label>
                 <Label x:Name="LastOutboundMessage" IsVisible="False"></Label>
                 <Label x:Name="LastInboundMessage" IsVisible="False"></Label>
+                <Label x:Name="AuthyInfo" IsVisible="False"></Label>
                 <Button Margin="0,10,0,0" x:Name="BtnReset" IsVisible="False"
                 Text="Reset Stored Data" 
                 Clicked="BtnReset_OnClicked" Style="{StaticResource buttonStyle}"/>

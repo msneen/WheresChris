@@ -104,6 +104,14 @@ namespace WheresChris.Views.AuthenticatePhone
 	            });
 	        }
 	    }
+
+	    private void ResendCodeButton_OnClicked(object sender, EventArgs e)
+	    {
+	        if(!string.IsNullOrWhiteSpace(_authyUser.UserId))
+	        {
+	            _authyClient.SendSms(_authyUser.UserId);
+	        }	        
+	    }
 	}
 
     public class AuthyUser

@@ -28,6 +28,8 @@ namespace WheresChris.Views
 
 		        LastOutboundMessage.IsVisible = true;
 		        LastInboundMessage.IsVisible = true;
+		        var userJson = CrossSettings.Current.GetValueOrDefault("AuthyUser", "");
+		        AuthyInfo.Text = userJson;
 		        BtnReset.IsVisible = true;
 		        InitializeMessagingCenter();
 		    };
@@ -79,10 +81,9 @@ namespace WheresChris.Views
 	    private void DisplayVersionNumber()
 	    {
 	        //var permissions = PermissionHelper.GetNecessaryPermissionInformation().Result;
-	        var userJson = CrossSettings.Current.GetValueOrDefault("AuthyUser", "");
 	        var version = Assembly.GetExecutingAssembly().GetName().Version;
-	        var versionNumber = $"{version.Major}.{version.Minor}.{version.Build}\n";
-	        VersionSpan.Text = versionNumber + userJson;
+	        var versionNumber = $"{version.Major}.{version.Minor}.{version.Build}";
+	        VersionSpan.Text = versionNumber;
 	    }
 
 	    protected override void OnAppearing()
