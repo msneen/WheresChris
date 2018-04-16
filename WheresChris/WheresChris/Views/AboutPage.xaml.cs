@@ -30,6 +30,7 @@ namespace WheresChris.Views
 		        LastInboundMessage.IsVisible = true;
 		        var userJson = CrossSettings.Current.GetValueOrDefault("AuthyUser", "");
 		        AuthyInfo.Text = userJson;
+		        AuthyInfo.IsVisible = true;
 		        BtnReset.IsVisible = true;
 		        InitializeMessagingCenter();
 		    };
