@@ -4,15 +4,15 @@
              x:Class="WheresChris.Views.AuthenticatePhone.AuthenticatePhonePage">
     <ContentPage.Content>
         <StackLayout>
-            <Frame x:Name="RegistrationForm" AutomationId="RegistrationForm">
-                <Entry x:Name="EmailAddress" AutomationId="EmailAddress" Placeholder="Email Address"/>
-                <Entry x:Name="PhoneNumber" AutomationId="PhoneNumber" Placeholder="Phone Number" IsEnabled="False"/>
-                <Button x:Name="AuthenticatePhoneButton" AutomationId="AuthenticatePhoneButton" Text="Authenticate"  Clicked="AuthenticatePhoneButton_OnClicked" Style="{StaticResource buttonStyle}"/>
-            </Frame>
-            <Frame x:Name="ConfirmationForm" AutomationId="ConfirmationForm" IsVisible="False">
+            <StackLayout x:Name="RegistrationForm" AutomationId="RegistrationForm">
+                    <Entry x:Name="EmailAddress" AutomationId="EmailAddress" Placeholder="Email Address"/>
+                    <Entry x:Name="PhoneNumber" AutomationId="PhoneNumber" Placeholder="Phone Number" IsEnabled="False"/>
+                    <Button x:Name="AuthenticatePhoneButton" AutomationId="AuthenticatePhoneButton" Text="Authenticate"  Clicked="AuthenticatePhoneButton_OnClicked" Style="{StaticResource buttonStyle}"/>
+            </StackLayout>
+            <StackLayout x:Name="ConfirmationForm" AutomationId="ConfirmationForm" IsVisible="False">
                 <Entry x:Name="AuthyToken" AutomationId="AuthyToken" Placeholder="code"/>
                 <Button x:Name="ConfirmCodeButton" AutomationId="ConfirmCodeButton" Text="Confirm"  Clicked="ConfirmCodeButton_OnClicked" Style="{StaticResource buttonStyle}"/>
-            </Frame>
+            </StackLayout>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

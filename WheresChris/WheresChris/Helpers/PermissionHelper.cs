@@ -26,7 +26,8 @@ namespace WheresChris.Helpers
             var locationEnabledPermissionsGranted = await HasGpsEnabled();
             var locationPermissionsGranted = await HasLocationPermission();
             var contactsPermissionsGranted = await HastContactPermission();
-            return locationPermissionsGranted && locationEnabledPermissionsGranted && contactsPermissionsGranted;
+            var phoneNumberAuthenticated = IsAuthyAuthenticated();
+            return locationPermissionsGranted && locationEnabledPermissionsGranted && contactsPermissionsGranted && phoneNumberAuthenticated;
         }
 
         public static async Task<bool> HasOrRequestGpsEnabledPermission()
@@ -147,6 +148,13 @@ namespace WheresChris.Helpers
 
             var information = $"\n\rContacts={contacts}\n\rPhone={phone}\n\rLocation={location}";
             return information;
+        }
+
+        public static bool IsAuthyAuthenticated()
+        {
+            var authyUser = SettingsHelper.GetAuthyUser();
+            var isAuthenticated = authyUser?.TokenResult?.Success ?? false;
+            return isAuthenticated;
         }
     }
 }

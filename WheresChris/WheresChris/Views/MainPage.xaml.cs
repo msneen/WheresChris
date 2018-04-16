@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using StayTogether.Helpers;
 using WheresChris.Helpers;
 using WheresChris.Models;
+using WheresChris.Views.AuthenticatePhone;
 using Xamarin.Forms;
 
 
@@ -24,7 +25,7 @@ namespace WheresChris.Views
 
         private void InitializePage()
         {
-            SaveButton.Clicked += SaveButton_OnClicked;
+            //SaveButton.Clicked += SaveButton_OnClicked;
             InitializeMessagingCenterSubscriptions();
             InitializePhoneAndNickname();
             Invitation = InvitationHelper.LoadInvitation();
@@ -42,6 +43,9 @@ namespace WheresChris.Views
         {
             Device.BeginInvokeOnMainThread(async () =>
             {
+                InviteButton.IsEnabled = false;
+                JoinButton.IsEnabled = false;
+
                 PhoneNumber.Text = SettingsHelper.GetPhoneNumber();
                 if(string.IsNullOrWhiteSpace(PhoneNumber.Text))
                 {
@@ -54,18 +58,33 @@ namespace WheresChris.Views
 
                 DisableIfValid(PhoneNumber);
                 DisableIfValid(Nickname);
-                if(PhoneNumber.IsEnabled == false && Nickname.IsEnabled == false)
+                if(PhoneNumber.IsEnabled == false && Nickname.IsEnabled == false && PermissionHelper.IsAuthyAuthenticated())
                 {
                     SaveButton.IsVisible = false;
                     InviteButton.IsEnabled = true;
                     JoinButton.IsEnabled = true;
+                    return;
                 }
-                else
+                            
+                if(PhoneNumber.IsEnabled == true || Nickname.IsEnabled == true)
                 {
-                    InviteButton.IsEnabled = false;
-                    JoinButton.IsEnabled = false;
+                    SaveButton.IsVisible = true;
+                    return;
                 }
 
+                SaveButton.IsVisible = false;
+                if(!PermissionHelper.IsAuthyAuthenticated())
+                {
+                    Device.BeginInvokeOnMainThread(async () =>
+                    {
+                        await AuthyValidateUser()
+                        .ContinueWith((tsk) =>
+                        {
+                            InitializePhoneAndNickname();
+                        });
+                    });
+                    
+                }              
             });
         }
 
@@ -109,8 +128,29 @@ namespace WheresChris.Views
             TrySaveNickname();
             if ( AskForNickname()) return;
             SaveButton.IsVisible = false;
-            InviteButton.IsEnabled = true;
-            JoinButton.IsEnabled = true;
+
+            if(!PermissionHelper.IsAuthyAuthenticated())
+            {
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    await AuthyValidateUser()
+                        .ContinueWith((tsk) =>
+                        {
+                            InitializePhoneAndNickname();
+                        });
+                });                
+            }
+            else
+            {
+                InviteButton.IsEnabled = true;
+                JoinButton.IsEnabled = true;
+            }
+        }
+
+        public async Task AuthyValidateUser()
+        {
+            var authenticatePhonePage = new AuthenticatePhonePage();
+            await Navigation.PushAsync(authenticatePhonePage);
         }
 
         private void TrySavePhoneNumber()

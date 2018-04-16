@@ -156,9 +156,9 @@ namespace Authy.Net
             where TResult : AuthyResult, new()
         {
             var client = new WebClient();
-            var libraryVersion = AuthyHelpers.GetVersion();
+            //var libraryVersion = AuthyHelpers.GetVersion();
             var runtimeVersion = AuthyHelpers.GetSystemInfo();
-            var userAgent = string.Format("AuthyNet/{0} ({1})", libraryVersion, runtimeVersion);
+            var userAgent = $"AuthyNet/1.0.1.1 ({runtimeVersion})";
 
             // Set a custom user agent
             client.Headers.Add("user-agent", userAgent);

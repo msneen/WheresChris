@@ -56,10 +56,10 @@
                     <Entry x:Name="Nickname" AutomationId="Nickname" Text="" 
                             RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=0}"
                             RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}" />
-                </RelativeLayout>                    
+                </RelativeLayout>
 
 
-                <Button x:Name="SaveButton" AutomationId="SaveButton" Text="Save" Style="{StaticResource buttonStyle}"
+                <Button x:Name="SaveButton" AutomationId="SaveButton" Text="Save" Clicked="SaveButton_OnClicked" Style="{StaticResource buttonStyle}"
                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.5, Constant=0}"
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.05, Constant=0}"                    
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.9,Constant=0}"/>

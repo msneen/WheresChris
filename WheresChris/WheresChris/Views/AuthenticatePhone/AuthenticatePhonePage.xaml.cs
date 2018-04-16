@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Authy.Net;
+using Microsoft.AppCenter.Crashes;
 using WheresChris.Helpers;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -18,12 +20,32 @@ namespace WheresChris.Views.AuthenticatePhone
 	    public AuthenticatePhonePage ()
 	    {
 	        InitializeComponent ();
+
+	        if(PermissionHelper.IsAuthyAuthenticated())
+	        {
+	            Device.BeginInvokeOnMainThread(() =>
+	            {
+	                Navigation.PopAsync();
+	            });
+	        }
 #if (DEBUG)
 	        _testMode = true;
 #endif
-            _authyClient = new AuthyClient("Todo:get authy apikey", _testMode);
+            _authyClient = new AuthyClient("OKkpKcWSzDvBs4Fbfm6nSpp905BFHAOD", _testMode);
 
-	        PhoneNumber.Text = SettingsHelper.GetPhoneNumber();
+	        var userAuthy = SettingsHelper.GetAuthyUser();
+	        if(!string.IsNullOrWhiteSpace(userAuthy?.UserId))
+	        {
+	            RegistrationForm.IsVisible = false;
+	            ConfirmationForm.IsVisible = true;
+	        }
+	        else
+	        {
+	            PhoneNumber.Text = SettingsHelper.GetPhoneNumber(); 
+#if (DEBUG)
+	        PhoneNumber.Text = "6199284340";
+#endif     
+	        }
 	    }
 
 	    private void AuthenticatePhoneButton_OnClicked(object sender, EventArgs e)
@@ -45,17 +67,39 @@ namespace WheresChris.Views.AuthenticatePhone
 
 	    private void ConfirmCodeButton_OnClicked(object sender, EventArgs e)
 	    {
-	        if(_authyUser == null)
+	        try
 	        {
-	            _authyUser = SettingsHelper.GetAuthyUser();
-	            if(_authyUser == null) return;
-	        }
-	        var result = _authyClient.VerifyToken(_authyUser.UserId, AuthyToken.Text);
-	        _authyUser.TokenResult = result;
-	        AuthyTokenResult = result;
-            SettingsHelper.SaveAuthyUser(_authyUser);
+	            if(_authyUser == null)
+	            {
+	                _authyUser = SettingsHelper.GetAuthyUser();
+	                if(_authyUser == null) return;
+//Leave this here.  Enable for Emulators that can't receive the text message
+//#if (DEBUG)
+//	                _authyUser.TokenResult.Success = true;
+//	                _authyUser.TokenResult.Status = AuthyStatus.Success;
+//	                SettingsHelper.SaveAuthyUser(_authyUser);
+//	                return;
+//#endif
+	            }
+	            var result = _authyClient.VerifyToken(_authyUser.UserId, AuthyToken.Text);
+	            _authyUser.TokenResult = result;
+	            AuthyTokenResult = result;
+	            SettingsHelper.SaveAuthyUser(_authyUser);
 
-	        ConfirmationForm.IsVisible = false;
+	            ConfirmationForm.IsVisible = false;
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    Navigation.PopAsync(true);
+                });
+	        }
+	        catch(Exception ex)
+	        {
+	            Crashes.TrackError(ex, new Dictionary<string, string>
+	            {
+	                {"Source", ex.Source },
+	                { "stackTrace",ex.StackTrace}
+	            });
+	        }
 	    }
 	}
 
