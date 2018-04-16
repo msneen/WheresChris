@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Plugin.Settings;
 using StayTogether;
 using StayTogether.Classes;
 using StayTogether.Helpers;
@@ -78,9 +79,10 @@ namespace WheresChris.Views
 	    private void DisplayVersionNumber()
 	    {
 	        //var permissions = PermissionHelper.GetNecessaryPermissionInformation().Result;
+	        var userJson = CrossSettings.Current.GetValueOrDefault("AuthyUser", "");
 	        var version = Assembly.GetExecutingAssembly().GetName().Version;
-	        var versionNumber = $"{version.Major}.{version.Minor}.{version.Build}";
-	        VersionSpan.Text = versionNumber;
+	        var versionNumber = $"{version.Major}.{version.Minor}.{version.Build}\n";
+	        VersionSpan.Text = versionNumber + userJson;
 	    }
 
 	    protected override void OnAppearing()
