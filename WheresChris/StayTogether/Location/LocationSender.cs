@@ -249,10 +249,16 @@ Debugger.Break();
             try
             {
                 if(! await IsGeolocationAvailable()) return;
+                var authyUserId = SettingsHelper.GetAuthyUser()?.UserId ?? "";
                 // Connect to the server
                 _hubConnection = new HubConnection("https://staytogetherserver.azurewebsites.net/"); //mike
                 //_hubConnection = new HubConnection("http://162.231.59.41/StayTogetherServer/");//mike
                 _hubConnection.Headers.Add("AuthToken", "x0y2!tJyHR%$Sip@*%amaGxvs");
+                if(PermissionHelper.IsAuthyAuthenticated())
+                {
+                    _hubConnection.Headers.Add("AuthyAuthenticated", "true");
+                    _hubConnection.Headers.Add("AuthyUserId", authyUserId);
+                }
 
                 // Create a proxy to the 'ChatHub' SignalR Hub
                 _chatHubProxy = _hubConnection.CreateHubProxy("StayTogetherHub");

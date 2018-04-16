@@ -9,6 +9,14 @@
     <Import_RootNamespace>StayTogether</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Authy.Net\AuthyClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Authy.Net\AuthyHelpers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Authy.Net\AuthyResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Authy.Net\AuthyStatus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Authy.Net\RegisterUserResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Authy.Net\SendSmsResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Authy.Net\StartPhoneCallResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Authy.Net\VerifyTokenResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\GroupMemberConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\PositionConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ColorExtensions.cs" />

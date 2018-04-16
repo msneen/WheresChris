@@ -1,6 +1,9 @@
 ﻿using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Plugin.Settings;
 using StayTogether;
+using WheresChris.Views.AuthenticatePhone;
+
 #if __ANDROID__
 using Android.App;
 using Android.Content;
@@ -62,6 +65,21 @@ namespace WheresChris.Helpers
         {
             CrossSettings.Current.AddOrUpdateValue("phonenumber", string.Empty);
             CrossSettings.Current.AddOrUpdateValue("nickname", string.Empty);
+        }
+
+        public static void SaveAuthyUser(AuthyUser user)
+        {
+            var userJson = JsonConvert.SerializeObject(user);
+            CrossSettings.Current.AddOrUpdateValue("AuthyUser", userJson);
+        }
+
+        public static AuthyUser GetAuthyUser()
+        {
+            var userJson = CrossSettings.Current.GetValueOrDefault("AuthyUser", "");
+            if(string.IsNullOrWhiteSpace(userJson)) return null;
+
+            var user = JsonConvert.DeserializeObject<AuthyUser>(userJson);
+            return user;
         }
     }
 }
