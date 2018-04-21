@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using Authy.Net;
 using Microsoft.AppCenter.Crashes;
+using StayTogether;
+using StayTogether.Models;
 using WheresChris.Helpers;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace WheresChris.Views.AuthenticatePhone
 {
+    
+
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	// ReSharper disable once RedundantExtendsListEntry
 	public partial class AuthenticatePhonePage : ContentPage
@@ -16,21 +20,18 @@ namespace WheresChris.Views.AuthenticatePhone
 	    private bool _testMode = false;
 	    private AuthyUser _authyUser;
 	    public VerifyTokenResult AuthyTokenResult { get; set; }
-
+	    
 	    public AuthenticatePhonePage ()
 	    {
 	        InitializeComponent ();
 
+
+
 	        if(PermissionHelper.IsAuthyAuthenticated())
-	        {
-	            Device.BeginInvokeOnMainThread(() =>
-	            {
-	                Navigation.PopModalAsync();
-	            });
+	        {	            
+	            Navigation.PopModalAsync();	            
 	        }
-#if (DEBUG)
-	        _testMode = true;
-#endif
+
             _authyClient = new AuthyClient("OKkpKcWSzDvBs4Fbfm6nSpp905BFHAOD", _testMode);
 
 	        _authyUser = SettingsHelper.GetAuthyUser();
@@ -38,12 +39,16 @@ namespace WheresChris.Views.AuthenticatePhone
 	        {
 	            RegistrationForm.IsVisible = false;
 	            EmailAddress.Text = _authyUser.Email;
-
+	            Nickname.Text = _authyUser.Nickname;
 	            ConfirmationForm.IsVisible = true;
 	        }
 	        else
 	        {
-	            PhoneNumber.Text = SettingsHelper.GetPhoneNumber(); 
+                var phoneNumber = SettingsHelper.GetPhoneNumber();
+	            PhoneNumber.Text = string.IsNullOrWhiteSpace(phoneNumber)
+	                ? SettingsHelper.GetPhoneNumberFromService().Result
+	                : phoneNumber;
+	            Nickname.Text = SettingsHelper.GetNickname();
 #if (DEBUG)
 	        PhoneNumber.Text = "6199284340";
 #endif     
@@ -55,15 +60,20 @@ namespace WheresChris.Views.AuthenticatePhone
 	        if(string.IsNullOrWhiteSpace(PhoneNumber.Text)) return;
 	        if(string.IsNullOrWhiteSpace(EmailAddress.Text)) return;
 
-            _authyUser = _authyUser ?? new AuthyUser(EmailAddress.Text, PhoneNumber.Text);
+            _authyUser = _authyUser ?? new AuthyUser(EmailAddress.Text, PhoneNumber.Text, Nickname.Text);
 	        var authyResult = _authyClient.RegisterUser
                                     (_authyUser.Email, 
                                     _authyUser.PhoneNumber.Replace($"+{_authyUser.CountryCode}", string.Empty), 
                                     Convert.ToInt32(_authyUser.CountryCode)
                                     );
 
-	        _authyUser.UserId = authyResult.UserId;           
-            SettingsHelper.SaveAuthyUser(_authyUser);
+	        _authyUser.UserId = authyResult.UserId;
+	        if(!string.IsNullOrWhiteSpace(_authyUser.UserId))
+	        {
+	            _authyClient.SendSms(_authyUser.UserId);
+	            SettingsHelper.SaveAuthyUser(_authyUser);
+	        }
+
 	        RegistrationForm.IsVisible = false;
 	        ConfirmationForm.IsVisible = true;
 	    }
@@ -89,11 +99,15 @@ namespace WheresChris.Views.AuthenticatePhone
 	            AuthyTokenResult = result; 
 	            SettingsHelper.SaveAuthyUser(_authyUser);
 
-	            ConfirmationForm.IsVisible = false;
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    Navigation.PopModalAsync(true);
-                });
+	            if(result.Success)
+	            {
+	                ConfirmationForm.IsVisible = false;
+	                MessagingCenter.Send(new MessagingCenterSender(), LocationSender.AuthenticationCompleteMsg, result);
+	                Device.BeginInvokeOnMainThread(() =>
+	                {
+	                    Navigation.PopModalAsync(true);
+	                });
+	            }
 	        }
 	        catch(Exception ex)
 	        {
@@ -121,15 +135,18 @@ namespace WheresChris.Views.AuthenticatePhone
             
         }
 
-        public AuthyUser(string email, string phoneNumber)
+        public AuthyUser(string email, string phoneNumber, string nickname)
         {
             Email = email;
             PhoneNumber = phoneNumber;
+            Nickname = nickname;
         }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string CountryCode { get; set; } = "1";//only usa and canada for now
         public string UserId { get; set; }
+
+        public string Nickname { get; set; }
         public VerifyTokenResult TokenResult { get; set; }
     }
 }

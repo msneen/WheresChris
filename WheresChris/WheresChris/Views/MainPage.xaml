@@ -42,7 +42,7 @@
                     <Label Text="My Phone#"
                             RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.05, Constant=0}"
                             RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.45,Constant=0}"/>
-                    <Entry x:Name="PhoneNumber" AutomationId="PhoneNumber" Text=""
+                    <Entry x:Name="PhoneNumber" AutomationId="PhoneNumber" IsEnabled="False"
                             RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=0}"
                             RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}" />
                 </RelativeLayout>
@@ -53,16 +53,16 @@
                     <Label Text="My Name"
                             RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.05, Constant=0}"
                             RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=.45,Constant=0}"/>
-                    <Entry x:Name="Nickname" AutomationId="Nickname" Text="" 
+                    <Entry x:Name="Nickname" AutomationId="Nickname" IsEnabled="false" 
                             RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=0}"
                             RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.45,Constant=0}" />
                 </RelativeLayout>
 
 
-                <Button x:Name="SaveButton" AutomationId="SaveButton" Text="Save" Clicked="SaveButton_OnClicked" Style="{StaticResource buttonStyle}"
+                <!--<Button x:Name="SaveButton" AutomationId="SaveButton" Text="Save" Clicked="SaveButton_OnClicked" Style="{StaticResource buttonStyle}"
                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.5, Constant=0}"
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.05, Constant=0}"                    
-                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.9,Constant=0}"/>
+                    RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.9,Constant=0}"/>-->
 
                 <Button x:Name="InviteButton" AutomationId="InviteButton" Text="Invite Chris" Clicked="StartGroup" Style="{StaticResource buttonStyle}" 
                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.6, Constant=0}"

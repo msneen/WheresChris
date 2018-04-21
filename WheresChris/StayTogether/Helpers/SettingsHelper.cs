@@ -70,6 +70,16 @@ namespace WheresChris.Helpers
 
         public static void SaveAuthyUser(AuthyUser user)
         {
+            if(user.PhoneNumber.IsValidPhoneNumber())
+            {
+                SavePhoneNumber(user.PhoneNumber);
+            }
+
+            if(!string.IsNullOrWhiteSpace(user.Nickname))
+            {
+                SaveNickname(user.Nickname);
+            }
+
             var userJson = JsonConvert.SerializeObject(user);
             CrossSettings.Current.AddOrUpdateValue("AuthyUser", userJson);
         }

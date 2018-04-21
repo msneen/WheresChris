@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Authy.Net;
+using StayTogether;
 using StayTogether.Helpers;
+using StayTogether.Models;
 using WheresChris.Helpers;
 using WheresChris.Models;
 using WheresChris.Views.AuthenticatePhone;
@@ -14,27 +17,39 @@ namespace WheresChris.Views
     /// </summary>
     public partial class MainPage : ContentPage
     {
-        private Invitation Invitation;
+        private Invitation _invitation;
         private static readonly Interval InitializeInterval = new Interval();
 
         public MainPage()
         {
             InitializeComponent();
+            InitializeMessagingCenter();
             InitializeInterval.SetInterval(InitializePage, 1000);
+        }
+
+        private void InitializeMessagingCenter()
+        {
+            MessagingCenter.Subscribe<MessagingCenterSender, VerifyTokenResult>(this, LocationSender.AuthenticationCompleteMsg,
+                (sender, result) =>
+                {
+                    Device.BeginInvokeOnMainThread(()=>
+                    {
+                        App.AttemptLoadPagesNeedingPermissions();
+                        InitializePhoneAndNickname();
+                    });
+                });
         }
 
         private void InitializePage()
         {
-            //SaveButton.Clicked += SaveButton_OnClicked;
-            InitializeMessagingCenterSubscriptions();
-            InitializePhoneAndNickname();
+            InitializePhoneAndNicknameWithValidation();
             LoadLastInvitation();
         }
 
         private void LoadLastInvitation()
         {
-            Invitation = InvitationHelper.LoadInvitation();
-            if(Invitation?.Members != null && Invitation.Members.Count > 0)
+            _invitation = InvitationHelper.LoadInvitation();
+            if(_invitation?.Members != null && _invitation.Members.Count > 0)
             {
                 LastInviteButton.IsVisible = true;
             }
@@ -44,116 +59,40 @@ namespace WheresChris.Views
             }
         }
 
+        private void InitializePhoneAndNicknameWithValidation()
+        {
+            InitializePhoneAndNickname();
+
+            AsyncHelper.RunSync(AuthyValidateUser);
+        }
+
         private void InitializePhoneAndNickname()
         {
-            Device.BeginInvokeOnMainThread(async () =>
+            InviteButton.IsEnabled = false;
+            JoinButton.IsEnabled = false;
+
+            var phoneNumber = SettingsHelper.GetPhoneNumber();
+
+            PhoneNumber.Text = phoneNumber;
+
+            Nickname.Text = SettingsHelper.GetNickname();
+
+            if(PermissionHelper.IsAuthyAuthenticated() && phoneNumber.IsValidPhoneNumber())
             {
-                InviteButton.IsEnabled = false;
-                JoinButton.IsEnabled = false;
-
-                PhoneNumber.Text = SettingsHelper.GetPhoneNumber();
-                if(string.IsNullOrWhiteSpace(PhoneNumber.Text))
-                {
-
-                    var phoneNumber = await SettingsHelper.GetPhoneNumberFromService();
-
-                    PhoneNumber.Text = phoneNumber;
-                }
-                Nickname.Text = SettingsHelper.GetNickname();
-
-                DisableIfValid(PhoneNumber);
-                DisableIfValid(Nickname);
-                if(PhoneNumber.IsEnabled == false && Nickname.IsEnabled == false && PermissionHelper.IsAuthyAuthenticated())
-                {
-                    SaveButton.IsVisible = false;
-                    InviteButton.IsEnabled = true;
-                    JoinButton.IsEnabled = true;
-                    return;
-                }
-                            
-                if(PhoneNumber.IsEnabled == true || Nickname.IsEnabled == true)
-                {
-                    SaveButton.IsVisible = true;
-                    return;
-                }
-
-                SaveButton.IsVisible = false;
-                if(!PermissionHelper.IsAuthyAuthenticated())
-                {
-                    Device.BeginInvokeOnMainThread(async () =>
-                    {
-                        await AuthyValidateUser()
-                        .ContinueWith((tsk) =>
-                        {
-                            //InitializePhoneAndNickname();
-                            if(PermissionHelper.IsAuthyAuthenticated())
-                            {
-                                App.AttemptLoadPagesNeedingPermissions();
-                            }
-                        });
-                    });
-                    
-                }              
-            });
+                InviteButton.IsEnabled = true;
+                JoinButton.IsEnabled = true;
+            }         
         }
 
-        private static void DisableIfValid(Entry textbox)
-        {
-            if (string.IsNullOrWhiteSpace(textbox?.Text)) return;
-            textbox.IsEnabled = false;
-        }
-
-        private void InitializeMessagingCenterSubscriptions()
-        {
-            //MessagingCenter.Subscribe<LocationSender>(this, LocationSender.LocationSentMsg, (sender) =>
-            //{
-            //    Device.BeginInvokeOnMainThread(() =>
-            //    {
-            //        TitleLabel.TextColor = TitleLabel.TextColor == Color.White ? Color.Yellow : Color.White;
-            //    });
-            //});
-        }
 
         public void StartGroup(object sender, EventArgs e)
         {
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                App.SetCurrentTab("Invite");
-            });
+            App.SetCurrentTab("Invite");
         }
 
         public void JoinGroup(object sender, EventArgs e)
         {
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                App.SetCurrentTab("Join");
-            });
-        }
-
-        private void SaveButton_OnClicked(object sender, EventArgs e)
-        {
-            TrySavePhoneNumber();
-            if (AskForPhoneNumber()) return;
-            TrySaveNickname();
-            if ( AskForNickname()) return;
-            SaveButton.IsVisible = false;
-
-            if(!PermissionHelper.IsAuthyAuthenticated())
-            {
-                Device.BeginInvokeOnMainThread(async () =>
-                {
-                    await AuthyValidateUser()
-                        .ContinueWith((tsk) =>
-                        {
-                            InitializePhoneAndNickname();
-                        });
-                });                
-            }
-            else
-            {
-                InviteButton.IsEnabled = true;
-                JoinButton.IsEnabled = true;
-            }
+            App.SetCurrentTab("Join");
         }
 
         public async Task AuthyValidateUser()
@@ -162,50 +101,9 @@ namespace WheresChris.Views
             await Navigation.PushModalAsync(authenticatePhonePage);
         }
 
-        private void TrySavePhoneNumber()
-        {
-            if (PhoneNumber.IsEnabled && !string.IsNullOrWhiteSpace(PhoneNumber.Text))
-            {
-                SettingsHelper.SavePhoneNumber(PhoneNumber.Text);
-                PhoneNumber.IsEnabled = false;
-            }
-        }
-
-        private void TrySaveNickname()
-        {
-            if(!Nickname.IsEnabled || string.IsNullOrWhiteSpace(Nickname.Text)) return;
-
-            SettingsHelper.SaveNickname(Nickname.Text);
-            Nickname.IsEnabled = false;
-        }
-
-        private bool AskForNickname()
-        {
-            if(!string.IsNullOrWhiteSpace(Nickname.Text)) return false;
-
-            var title = "Nickname";
-            var description = "Please enter your Nickname";
-            ToastHelper.Display(title, description);
-
-            Nickname.Focus();
-            return true;
-        }
-
-        private bool AskForPhoneNumber()
-        {
-            if(!string.IsNullOrWhiteSpace(PhoneNumber.Text)) return false;
-
-            var title = "Phone Number";
-            var description = "Please enter your PhoneNumber";
-            ToastHelper.Display(title,description);
-
-            PhoneNumber.Focus();
-            return true;
-        }
-
         private async Task SendLastInvitmtion(object sender, EventArgs e)
         {
-            await GroupActionsHelper.StartGroup(Invitation.Members, Invitation.UserPhoneNumber, Invitation.ExpirationHours);
+            await GroupActionsHelper.StartGroup(_invitation.Members, _invitation.UserPhoneNumber, _invitation.ExpirationHours);
         }
     }
 }

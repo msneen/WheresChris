@@ -56,6 +56,7 @@ namespace StayTogether
 	    public const string AdditionalMembersRequestJoinGroup = "ADDITIONALMEMBERSREQUESTJOINGROUP";//This is the signal r call to the group leader when someone requests to add members
 	    public const string SendTelemetryMsg = "SENDTELEMETRYMESSAGE";
 	    public const string LeaveOrEndGroupMsg = "LEAVEORENDGROUPMESSAGE";
+	    public const string AuthenticationCompleteMsg = "AUTHENTICATIONCOMPLETE";
 
         public bool InAGroup { get; set; }
         public bool GroupLeader { get; set; }
@@ -486,9 +487,9 @@ Debugger.Break();
             }
             catch (Exception ex)
             {
-#if (DEBUG)
-                Debugger.Break();
-#endif
+//#if (DEBUG)
+//                Debugger.Break();
+//#endif
                 Analytics.TrackEvent($"LocationSender_SetUpLocationEvents", new Dictionary<string, string>
                 {
                     { "Message", ex.Message}
