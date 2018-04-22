@@ -71,20 +71,24 @@ namespace WheresChris.Views
 
         private void InitializePhoneAndNickname()
         {
-            InviteButton.IsEnabled = false;
-            JoinButton.IsEnabled = false;
-
-            var phoneNumber = SettingsHelper.GetPhoneNumber();
-
-            PhoneNumber.Text = phoneNumber;
-
-            Nickname.Text = SettingsHelper.GetNickname();
-
-            if(PermissionHelper.IsAuthyAuthenticated() && phoneNumber.IsValidPhoneNumber())
+            Device.BeginInvokeOnMainThread(() =>
             {
-                InviteButton.IsEnabled = true;
-                JoinButton.IsEnabled = true;
-            }         
+                InviteButton.IsEnabled = false;
+                JoinButton.IsEnabled = false;
+
+                var phoneNumber = SettingsHelper.GetPhoneNumber();
+
+                PhoneNumber.Text = phoneNumber;
+
+                Nickname.Text = SettingsHelper.GetNickname();
+
+                if(PermissionHelper.IsAuthyAuthenticated() && phoneNumber.IsValidPhoneNumber())
+                {
+                    InviteButton.IsEnabled = true;
+                    JoinButton.IsEnabled = true;
+                }  
+            });
+        
         }
 
 
