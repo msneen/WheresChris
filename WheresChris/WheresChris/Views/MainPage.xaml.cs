@@ -63,7 +63,10 @@ namespace WheresChris.Views
         {
             InitializePhoneAndNickname();
 
-            AsyncHelper.RunSync(AuthyValidateUser);
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                await AuthyValidateUser();
+            });
         }
 
         private void InitializePhoneAndNickname()
