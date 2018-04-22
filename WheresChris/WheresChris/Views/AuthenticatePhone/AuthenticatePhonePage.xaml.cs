@@ -28,8 +28,11 @@ namespace WheresChris.Views.AuthenticatePhone
 
 
 	        if(PermissionHelper.IsAuthyAuthenticated())
-	        {	            
-	            Navigation.PopModalAsync();	            
+	        {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    Navigation.PopModalAsync();	
+                });	                        
 	        }
 
             _authyClient = new AuthyClient("OKkpKcWSzDvBs4Fbfm6nSpp905BFHAOD", _testMode);
@@ -105,7 +108,7 @@ namespace WheresChris.Views.AuthenticatePhone
 	                MessagingCenter.Send(new MessagingCenterSender(), LocationSender.AuthenticationCompleteMsg, result);
 	                Device.BeginInvokeOnMainThread(() =>
 	                {
-	                    Navigation.PopModalAsync(true);
+	                    Navigation.PopModalAsync();
 	                });
 	            }
 	        }
