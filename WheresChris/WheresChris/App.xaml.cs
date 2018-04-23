@@ -73,6 +73,7 @@ namespace WheresChris
             LocationOn,
             LocationConfirmed,
             PhoneConfirmed,
+            PhonePermissionUnknown,
             Initialized
         }
 
@@ -88,16 +89,16 @@ namespace WheresChris
             ConfirmLocationPermission,
             TriggerConfirmPhonePermission,
             TriggerRetryPhonePermission,
-            GpsPermissionsNeeded
+            GpsPermissionsNeeded,
+            TriggerPhonePermissionUnknown
         }
 
         private void InitializeStateMachine()
         {
             try
             {
-
+                
                 _machine.Configure(State.Uninitialized)
-                    .PermitReentry(Trigger.TriggerRetryPhonePermission)
                     .OnEntryAsync(async ()=>
                     {
                         var phonePermissionGranted  = await PermissionHelper.HasOrRequestPhonePermission();
@@ -107,15 +108,23 @@ namespace WheresChris
                         }
                         else
                         {
-                            //wait a few seconds and try again
-                            InitializeInterval.SetInterval(() =>
-                            {
-                                _machine.FireAsync(Trigger.TriggerRetryPhonePermission);
-                            }, 10000);
+                            _machine.Fire(Trigger.TriggerPhonePermissionUnknown);
                         }
                     })
-                    //.Permit(Trigger.TriggerRetryPhonePermission, State.Uninitialized)
+                    .Permit(Trigger.TriggerPhonePermissionUnknown, State.PhonePermissionUnknown)
                     .Permit(Trigger.TriggerConfirmPhonePermission, State.PhoneConfirmed);
+
+                _machine.Configure(State.PhonePermissionUnknown)
+                    .OnEntry(() =>
+                    {
+                        //wait a few seconds and try again
+                        InitializeInterval.SetInterval(async() =>
+                        {
+                            await _machine.FireAsync(Trigger.TriggerRetryPhonePermission);
+                        }, 10000);
+                        
+                    })
+                    .Permit(Trigger.TriggerRetryPhonePermission, State.Uninitialized);
                     
                 _machine.Configure(State.PhoneConfirmed)
                     .OnEntry(AuthyValidateUser)
