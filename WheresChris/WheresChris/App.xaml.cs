@@ -202,7 +202,7 @@ namespace WheresChris
                     })
                     .Permit(Trigger.ConfirmLocationPermission, State.Initialized);
 
-                _machine.FireAsync(Trigger.AuthorizeAuthy);
+                //_machine.FireAsync(Trigger.AuthorizeAuthy);
             }
             catch(System.Exception ex)
             {
