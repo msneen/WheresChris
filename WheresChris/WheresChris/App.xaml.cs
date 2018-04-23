@@ -104,10 +104,12 @@ namespace WheresChris
                         var phonePermissionGranted  = await PermissionHelper.HasOrRequestPhonePermission();
                         if(phonePermissionGranted)
                         {
+                            Plugin.LocalNotifications.CrossLocalNotifications.Current.Show("Phone Permission Granted", "Phone Permission Granted in Uninitialized");
                             _machine.Fire(Trigger.TriggerConfirmPhonePermission);
                         }
                         else
                         {
+                            Plugin.LocalNotifications.CrossLocalNotifications.Current.Show("PermissionUnknown", "Permission Unknown in Uninitialized");
                             _machine.Fire(Trigger.TriggerPhonePermissionUnknown);
                         }
                     })
@@ -117,6 +119,7 @@ namespace WheresChris
                 _machine.Configure(State.PhonePermissionUnknown)
                     .OnEntry(() =>
                     {
+                        Plugin.LocalNotifications.CrossLocalNotifications.Current.Show("PhonePermissionUnknown", "Permission Unknown in PhonePermissionUnknown");
                         //wait a few seconds and try again
                         InitializeInterval.SetInterval(async() =>
                         {
