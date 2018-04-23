@@ -116,7 +116,7 @@ namespace WheresChris
                     .PermitReentry(Trigger.TriggerRetryPhonePermission)
                     .Permit(Trigger.TriggerRetryPhonePermission, State.Uninitialized)
                     .Permit(Trigger.TriggerConfirmPhonePermission, State.PhoneConfirmed);
-
+                    
                 _machine.Configure(State.PhoneConfirmed)
                     .OnEntry(AuthyValidateUser)
                     .Permit(Trigger.AuthorizeAuthy, State.AuthySent)
@@ -200,7 +200,9 @@ namespace WheresChris
                 Crashes.TrackError(ex, new Dictionary<string, string>
                 {
                     {"Source", ex.Source},
-                    {"stackTrace", ex.StackTrace}
+                    {"stackTrace", ex.StackTrace},
+                    {"State", _machine.State.ToString()},
+                    {"PermittedTriggers", _machine.PermittedTriggers.ToString() }
                 });
             }
         }
