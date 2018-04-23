@@ -97,6 +97,7 @@ namespace WheresChris
             {
 
                 _machine.Configure(State.Uninitialized)
+                    .PermitReentry(Trigger.TriggerRetryPhonePermission)
                     .OnEntryAsync(async ()=>
                     {
                         var phonePermissionGranted  = await PermissionHelper.HasOrRequestPhonePermission();
@@ -113,8 +114,7 @@ namespace WheresChris
                             }, 10000);
                         }
                     })
-                    .PermitReentry(Trigger.TriggerRetryPhonePermission)
-                    .Permit(Trigger.TriggerRetryPhonePermission, State.Uninitialized)
+                    //.Permit(Trigger.TriggerRetryPhonePermission, State.Uninitialized)
                     .Permit(Trigger.TriggerConfirmPhonePermission, State.PhoneConfirmed);
                     
                 _machine.Configure(State.PhoneConfirmed)
