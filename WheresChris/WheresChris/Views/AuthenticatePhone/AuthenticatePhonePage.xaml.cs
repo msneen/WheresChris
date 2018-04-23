@@ -71,6 +71,8 @@ namespace WheresChris.Views.AuthenticatePhone
                                     );
 
 	        _authyUser.UserId = authyResult.UserId;
+	        MessagingCenter.Send(new MessagingCenterSender(), LocationSender.AuthenticationSentMsg, authyResult);
+
 	        if(!string.IsNullOrWhiteSpace(_authyUser.UserId))
 	        {
 	            _authyClient.SendSms(_authyUser.UserId);

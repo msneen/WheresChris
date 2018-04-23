@@ -29,14 +29,13 @@ namespace WheresChris.Views
 
         private void InitializeMessagingCenter()
         {
-            MessagingCenter.Subscribe<MessagingCenterSender, VerifyTokenResult>(this, LocationSender.AuthenticationCompleteMsg,
-                (sender, result) =>
+            MessagingCenter.Subscribe<MessagingCenterSender>(this, LocationSender.InitializeMainPageMsg,
+                (sender) =>
                 {
-                    Device.BeginInvokeOnMainThread(()=>
+                    Device.BeginInvokeOnMainThread(() =>
                     {
-                        App.AttemptLoadPagesNeedingPermissions();
-                        InitializePhoneAndNickname();
-                    });
+                        InitializeInterval.SetInterval(InitializePhoneAndNickname,1000);
+                    });                    
                 });
         }
 
@@ -108,7 +107,7 @@ namespace WheresChris.Views
             await Navigation.PushModalAsync(authenticatePhonePage);
         }
 
-        private async Task SendLastInvitmtion(object sender, EventArgs e)
+        private async Task SendLastInvitation(object sender, EventArgs e)
         {
             await GroupActionsHelper.StartGroup(_invitation.Members, _invitation.UserPhoneNumber, _invitation.ExpirationHours);
         }

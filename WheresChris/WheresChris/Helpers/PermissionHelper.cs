@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 using Microsoft.AppCenter.Analytics;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
-using Plugin.Toasts;
 using StayTogether;
 using StayTogether.Helpers;
+using StayTogether.Models;
 using Xamarin.Forms;
 
 namespace WheresChris.Helpers
@@ -25,7 +24,7 @@ namespace WheresChris.Helpers
         {
             var locationEnabledPermissionsGranted = await HasGpsEnabled();
             var locationPermissionsGranted = await HasLocationPermission();
-            var contactsPermissionsGranted = await HastContactPermission();
+            var contactsPermissionsGranted = await HasContactPermission();
             return locationPermissionsGranted && locationEnabledPermissionsGranted && contactsPermissionsGranted;
         }
 
@@ -70,7 +69,7 @@ namespace WheresChris.Helpers
             return Task.FromResult(LocationSender.IsGeolocationAvailable().Result);
         }
 
-        public static async Task<bool> HastContactPermission()
+        public static async Task<bool> HasContactPermission()
         {
             return await HasPermission(Permission.Contacts);
         }
@@ -115,16 +114,20 @@ namespace WheresChris.Helpers
         private static async Task<PermissionStatus> RequestPermission(Permission permission, string title, string body)
         {
             var existingPermission = await CrossPermissions.Current.CheckPermissionStatusAsync(permission);
-            if (existingPermission == PermissionStatus.Granted) return existingPermission;
+            if(existingPermission == PermissionStatus.Granted)
+            {
+                return existingPermission;
+            }
 
 
             if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
-            {
+            {                
                 Plugin.LocalNotifications.CrossLocalNotifications.Current.Show(title, body);
             }
             var permissionStatus = await CrossPermissions.Current.RequestPermissionsAsync(permission);
 
-            return permissionStatus.ContainsKey(permission) ? permissionStatus[permission] : PermissionStatus.Unknown;
+            var newPermission = permissionStatus.ContainsKey(permission) ? permissionStatus[permission] : PermissionStatus.Unknown;
+            return newPermission;
         }
 
         public static async Task<string> GetNecessaryPermissionInformation()

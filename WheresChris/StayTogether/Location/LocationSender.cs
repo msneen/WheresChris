@@ -56,7 +56,10 @@ namespace StayTogether
 	    public const string AdditionalMembersRequestJoinGroup = "ADDITIONALMEMBERSREQUESTJOINGROUP";//This is the signal r call to the group leader when someone requests to add members
 	    public const string SendTelemetryMsg = "SENDTELEMETRYMESSAGE";
 	    public const string LeaveOrEndGroupMsg = "LEAVEORENDGROUPMESSAGE";
+	    public const string AuthenticationSentMsg = "AUTHENTICATIONSENT";
 	    public const string AuthenticationCompleteMsg = "AUTHENTICATIONCOMPLETE";
+	    public const string InitializeMainPageMsg = "INITIALIZEMAINPAGE";
+	    public const string HasContactsPermissionMsg = "HASCONTACTSPERMISSION";
 
         public bool InAGroup { get; set; }
         public bool GroupLeader { get; set; }

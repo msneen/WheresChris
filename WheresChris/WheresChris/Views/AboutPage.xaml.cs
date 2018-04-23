@@ -28,13 +28,18 @@ namespace WheresChris.Views
 
 		        LastOutboundMessage.IsVisible = true;
 		        LastInboundMessage.IsVisible = true;
-		        var userJson = CrossSettings.Current.GetValueOrDefault("AuthyUser", "");
-		        AuthyInfo.Text = userJson;
-		        AuthyInfo.IsVisible = true;
+		        ShowAuthyInfo();
 		        BtnReset.IsVisible = true;
 		        InitializeMessagingCenter();
 		    };
 		}
+
+	    private void ShowAuthyInfo()
+	    {
+	        var userJson = CrossSettings.Current.GetValueOrDefault("AuthyUser", "");
+	        AuthyInfo.Text = userJson;
+	        AuthyInfo.IsVisible = true;
+	    }
 
 	    private void InitializeMessagingCenter()
 	    {
@@ -96,6 +101,7 @@ namespace WheresChris.Views
 	    private void BtnReset_OnClicked(object sender, EventArgs e)
 	    {
 	        SettingsHelper.ResetData();
+	        ShowAuthyInfo();
 	    }
 	}
 }

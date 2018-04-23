@@ -20,7 +20,7 @@
             <controls:AdView x:Name="AdView"/>
             <RelativeLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
 
-                <Button x:Name="LastInviteButton" AutomationId="LastInviteButton" Text="Send Last Invitation"  Clicked="SendLastInvitmtion" Style="{StaticResource buttonStyle}"
+                <Button x:Name="LastInviteButton" AutomationId="LastInviteButton" Text="Send Last Invitation"  Clicked="SendLastInvitation" Style="{StaticResource buttonStyle}"
                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.05, Constant=0}"
                     RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.05, Constant=0}"
                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width,Factor=0.9,Constant=0}"/>

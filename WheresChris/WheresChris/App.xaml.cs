@@ -2,13 +2,16 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Authy.Net;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Stateless;
 using StayTogether;
 using StayTogether.Helpers;
 using StayTogether.Models;
 using WheresChris.Helpers;
 using WheresChris.Views;
+using WheresChris.Views.AuthenticatePhone;
 using WheresChris.Views.Popup;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -18,6 +21,7 @@ using Application = Xamarin.Forms.Application;
 using Device = Xamarin.Forms.Device;
 using TabbedPage = Xamarin.Forms.TabbedPage;
 
+
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace WheresChris
 {
@@ -25,7 +29,8 @@ namespace WheresChris
     {
         public static PopupMenu Popup;
         private static TabbedPage _mainTabbedPage;
-
+        private static readonly Interval InitializeInterval = new Interval();
+        private StateMachine<State,Trigger> _machine = new StateMachine<State, Trigger>(State.Uninitialized);
 
         public App()
         {
@@ -34,6 +39,186 @@ namespace WheresChris
             Xamarin.Forms.Application.Current.On<Xamarin.Forms.PlatformConfiguration.Android>().UseWindowSoftInputModeAdjust(WindowSoftInputModeAdjust.Resize | WindowSoftInputModeAdjust.Pan);
 
             SetMainPage();
+            InitializeMessagingCenter();
+            InitializeStateMachine(); 
+        }
+
+        private void InitializeMessagingCenter()
+        {
+            MessagingCenter.Subscribe<MessagingCenterSender, VerifyTokenResult>(this, LocationSender.AuthenticationSentMsg,
+                (sender, result) =>
+                {
+                    Device.BeginInvokeOnMainThread(()=>
+                    {
+                        _machine.Fire(Trigger.AuthorizeAuthy);
+                    });
+                });
+            MessagingCenter.Subscribe<MessagingCenterSender, VerifyTokenResult>(this, LocationSender.AuthenticationCompleteMsg,
+                (sender, result) =>
+                {
+                    Device.BeginInvokeOnMainThread(()=>
+                    {
+                        _machine.FireAsync(Trigger.TriggerAuthyConfirmed);
+                    });
+                });
+        }
+
+        public enum State
+        {
+            Uninitialized,
+            AuthySent,
+            AuthyConfirmed,
+            ContactsConfirmed,
+            JoinPageAdded,
+            LocationOn,
+            LocationConfirmed,
+            PhoneConfirmed,
+            Initialized
+        }
+
+        public enum Trigger
+        {
+            TriggerUnInitialized,
+            AuthorizeAuthy,
+            TriggerAuthyConfirmed,
+            ConfirmContactsPermission,
+            TriggerRetryContactsPermission,
+            TriggerJoinPageAdded,
+            ConfirmLocationOn,
+            ConfirmLocationPermission,
+            TriggerConfirmPhonePermission,
+            TriggerRetryPhonePermission,
+            GpsPermissionsNeeded
+        }
+
+        private void InitializeStateMachine()
+        {
+            try
+            {
+
+                _machine.Configure(State.Uninitialized)
+                    .OnEntryAsync(async ()=>
+                    {
+                        var phonePermissionGranted  = await PermissionHelper.HasOrRequestPhonePermission();
+                        if(phonePermissionGranted)
+                        {
+                            _machine.Fire(Trigger.TriggerConfirmPhonePermission);
+                        }
+                        else
+                        {
+                            //wait a few seconds and try again
+                            InitializeInterval.SetInterval(() =>
+                            {
+                                _machine.FireAsync(Trigger.TriggerRetryPhonePermission);
+                            }, 10000);
+                        }
+                    })
+                    .PermitReentry(Trigger.TriggerRetryPhonePermission)
+                    .Permit(Trigger.TriggerRetryPhonePermission, State.Uninitialized)
+                    .Permit(Trigger.TriggerConfirmPhonePermission, State.PhoneConfirmed);
+
+                _machine.Configure(State.PhoneConfirmed)
+                    .OnEntry(AuthyValidateUser)
+                    .Permit(Trigger.AuthorizeAuthy, State.AuthySent)
+                    .Permit(Trigger.TriggerAuthyConfirmed, State.AuthyConfirmed);
+
+                _machine.Configure(State.AuthySent)
+                    .OnEntry(AuthyValidateUser)
+                    .Permit(Trigger.TriggerAuthyConfirmed, State.AuthyConfirmed);
+
+                _machine.Configure(State.AuthyConfirmed)
+                    .OnEntryAsync(async ()=>
+                    {                    
+                        MessagingCenter.Send(new MessagingCenterSender(), LocationSender.InitializeMainPageMsg);
+                        var hasContactPermission = await PermissionHelper.HasOrRequestContactPermission();
+                        if(hasContactPermission)
+                        {
+                            _machine.Fire(Trigger.ConfirmContactsPermission);
+                        }
+                        else
+                        {
+                            //wait a few seconds and try again
+                            InitializeInterval.SetInterval(() =>
+                            {
+                                _machine.FireAsync(Trigger.TriggerRetryContactsPermission);
+                            }, 10000);
+                        }
+                    })
+                    .PermitReentry(Trigger.TriggerRetryContactsPermission)
+                    .Permit(Trigger.TriggerRetryContactsPermission, State.AuthyConfirmed)
+                    .Permit(Trigger.ConfirmContactsPermission, State.ContactsConfirmed);
+
+
+                _machine.Configure(State.ContactsConfirmed)
+                    .OnEntry(() =>
+                    {
+                        InsertPageBeforeAbout(new InvitePage(), "Invite");
+                        _machine.Fire(Trigger.TriggerJoinPageAdded);
+                    })
+                    .Permit(Trigger.TriggerJoinPageAdded, State.JoinPageAdded);
+                
+
+                _machine.Configure(State.JoinPageAdded)
+                    .OnEntryAsync(async () =>
+                    {
+                        var gpsEnabled = await PermissionHelper.HasGpsEnabled();
+                        if (gpsEnabled)
+                        {
+                            _machine.Fire(Trigger.ConfirmLocationOn);
+                        }
+                        else
+                        {
+                            await PermissionHelper.RequestGpsEnable();
+                            PermissionRequest.SetInterval(() =>
+                            {
+                                _machine.Fire(Trigger.GpsPermissionsNeeded);
+                            }, 15000);
+
+                        }
+                    })
+                    .PermitReentry(Trigger.GpsPermissionsNeeded)               
+                    .Permit(Trigger.GpsPermissionsNeeded, State.JoinPageAdded)
+                    .Permit(Trigger.ConfirmLocationOn, State.LocationOn);
+                
+
+                _machine.Configure(State.LocationOn)
+                    .Permit(Trigger.ConfirmLocationOn, State.LocationConfirmed);
+
+                _machine.Configure(State.LocationConfirmed)
+                    .OnEntry(() =>
+                    {
+                        InsertPageBeforeAbout(new MapPage(), "Map");
+                        InsertPageBeforeAbout(new ChatPage(), "Chat");
+                        InsertPageBeforeAbout(new JoinPage(), "Join");
+                    })
+                    .Permit(Trigger.ConfirmLocationPermission, State.Initialized);
+
+                _machine.FireAsync(Trigger.AuthorizeAuthy);
+            }
+            catch(System.Exception ex)
+            {
+                Crashes.TrackError(ex, new Dictionary<string, string>
+                {
+                    {"Source", ex.Source},
+                    {"stackTrace", ex.StackTrace}
+                });
+            }
+        }
+
+        public void AuthyValidateUser()
+        {
+            if(PermissionHelper.IsAuthyAuthenticated())
+            {
+                _machine.Fire(Trigger.TriggerAuthyConfirmed);
+            }
+            else
+            {
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    var authenticatePhonePage = new AuthenticatePhonePage();
+                    await Current.NavigationProxy.PushModalAsync(authenticatePhonePage);
+                });
+            }
         }
 
 
@@ -67,11 +252,11 @@ namespace WheresChris
 
                 AddPage(new AboutPage(), "About");
 
-                var authyAuthenticated = PermissionHelper.IsAuthyAuthenticated();
-                if(authyAuthenticated)
-                {
-                    PermissionRequest.SetInterval(AttemptLoadPagesNeedingPermissions, 5000);
-                }
+                //var authyAuthenticated = PermissionHelper.IsAuthyAuthenticated();
+                //if(authyAuthenticated)
+                //{
+                //    PermissionRequest.SetInterval(AttemptLoadPagesNeedingPermissions, 5000);
+                //}
             }
             catch (System.Exception ex)
             {
