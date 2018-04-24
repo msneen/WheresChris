@@ -31,7 +31,11 @@ namespace WheresChris
         public static PopupMenu Popup;
         private static TabbedPage _mainTabbedPage;
         private static readonly Interval InitializeInterval = new Interval();
-        private StateMachine<State,Trigger> _machine = new StateMachine<State, Trigger>(State.Uninitialized);
+        private readonly StateMachine<State,Trigger> _workflowStateMachine = new StateMachine<State, Trigger>(State.Uninitialized);
+        private static readonly Interval PermissionRequest = new Interval();
+        private static readonly Interval AddPagesInterval = new Interval();
+        private static int _permisionRequestIntervalTime = 5000;
+        private static int _addPagesIntervalTime = 5000;
 
         public App()
         {
@@ -40,30 +44,9 @@ namespace WheresChris
             Xamarin.Forms.Application.Current.On<Xamarin.Forms.PlatformConfiguration.Android>().UseWindowSoftInputModeAdjust(WindowSoftInputModeAdjust.Resize | WindowSoftInputModeAdjust.Pan);
 
             SetMainPage();
-            InitializeMessagingCenter();
 
             InitializeInterval.SetInterval(InitializeStateMachine, 1000);
              
-        }
-
-        private void InitializeMessagingCenter()
-        {
-            //MessagingCenter.Subscribe<MessagingCenterSender, VerifyTokenResult>(this, LocationSender.AuthenticationSentMsg,
-            //    (sender, result) =>
-            //    {
-            //        Device.BeginInvokeOnMainThread(()=>
-            //        {
-            //            _machine.Fire(Trigger.AuthorizeAuthy);
-            //        });
-            //    });
-            //MessagingCenter.Subscribe<MessagingCenterSender, VerifyTokenResult>(this, LocationSender.AuthenticationCompleteMsg,
-            //    (sender, result) =>
-            //    {
-            //        Device.BeginInvokeOnMainThread(()=>
-            //        {
-            //            _machine.FireAsync(Trigger.TriggerAuthyConfirmed);
-            //        });
-            //    });
         }
 
         public enum State
@@ -76,17 +59,21 @@ namespace WheresChris
 
             InitializingAuthy,
             AuthyConfirmed,
+            AuthyUnknown,
 
             InitializingContacts,
             ContactsConfirmed,
+            ContactsPermissionUnknown,
 
             JoinPageAdded,
 
             InitializingLocation,
             LocationConfirmed,
+            LocationPermissionUnknown,
                         
             InitializingGPS,
             ConfirmGpsOn,
+            RetryEnableGPS,
 
             InitializingJoinPage,
 
@@ -102,17 +89,18 @@ namespace WheresChris
 
             TriggerInitializingAuthy,
             TriggerAuthyConfirmed,
+            TriggerAuthyUnknown,
 
             TriggerInitializingContacts,
             TriggerContactsConfirmed,
-            TriggerRetryContactsPermission,
+            TriggerContactsPermissionUnknown,
 
             TriggerInitializingJoinPage,
             TriggerJoinPageAdded,
 
             TriggerInitializingLocation,
             TriggerLocationConfirmed,
-            TriggerRetryLocationPermission,
+            TriggerLocationPermissionUnknown,
 
             TriggerInitializingGPS,
             TriggerRetryEnabaGPS,
@@ -120,6 +108,7 @@ namespace WheresChris
 
             TriggerInsertingPages,
             TriggerInsertingPagesFinished
+
         }
 
         private void InitializeStateMachine()
@@ -127,106 +116,127 @@ namespace WheresChris
             try
             {
 
-                _machine.Configure(State.Uninitialized)
+                _workflowStateMachine.Configure(State.Uninitialized)
                     .Permit(Trigger.TriggerInitializingPhone, State.InitializingPhone);
 
 
-                _machine.Configure(State.InitializingPhone)
+                _workflowStateMachine.Configure(State.InitializingPhone)
                     .OnEntryAsync(async ()=> { await RequestPhonePermissions(); })
                     .Permit(Trigger.TriggerPhonePermissionUnknown, State.PhonePermissionUnknown)
                     .Permit(Trigger.TriggerPhoneConfirmed, State.PhoneConfirmed);
 
 
-                _machine.Configure(State.PhonePermissionUnknown)
+                _workflowStateMachine.Configure(State.PhonePermissionUnknown)
                     .OnEntry(() =>
                     {
                         //wait a few seconds and try again
                         InitializeInterval.SetInterval(async() =>
                         {
-                            await _machine.FireAsync(Trigger.TriggerInitializingPhone);
+                            await _workflowStateMachine.FireAsync(Trigger.TriggerInitializingPhone);
                         }, 10000);
                         
                     })
                     .Permit(Trigger.TriggerInitializingPhone, State.InitializingPhone);
                     
 
-                _machine.Configure(State.PhoneConfirmed)
-                    .OnEntry(()=>{_machine.Fire(Trigger.TriggerInitializingAuthy);})
+                _workflowStateMachine.Configure(State.PhoneConfirmed)
+                    .OnEntry(()=>{_workflowStateMachine.Fire(Trigger.TriggerInitializingAuthy);})
                     .Permit(Trigger.TriggerInitializingAuthy, State.InitializingAuthy);
 
-                _machine.Configure(State.InitializingAuthy)
+                _workflowStateMachine.Configure(State.InitializingAuthy)
                     .OnEntry(AuthyValidateUser)
                     .OnExit(()=>{MessagingCenter.Send(new MessagingCenterSender(), LocationSender.InitializeMainPageMsg);})
+                    .Permit(Trigger.TriggerAuthyUnknown, State.AuthyUnknown)
                     .Permit(Trigger.TriggerAuthyConfirmed, State.AuthyConfirmed);
 
-                _machine.Configure(State.AuthyConfirmed)
-                    .OnEntry(() => { _machine.Fire(Trigger.TriggerInitializingContacts); })
+                _workflowStateMachine.Configure(State.AuthyUnknown)
+                    .OnEntry(() =>
+                    {
+                        //wait a few seconds and try again
+                        InitializeInterval.SetInterval(async () =>
+                        {
+                            await _workflowStateMachine.FireAsync(Trigger.TriggerInitializingAuthy);
+                        }, 10000);
+                    })
+                    .Permit(Trigger.TriggerInitializingAuthy, State.InitializingAuthy);
+
+                _workflowStateMachine.Configure(State.AuthyConfirmed)
+                    .OnEntry(() => { _workflowStateMachine.Fire(Trigger.TriggerInitializingContacts); })
                     .Permit(Trigger.TriggerInitializingContacts, State.InitializingContacts);
                 
 
-                _machine.Configure(State.InitializingContacts)
+                _workflowStateMachine.Configure(State.InitializingContacts)
                     .OnEntry(async() => { await RequestContactsPermissions(); })
-                    //    .Permit(Trigger.Trigger.TriggerRetryContactsPermission, State.ContactsPermissionUnknown)
+                    .Permit(Trigger.TriggerContactsPermissionUnknown, State.ContactsPermissionUnknown)
                     .Permit(Trigger.TriggerContactsConfirmed, State.ContactsConfirmed);
 
 
-                _machine.Configure(State.ContactsConfirmed)
-                    .OnEntry(()=>{_machine.Fire(Trigger.TriggerInitializingJoinPage);})
+                _workflowStateMachine.Configure(State.ContactsConfirmed)
+                    .OnEntry(()=>{_workflowStateMachine.Fire(Trigger.TriggerInitializingJoinPage);})
                     .Permit(Trigger.TriggerInitializingJoinPage, State.InitializingJoinPage);
 
-                //_machine.Configure(State.ContactsPermissionUnknown)
-                //go back to State.InitializingContacts with Trigger.TriggerInitializingContacts
+                _workflowStateMachine.Configure(State.ContactsPermissionUnknown)
+                    .OnEntry(() =>
+                    {
+                        _workflowStateMachine.Fire(Trigger.TriggerInitializingContacts);
+                    })
+                    .Permit(Trigger.TriggerInitializingContacts, State.InitializingContacts);
 
-                _machine.Configure(State.InitializingJoinPage)
+
+                _workflowStateMachine.Configure(State.InitializingJoinPage)
                     .OnEntry(() =>
                     {
                         InsertPageBeforeAbout(new InvitePage(), "Invite");
-                        _machine.Fire(Trigger.TriggerJoinPageAdded);
+                        _workflowStateMachine.Fire(Trigger.TriggerJoinPageAdded);
                     })
                     .Permit(Trigger.TriggerJoinPageAdded, State.JoinPageAdded);
 
                 
-                _machine.Configure(State.JoinPageAdded)
-                    .OnEntry(()=>{_machine.Fire(Trigger.TriggerInitializingLocation);})
+                _workflowStateMachine.Configure(State.JoinPageAdded)
+                    .OnEntry(()=>{_workflowStateMachine.Fire(Trigger.TriggerInitializingLocation);})
                     .Permit(Trigger.TriggerInitializingLocation, State.InitializingLocation);
 
 
-                _machine.Configure(State.InitializingLocation)
+                _workflowStateMachine.Configure(State.InitializingLocation)
                     .OnEntry(async () => { await RequestLocationPermission(); })
-                //    .Permit(Trigger.TriggerRetryLocationPermission, State.RetryLocationPermission)
+                    .Permit(Trigger.TriggerLocationPermissionUnknown, State.LocationPermissionUnknown)
                     .Permit(Trigger.TriggerLocationConfirmed, State.LocationConfirmed);
 
-                //_machine.Configure(State.RetryLocationPermission)
+                _workflowStateMachine.Configure(State.LocationPermissionUnknown)
+                    .OnEntry(() => { _workflowStateMachine.Fire(Trigger.TriggerInitializingLocation); })
+                    .Permit(Trigger.TriggerInitializingLocation, State.InitializingLocation);
 
-                _machine.Configure(State.LocationConfirmed)
-                    .OnEntry(()=>{_machine.Fire(Trigger.TriggerInitializingGPS);})
+                _workflowStateMachine.Configure(State.LocationConfirmed)
+                    .OnEntry(()=>{_workflowStateMachine.Fire(Trigger.TriggerInitializingGPS);})
                     .Permit(Trigger.TriggerInitializingGPS, State.InitializingGPS);
 
-                _machine.Configure(State.InitializingGPS)
+                _workflowStateMachine.Configure(State.InitializingGPS)
                     .OnEntry(async () => { await RequestEnableGps(); })
-                //  .Permit(Trigger.TriggerRetryEnabaGPS, State.RetryEnabaGPS)
+                    .Permit(Trigger.TriggerRetryEnabaGPS, State.RetryEnableGPS)
                     .Permit(Trigger.TriggerConfirmGpsOn, State.ConfirmGpsOn);
 
-                //_machine.Configure(State.RetryEnabaGPS)
+                _workflowStateMachine.Configure(State.RetryEnableGPS)
+                    .OnEntry(() => { _workflowStateMachine.Fire(Trigger.TriggerInitializingGPS); })
+                    .Permit(Trigger.TriggerInitializingGPS, State.InitializingGPS);
 
-                _machine.Configure(State.ConfirmGpsOn)
-                    .OnEntry(() => { _machine.Fire(Trigger.TriggerInsertingPages); })
+                _workflowStateMachine.Configure(State.ConfirmGpsOn)
+                    .OnEntry(() => { _workflowStateMachine.Fire(Trigger.TriggerInsertingPages); })
                     .Permit(Trigger.TriggerInsertingPages, State.InsertingPages);
 
-                _machine.Configure(State.InsertingPages)
+                _workflowStateMachine.Configure(State.InsertingPages)
                     .OnEntry(() =>
                     {
                         InsertPagesNeedingLocation();
-                        _machine.Fire(Trigger.TriggerInsertingPagesFinished);
+                        _workflowStateMachine.Fire(Trigger.TriggerInsertingPagesFinished);
                     })
                     .Permit(Trigger.TriggerInsertingPagesFinished, State.InsertingPagesFinished);
 
 
-                _machine.Configure(State.InsertingPagesFinished);
+                _workflowStateMachine.Configure(State.InsertingPagesFinished);
 
 
                 //Configuration Finished, start Initializing
-                _machine.FireAsync(Trigger.TriggerInitializingPhone);
+                _workflowStateMachine.FireAsync(Trigger.TriggerInitializingPhone);
             }
             catch(System.Exception ex)
             {
@@ -234,8 +244,8 @@ namespace WheresChris
                 {
                     {"Source", ex.Source},
                     {"stackTrace", ex.StackTrace},
-                    {"State", _machine.State.ToString()},
-                    {"PermittedTriggers", _machine.PermittedTriggers.ToString() }
+                    {"State", _workflowStateMachine.State.ToString()},
+                    {"PermittedTriggers", _workflowStateMachine.PermittedTriggers.ToString() }
                 });
             }
         }
@@ -252,11 +262,11 @@ namespace WheresChris
             var gpsEnabled = await PermissionHelper.HasGpsEnabled();
             if(gpsEnabled)
             {
-                _machine.Fire(Trigger.TriggerConfirmGpsOn);
+                _workflowStateMachine.Fire(Trigger.TriggerConfirmGpsOn);
             }
             else
             {
-                PermissionRequest.SetInterval(() => { _machine.Fire(Trigger.TriggerRetryEnabaGPS); }, 15000);
+                PermissionRequest.SetInterval(() => { _workflowStateMachine.Fire(Trigger.TriggerRetryEnabaGPS); }, 15000);
             }
         }
 
@@ -265,11 +275,11 @@ namespace WheresChris
             var locationPermission = await PermissionHelper.HasOrRequestLocationPermission();
             if(locationPermission)
             {
-                _machine.Fire(Trigger.TriggerLocationConfirmed);
+                _workflowStateMachine.Fire(Trigger.TriggerLocationConfirmed);
             }
             else
             {
-                PermissionRequest.SetInterval(() => { _machine.Fire(Trigger.TriggerRetryLocationPermission); }, 10000);
+                PermissionRequest.SetInterval(() => { _workflowStateMachine.Fire(Trigger.TriggerLocationPermissionUnknown); }, 10000);
             }
         }
 
@@ -278,12 +288,12 @@ namespace WheresChris
             var hasContactPermission = await PermissionHelper.HasOrRequestContactPermission();
             if(hasContactPermission)
             {
-                _machine.Fire(Trigger.TriggerContactsConfirmed);
+                _workflowStateMachine.Fire(Trigger.TriggerContactsConfirmed);
             }
             else
             {
                 //wait a few seconds and try again
-                InitializeInterval.SetInterval(() => { _machine.FireAsync(Trigger.TriggerRetryContactsPermission); }, 10000);
+                InitializeInterval.SetInterval(() => { _workflowStateMachine.FireAsync(Trigger.TriggerContactsPermissionUnknown); }, 10000);
             }
         }
 
@@ -294,11 +304,11 @@ namespace WheresChris
                 var phonePermissionGranted = await PermissionHelper.HasOrRequestPhonePermission();
                 if(phonePermissionGranted)
                 {
-                    _machine.Fire(Trigger.TriggerPhoneConfirmed);
+                    _workflowStateMachine.Fire(Trigger.TriggerPhoneConfirmed);
                 }
                 else
                 {
-                    _machine.Fire(Trigger.TriggerPhonePermissionUnknown);
+                    _workflowStateMachine.Fire(Trigger.TriggerPhonePermissionUnknown);
                 }
             }
             catch(Exception ex)
@@ -307,7 +317,7 @@ namespace WheresChris
                 {
                     {"Source", ex.Source},
                     {"stackTrace", ex.StackTrace},
-                    {"State", _machine.State.ToString()}
+                    {"State", _workflowStateMachine.State.ToString()}
                 });
             }
         }
@@ -316,7 +326,7 @@ namespace WheresChris
         {
             if(PermissionHelper.IsAuthyAuthenticated())
             {
-                _machine.Fire(Trigger.TriggerAuthyConfirmed);
+                _workflowStateMachine.Fire(Trigger.TriggerAuthyConfirmed);
             }
             else
             {
@@ -327,19 +337,17 @@ namespace WheresChris
                     {
                         if(PermissionHelper.IsAuthyAuthenticated())
                         {
-                            _machine.Fire(Trigger.TriggerAuthyConfirmed);
+                            _workflowStateMachine.Fire(Trigger.TriggerAuthyConfirmed);
+                        }
+                        else
+                        {
+                            _workflowStateMachine.Fire(Trigger.TriggerAuthyUnknown);
                         }
                     };
                     await Current.NavigationProxy.PushModalAsync(authenticatePhonePage);
                 });
             }
         }
-
-
-        private static readonly Interval PermissionRequest = new Interval();
-        private static readonly Interval AddPagesInterval = new Interval();
-        private static int _permisionRequestIntervalTime = 5000;
-        private static int _addPagesIntervalTime = 5000;
 
         private static async Task StartLocationSenderAsync()
         {
@@ -348,11 +356,6 @@ namespace WheresChris
                 {
                     MessagingCenter.Send(new MessagingCenterSender(), LocationSender.LeaveOrEndGroupMsg);
                 });
-        }
-
-        public static void AttemptLoadPagesNeedingPermissions()
-        {
-            AsyncHelper.RunSync(AttemptLoadPagesNeedingPermissionsAsync);
         }
 
         public static void SetMainPage()
@@ -365,12 +368,6 @@ namespace WheresChris
                 AddPage(new MainPage(), "Main");
 
                 AddPage(new AboutPage(), "About");
-
-                //var authyAuthenticated = PermissionHelper.IsAuthyAuthenticated();
-                //if(authyAuthenticated)
-                //{
-                //    PermissionRequest.SetInterval(AttemptLoadPagesNeedingPermissions, 5000);
-                //}
             }
             catch (System.Exception ex)
             {
@@ -423,50 +420,6 @@ namespace WheresChris
             AsyncHelper.RunSync(StartLocationSenderAsync);
           
             Popup = new PopupMenu();
-        }
-
-        private static async Task AttemptLoadPagesNeedingPermissionsAsync()
-        {
-            var alreadyHasPermissions = await PermissionHelper.HasNecessaryPermissions();
-            if(alreadyHasPermissions)
-            {
-                _permisionRequestIntervalTime = 250;
-                _addPagesIntervalTime = 250;
-                PermissionRequest.SetInterval(InsertPagesNeedingPermissions, _permisionRequestIntervalTime);
-            }
-            else
-            {
-                var gpsEnabled = await PermissionHelper.HasGpsEnabled();
-                if(!gpsEnabled)
-                {
-                    _permisionRequestIntervalTime = 15000;
-                    _addPagesIntervalTime = 15000;
-                    PermissionRequest.SetInterval(AttemptLoadPagesNeedingPermissions, _permisionRequestIntervalTime);
-                    await PermissionHelper.RequestGpsEnable();
-                }
-                else
-                {
-                    PermissionRequest.SetInterval(InsertPagesNeedingPermissions, _permisionRequestIntervalTime);
-                }
-            }
-        }
-
-        private static void InsertPagesNeedingPermissions()
-        {
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                AddPagesInterval.SetInterval(InsertPages, _addPagesIntervalTime);
-            });
-        }
-
-        private static void InsertPages()
-        {
-            InsertPageBeforeAbout(new InvitePage(), "Invite");
-            InsertPageBeforeAbout(new MapPage(), "Map");
-            InsertPageBeforeAbout(new ChatPage(), "Chat");
-            InsertPageBeforeAbout(new JoinPage(), "Join");
-
-            PermissionRequest.SetInterval(FinishInitializing, 5000);
         }
 
         private static void AddPage(Page page, string title)

@@ -71,7 +71,7 @@ namespace WheresChris.Views.AuthenticatePhone
                                     );
 
 	        _authyUser.UserId = authyResult.UserId;
-	        MessagingCenter.Send(new MessagingCenterSender(), LocationSender.AuthenticationSentMsg, authyResult);
+	        //MessagingCenter.Send(new MessagingCenterSender(), LocationSender.AuthenticationSentMsg, authyResult);
 
 	        if(!string.IsNullOrWhiteSpace(_authyUser.UserId))
 	        {
@@ -107,7 +107,7 @@ namespace WheresChris.Views.AuthenticatePhone
 	            if(result.Success)
 	            {
 	                ConfirmationForm.IsVisible = false;
-	                MessagingCenter.Send(new MessagingCenterSender(), LocationSender.AuthenticationCompleteMsg, result);
+	                //MessagingCenter.Send(new MessagingCenterSender(), LocationSender.AuthenticationCompleteMsg, result);
 	                Device.BeginInvokeOnMainThread(() =>
 	                {
 	                    Navigation.PopModalAsync();
