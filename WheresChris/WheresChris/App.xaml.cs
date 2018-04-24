@@ -41,7 +41,9 @@ namespace WheresChris
 
             SetMainPage();
             InitializeMessagingCenter();
-            InitializeStateMachine(); 
+
+            InitializeInterval.SetInterval(InitializeStateMachine, 1000);
+             
         }
 
         private void InitializeMessagingCenter()
