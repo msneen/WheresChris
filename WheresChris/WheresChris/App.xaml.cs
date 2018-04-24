@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -45,27 +46,28 @@ namespace WheresChris
 
         private void InitializeMessagingCenter()
         {
-            MessagingCenter.Subscribe<MessagingCenterSender, VerifyTokenResult>(this, LocationSender.AuthenticationSentMsg,
-                (sender, result) =>
-                {
-                    Device.BeginInvokeOnMainThread(()=>
-                    {
-                        _machine.Fire(Trigger.AuthorizeAuthy);
-                    });
-                });
-            MessagingCenter.Subscribe<MessagingCenterSender, VerifyTokenResult>(this, LocationSender.AuthenticationCompleteMsg,
-                (sender, result) =>
-                {
-                    Device.BeginInvokeOnMainThread(()=>
-                    {
-                        _machine.FireAsync(Trigger.TriggerAuthyConfirmed);
-                    });
-                });
+            //MessagingCenter.Subscribe<MessagingCenterSender, VerifyTokenResult>(this, LocationSender.AuthenticationSentMsg,
+            //    (sender, result) =>
+            //    {
+            //        Device.BeginInvokeOnMainThread(()=>
+            //        {
+            //            _machine.Fire(Trigger.AuthorizeAuthy);
+            //        });
+            //    });
+            //MessagingCenter.Subscribe<MessagingCenterSender, VerifyTokenResult>(this, LocationSender.AuthenticationCompleteMsg,
+            //    (sender, result) =>
+            //    {
+            //        Device.BeginInvokeOnMainThread(()=>
+            //        {
+            //            _machine.FireAsync(Trigger.TriggerAuthyConfirmed);
+            //        });
+            //    });
         }
 
         public enum State
         {
             Uninitialized,
+            InitializingPhone,
             AuthySent,
             AuthyConfirmed,
             ContactsConfirmed,
@@ -79,7 +81,7 @@ namespace WheresChris
 
         public enum Trigger
         {
-            TriggerUnInitialized,
+            TriggerStartInitializing,
             AuthorizeAuthy,
             TriggerAuthyConfirmed,
             ConfirmContactsPermission,
@@ -97,29 +99,20 @@ namespace WheresChris
         {
             try
             {
-                
+
                 _machine.Configure(State.Uninitialized)
-                    .OnEntryAsync(async ()=>
-                    {
-                        var phonePermissionGranted  = await PermissionHelper.HasOrRequestPhonePermission();
-                        if(phonePermissionGranted)
-                        {
-                            Plugin.LocalNotifications.CrossLocalNotifications.Current.Show("Phone Permission Granted", "Phone Permission Granted in Uninitialized");
-                            _machine.Fire(Trigger.TriggerConfirmPhonePermission);
-                        }
-                        else
-                        {
-                            Plugin.LocalNotifications.CrossLocalNotifications.Current.Show("PermissionUnknown", "Permission Unknown in Uninitialized");
-                            _machine.Fire(Trigger.TriggerPhonePermissionUnknown);
-                        }
-                    })
+                    .Permit(Trigger.TriggerStartInitializing, State.InitializingPhone);
+
+
+                _machine.Configure(State.InitializingPhone)
+                    .OnEntryAsync(async ()=> { await RequestPhonePermissions(); })
                     .Permit(Trigger.TriggerPhonePermissionUnknown, State.PhonePermissionUnknown)
                     .Permit(Trigger.TriggerConfirmPhonePermission, State.PhoneConfirmed);
+
 
                 _machine.Configure(State.PhonePermissionUnknown)
                     .OnEntry(() =>
                     {
-                        Plugin.LocalNotifications.CrossLocalNotifications.Current.Show("PhonePermissionUnknown", "Permission Unknown in PhonePermissionUnknown");
                         //wait a few seconds and try again
                         InitializeInterval.SetInterval(async() =>
                         {
@@ -127,85 +120,87 @@ namespace WheresChris
                         }, 10000);
                         
                     })
-                    .Permit(Trigger.TriggerRetryPhonePermission, State.Uninitialized);
+                    .Permit(Trigger.TriggerRetryPhonePermission, State.InitializingPhone);
                     
+
                 _machine.Configure(State.PhoneConfirmed)
                     .OnEntry(AuthyValidateUser)
-                    .Permit(Trigger.AuthorizeAuthy, State.AuthySent)
+                    /*.Permit(Trigger.AuthorizeAuthy, State.AuthySent)*/
                     .Permit(Trigger.TriggerAuthyConfirmed, State.AuthyConfirmed);
 
-                _machine.Configure(State.AuthySent)
-                    .OnEntry(AuthyValidateUser)
-                    .Permit(Trigger.TriggerAuthyConfirmed, State.AuthyConfirmed);
+                //_machine.Configure(State.AuthySent)
+                //    .OnEntry(AuthyValidateUser)
+                //    .Permit(Trigger.TriggerAuthyConfirmed, State.AuthyConfirmed);
 
                 _machine.Configure(State.AuthyConfirmed)
-                    .OnEntryAsync(async ()=>
-                    {                    
+                    .OnEntry(() =>
+                    {
                         MessagingCenter.Send(new MessagingCenterSender(), LocationSender.InitializeMainPageMsg);
-                        var hasContactPermission = await PermissionHelper.HasOrRequestContactPermission();
-                        if(hasContactPermission)
-                        {
-                            _machine.Fire(Trigger.ConfirmContactsPermission);
-                        }
-                        else
-                        {
-                            //wait a few seconds and try again
-                            InitializeInterval.SetInterval(() =>
-                            {
-                                _machine.FireAsync(Trigger.TriggerRetryContactsPermission);
-                            }, 10000);
-                        }
+                        //var hasContactPermission = await PermissionHelper.HasOrRequestContactPermission();
+                        //if (hasContactPermission)
+                        //{
+                        //    _machine.Fire(Trigger.ConfirmContactsPermission);
+                        //}
+                        //else
+                        //{
+                        //    //wait a few seconds and try again
+                        //    InitializeInterval.SetInterval(() =>
+                        //    {
+                        //        _machine.FireAsync(Trigger.TriggerRetryContactsPermission);
+                        //    }, 10000);
+                        //}
                     })
-                    .PermitReentry(Trigger.TriggerRetryContactsPermission)
-                    .Permit(Trigger.TriggerRetryContactsPermission, State.AuthyConfirmed)
-                    .Permit(Trigger.ConfirmContactsPermission, State.ContactsConfirmed);
+                //    .PermitReentry(Trigger.TriggerRetryContactsPermission)
+                //    .Permit(Trigger.TriggerRetryContactsPermission, State.AuthyConfirmed)
+                //    .Permit(Trigger.ConfirmContactsPermission, State.ContactsConfirmed)
+                ;
 
 
-                _machine.Configure(State.ContactsConfirmed)
-                    .OnEntry(() =>
-                    {
-                        InsertPageBeforeAbout(new InvitePage(), "Invite");
-                        _machine.Fire(Trigger.TriggerJoinPageAdded);
-                    })
-                    .Permit(Trigger.TriggerJoinPageAdded, State.JoinPageAdded);
-                
+                //_machine.Configure(State.ContactsConfirmed)
+                //    .OnEntry(() =>
+                //    {
+                //        InsertPageBeforeAbout(new InvitePage(), "Invite");
+                //        _machine.Fire(Trigger.TriggerJoinPageAdded);
+                //    })
+                //    .Permit(Trigger.TriggerJoinPageAdded, State.JoinPageAdded);
 
-                _machine.Configure(State.JoinPageAdded)
-                    .OnEntryAsync(async () =>
-                    {
-                        var gpsEnabled = await PermissionHelper.HasGpsEnabled();
-                        if (gpsEnabled)
-                        {
-                            _machine.Fire(Trigger.ConfirmLocationOn);
-                        }
-                        else
-                        {
-                            await PermissionHelper.RequestGpsEnable();
-                            PermissionRequest.SetInterval(() =>
-                            {
-                                _machine.Fire(Trigger.GpsPermissionsNeeded);
-                            }, 15000);
 
-                        }
-                    })
-                    .PermitReentry(Trigger.GpsPermissionsNeeded)               
-                    .Permit(Trigger.GpsPermissionsNeeded, State.JoinPageAdded)
-                    .Permit(Trigger.ConfirmLocationOn, State.LocationOn);
-                
+                //_machine.Configure(State.JoinPageAdded)
+                //    .OnEntryAsync(async () =>
+                //    {
+                //        var gpsEnabled = await PermissionHelper.HasGpsEnabled();
+                //        if (gpsEnabled)
+                //        {
+                //            _machine.Fire(Trigger.ConfirmLocationOn);
+                //        }
+                //        else
+                //        {
+                //            await PermissionHelper.RequestGpsEnable();
+                //            PermissionRequest.SetInterval(() =>
+                //            {
+                //                _machine.Fire(Trigger.GpsPermissionsNeeded);
+                //            }, 15000);
 
-                _machine.Configure(State.LocationOn)
-                    .Permit(Trigger.ConfirmLocationOn, State.LocationConfirmed);
+                //        }
+                //    })
+                //    .PermitReentry(Trigger.GpsPermissionsNeeded)               
+                //    .Permit(Trigger.GpsPermissionsNeeded, State.JoinPageAdded)
+                //    .Permit(Trigger.ConfirmLocationOn, State.LocationOn);
 
-                _machine.Configure(State.LocationConfirmed)
-                    .OnEntry(() =>
-                    {
-                        InsertPageBeforeAbout(new MapPage(), "Map");
-                        InsertPageBeforeAbout(new ChatPage(), "Chat");
-                        InsertPageBeforeAbout(new JoinPage(), "Join");
-                    })
-                    .Permit(Trigger.ConfirmLocationPermission, State.Initialized);
 
-                //_machine.FireAsync(Trigger.AuthorizeAuthy);
+                //_machine.Configure(State.LocationOn)
+                //    .Permit(Trigger.ConfirmLocationOn, State.LocationConfirmed);
+
+                //_machine.Configure(State.LocationConfirmed)
+                //    .OnEntry(() =>
+                //    {
+                //        InsertPageBeforeAbout(new MapPage(), "Map");
+                //        InsertPageBeforeAbout(new ChatPage(), "Chat");
+                //        InsertPageBeforeAbout(new JoinPage(), "Join");
+                //    })
+                //    .Permit(Trigger.ConfirmLocationPermission, State.Initialized);
+
+                _machine.FireAsync(Trigger.TriggerStartInitializing);
             }
             catch(System.Exception ex)
             {
@@ -215,6 +210,31 @@ namespace WheresChris
                     {"stackTrace", ex.StackTrace},
                     {"State", _machine.State.ToString()},
                     {"PermittedTriggers", _machine.PermittedTriggers.ToString() }
+                });
+            }
+        }
+
+        private async Task RequestPhonePermissions()
+        {
+            try
+            {
+                var phonePermissionGranted = await PermissionHelper.HasOrRequestPhonePermission();
+                if(phonePermissionGranted)
+                {
+                    _machine.Fire(Trigger.TriggerConfirmPhonePermission);
+                }
+                else
+                {
+                    _machine.Fire(Trigger.TriggerPhonePermissionUnknown);
+                }
+            }
+            catch(Exception ex)
+            {
+                Crashes.TrackError(ex, new Dictionary<string, string>
+                {
+                    {"Source", ex.Source},
+                    {"stackTrace", ex.StackTrace},
+                    {"State", _machine.State.ToString()}
                 });
             }
         }
@@ -230,6 +250,13 @@ namespace WheresChris
                 Device.BeginInvokeOnMainThread(async () =>
                 {
                     var authenticatePhonePage = new AuthenticatePhonePage();
+                    authenticatePhonePage.Disappearing += (sender, args) =>
+                    {
+                        if(PermissionHelper.IsAuthyAuthenticated())
+                        {
+                            _machine.Fire(Trigger.TriggerAuthyConfirmed);
+                        }
+                    };
                     await Current.NavigationProxy.PushModalAsync(authenticatePhonePage);
                 });
             }

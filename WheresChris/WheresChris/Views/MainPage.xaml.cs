@@ -62,10 +62,10 @@ namespace WheresChris.Views
         {
             InitializePhoneAndNickname();
 
-            Device.BeginInvokeOnMainThread(async () =>
-            {
-                await AuthyValidateUser();
-            });
+            //Device.BeginInvokeOnMainThread(async () =>
+            //{
+            //    await AuthyValidateUser();
+            //});
         }
 
         private void InitializePhoneAndNickname()
@@ -101,11 +101,11 @@ namespace WheresChris.Views
             App.SetCurrentTab("Join");
         }
 
-        public async Task AuthyValidateUser()
-        {
-            var authenticatePhonePage = new AuthenticatePhonePage();
-            await Navigation.PushModalAsync(authenticatePhonePage);
-        }
+        //public async Task AuthyValidateUser()
+        //{
+        //    var authenticatePhonePage = new AuthenticatePhonePage();
+        //    await Navigation.PushModalAsync(authenticatePhonePage);
+        //}
 
         private async Task SendLastInvitation(object sender, EventArgs e)
         {
