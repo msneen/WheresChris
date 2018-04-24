@@ -77,45 +77,45 @@ namespace WheresChris
 
             InitializingContacts,
             ContactsConfirmed,
+
             JoinPageAdded,
-            LocationOn,
-            LocationConfirmed,
-            Initialized,
-            InitializingJoinPage,
-            InitializingGPS,
+
             InitializingLocation,
+            LocationConfirmed,
+                        
+            InitializingGPS,
             ConfirmGpsOn,
+
+            InitializingJoinPage,
+
             InsertingPages,
-            Finished,
             InsertingPagesFinished
         }
 
         public enum Trigger
         {
-            TriggerStartInitializing,
+            TriggerInitializingPhone,
+            TriggerPhoneConfirmed,           
+            TriggerPhonePermissionUnknown,
 
-            AuthorizeAuthy,
+            TriggerInitializingAuthy,
             TriggerAuthyConfirmed,
 
-            ConfirmContactsPermission,
+            TriggerInitializingContacts,
+            TriggerContactsConfirmed,
             TriggerRetryContactsPermission,
 
-            TriggerJoinPageAdded,
-            
-            GpsPermissionsNeeded,
-            ConfirmLocationOn,
-            ConfirmLocationPermission,
-
-            TriggerConfirmPhonePermission,
-            TriggerRetryPhonePermission,
-            TriggerPhonePermissionUnknown,
-            TriggerInitializingAuthy,
-            TriggerInitializingContacts,
             TriggerInitializingJoinPage,
-            TriggerInitializeGPS,
+            TriggerJoinPageAdded,
+
+            TriggerInitializingLocation,
+            TriggerLocationConfirmed,
             TriggerRetryLocationPermission,
+
+            TriggerInitializingGPS,
             TriggerRetryEnabaGPS,
             TriggerConfirmGpsOn,
+
             TriggerInsertingPages,
             TriggerInsertingPagesFinished
         }
@@ -126,13 +126,13 @@ namespace WheresChris
             {
 
                 _machine.Configure(State.Uninitialized)
-                    .Permit(Trigger.TriggerStartInitializing, State.InitializingPhone);
+                    .Permit(Trigger.TriggerInitializingPhone, State.InitializingPhone);
 
 
                 _machine.Configure(State.InitializingPhone)
                     .OnEntryAsync(async ()=> { await RequestPhonePermissions(); })
                     .Permit(Trigger.TriggerPhonePermissionUnknown, State.PhonePermissionUnknown)
-                    .Permit(Trigger.TriggerConfirmPhonePermission, State.PhoneConfirmed);
+                    .Permit(Trigger.TriggerPhoneConfirmed, State.PhoneConfirmed);
 
 
                 _machine.Configure(State.PhonePermissionUnknown)
@@ -141,11 +141,11 @@ namespace WheresChris
                         //wait a few seconds and try again
                         InitializeInterval.SetInterval(async() =>
                         {
-                            await _machine.FireAsync(Trigger.TriggerRetryPhonePermission);
+                            await _machine.FireAsync(Trigger.TriggerInitializingPhone);
                         }, 10000);
                         
                     })
-                    .Permit(Trigger.TriggerRetryPhonePermission, State.InitializingPhone);
+                    .Permit(Trigger.TriggerInitializingPhone, State.InitializingPhone);
                     
 
                 _machine.Configure(State.PhoneConfirmed)
@@ -165,7 +165,7 @@ namespace WheresChris
                 _machine.Configure(State.InitializingContacts)
                     .OnEntry(async() => { await RequestContactsPermissions(); })
                     //    .Permit(Trigger.Trigger.TriggerRetryContactsPermission, State.ContactsPermissionUnknown)
-                    .Permit(Trigger.ConfirmContactsPermission, State.ContactsConfirmed);
+                    .Permit(Trigger.TriggerContactsConfirmed, State.ContactsConfirmed);
 
 
                 _machine.Configure(State.ContactsConfirmed)
@@ -185,20 +185,20 @@ namespace WheresChris
 
                 
                 _machine.Configure(State.JoinPageAdded)
-                    .OnEntry(()=>{_machine.Fire(Trigger.TriggerInitializeGPS);})
-                    .Permit(Trigger.TriggerInitializeGPS, State.InitializingLocation);
+                    .OnEntry(()=>{_machine.Fire(Trigger.TriggerInitializingLocation);})
+                    .Permit(Trigger.TriggerInitializingLocation, State.InitializingLocation);
 
 
                 _machine.Configure(State.InitializingLocation)
                     .OnEntry(async () => { await RequestLocationPermission(); })
                 //    .Permit(Trigger.TriggerRetryLocationPermission, State.RetryLocationPermission)
-                    .Permit(Trigger.ConfirmLocationPermission, State.LocationConfirmed);
+                    .Permit(Trigger.TriggerLocationConfirmed, State.LocationConfirmed);
 
                 //_machine.Configure(State.RetryLocationPermission)
 
                 _machine.Configure(State.LocationConfirmed)
-                    .OnEntry(()=>{_machine.Fire(Trigger.TriggerInitializeGPS);})
-                    .Permit(Trigger.TriggerInitializeGPS, State.InitializingGPS);
+                    .OnEntry(()=>{_machine.Fire(Trigger.TriggerInitializingGPS);})
+                    .Permit(Trigger.TriggerInitializingGPS, State.InitializingGPS);
 
                 _machine.Configure(State.InitializingGPS)
                     .OnEntry(async () => { await RequestEnableGps(); })
@@ -224,7 +224,7 @@ namespace WheresChris
 
 
                 //Configuration Finished, start Initializing
-                _machine.FireAsync(Trigger.TriggerStartInitializing);
+                _machine.FireAsync(Trigger.TriggerInitializingPhone);
             }
             catch(System.Exception ex)
             {
@@ -263,7 +263,7 @@ namespace WheresChris
             var locationPermission = await PermissionHelper.HasOrRequestLocationPermission();
             if(locationPermission)
             {
-                _machine.Fire(Trigger.ConfirmLocationPermission);
+                _machine.Fire(Trigger.TriggerLocationConfirmed);
             }
             else
             {
@@ -276,7 +276,7 @@ namespace WheresChris
             var hasContactPermission = await PermissionHelper.HasOrRequestContactPermission();
             if(hasContactPermission)
             {
-                _machine.Fire(Trigger.ConfirmContactsPermission);
+                _machine.Fire(Trigger.TriggerContactsConfirmed);
             }
             else
             {
@@ -292,7 +292,7 @@ namespace WheresChris
                 var phonePermissionGranted = await PermissionHelper.HasOrRequestPhonePermission();
                 if(phonePermissionGranted)
                 {
-                    _machine.Fire(Trigger.TriggerConfirmPhonePermission);
+                    _machine.Fire(Trigger.TriggerPhoneConfirmed);
                 }
                 else
                 {
