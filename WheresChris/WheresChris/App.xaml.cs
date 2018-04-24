@@ -67,32 +67,57 @@ namespace WheresChris
         public enum State
         {
             Uninitialized,
+
             InitializingPhone,
-            AuthySent,
+            PhoneConfirmed,
+            PhonePermissionUnknown,
+
+            InitializingAuthy,
             AuthyConfirmed,
+
+            InitializingContacts,
             ContactsConfirmed,
             JoinPageAdded,
             LocationOn,
             LocationConfirmed,
-            PhoneConfirmed,
-            PhonePermissionUnknown,
-            Initialized
+            Initialized,
+            InitializingJoinPage,
+            InitializingGPS,
+            InitializingLocation,
+            ConfirmGpsOn,
+            InsertingPages,
+            Finished,
+            InsertingPagesFinished
         }
 
         public enum Trigger
         {
             TriggerStartInitializing,
+
             AuthorizeAuthy,
             TriggerAuthyConfirmed,
+
             ConfirmContactsPermission,
             TriggerRetryContactsPermission,
+
             TriggerJoinPageAdded,
+            
+            GpsPermissionsNeeded,
             ConfirmLocationOn,
             ConfirmLocationPermission,
+
             TriggerConfirmPhonePermission,
             TriggerRetryPhonePermission,
-            GpsPermissionsNeeded,
-            TriggerPhonePermissionUnknown
+            TriggerPhonePermissionUnknown,
+            TriggerInitializingAuthy,
+            TriggerInitializingContacts,
+            TriggerInitializingJoinPage,
+            TriggerInitializeGPS,
+            TriggerRetryLocationPermission,
+            TriggerRetryEnabaGPS,
+            TriggerConfirmGpsOn,
+            TriggerInsertingPages,
+            TriggerInsertingPagesFinished
         }
 
         private void InitializeStateMachine()
@@ -124,82 +149,81 @@ namespace WheresChris
                     
 
                 _machine.Configure(State.PhoneConfirmed)
+                    .OnEntry(()=>{_machine.Fire(Trigger.TriggerInitializingAuthy);})
+                    .Permit(Trigger.TriggerInitializingAuthy, State.InitializingAuthy);
+
+                _machine.Configure(State.InitializingAuthy)
                     .OnEntry(AuthyValidateUser)
-                    /*.Permit(Trigger.AuthorizeAuthy, State.AuthySent)*/
+                    .OnExit(()=>{MessagingCenter.Send(new MessagingCenterSender(), LocationSender.InitializeMainPageMsg);})
                     .Permit(Trigger.TriggerAuthyConfirmed, State.AuthyConfirmed);
 
-                //_machine.Configure(State.AuthySent)
-                //    .OnEntry(AuthyValidateUser)
-                //    .Permit(Trigger.TriggerAuthyConfirmed, State.AuthyConfirmed);
-
                 _machine.Configure(State.AuthyConfirmed)
+                    .OnEntry(() => { _machine.Fire(Trigger.TriggerInitializingContacts); })
+                    .Permit(Trigger.TriggerInitializingContacts, State.InitializingContacts);
+                
+
+                _machine.Configure(State.InitializingContacts)
+                    .OnEntry(async() => { await RequestContactsPermissions(); })
+                    //    .Permit(Trigger.Trigger.TriggerRetryContactsPermission, State.ContactsPermissionUnknown)
+                    .Permit(Trigger.ConfirmContactsPermission, State.ContactsConfirmed);
+
+
+                _machine.Configure(State.ContactsConfirmed)
+                    .OnEntry(()=>{_machine.Fire(Trigger.TriggerInitializingJoinPage);})
+                    .Permit(Trigger.TriggerInitializingJoinPage, State.InitializingJoinPage);
+
+                //_machine.Configure(State.ContactsPermissionUnknown)
+                //go back to State.InitializingContacts with Trigger.TriggerInitializingContacts
+
+                _machine.Configure(State.InitializingJoinPage)
                     .OnEntry(() =>
                     {
-                        MessagingCenter.Send(new MessagingCenterSender(), LocationSender.InitializeMainPageMsg);
-                        //var hasContactPermission = await PermissionHelper.HasOrRequestContactPermission();
-                        //if (hasContactPermission)
-                        //{
-                        //    _machine.Fire(Trigger.ConfirmContactsPermission);
-                        //}
-                        //else
-                        //{
-                        //    //wait a few seconds and try again
-                        //    InitializeInterval.SetInterval(() =>
-                        //    {
-                        //        _machine.FireAsync(Trigger.TriggerRetryContactsPermission);
-                        //    }, 10000);
-                        //}
+                        InsertPageBeforeAbout(new InvitePage(), "Invite");
+                        _machine.Fire(Trigger.TriggerJoinPageAdded);
                     })
-                //    .PermitReentry(Trigger.TriggerRetryContactsPermission)
-                //    .Permit(Trigger.TriggerRetryContactsPermission, State.AuthyConfirmed)
-                //    .Permit(Trigger.ConfirmContactsPermission, State.ContactsConfirmed)
-                ;
+                    .Permit(Trigger.TriggerJoinPageAdded, State.JoinPageAdded);
+
+                
+                _machine.Configure(State.JoinPageAdded)
+                    .OnEntry(()=>{_machine.Fire(Trigger.TriggerInitializeGPS);})
+                    .Permit(Trigger.TriggerInitializeGPS, State.InitializingLocation);
 
 
-                //_machine.Configure(State.ContactsConfirmed)
-                //    .OnEntry(() =>
-                //    {
-                //        InsertPageBeforeAbout(new InvitePage(), "Invite");
-                //        _machine.Fire(Trigger.TriggerJoinPageAdded);
-                //    })
-                //    .Permit(Trigger.TriggerJoinPageAdded, State.JoinPageAdded);
+                _machine.Configure(State.InitializingLocation)
+                    .OnEntry(async () => { await RequestLocationPermission(); })
+                //    .Permit(Trigger.TriggerRetryLocationPermission, State.RetryLocationPermission)
+                    .Permit(Trigger.ConfirmLocationPermission, State.LocationConfirmed);
+
+                //_machine.Configure(State.RetryLocationPermission)
+
+                _machine.Configure(State.LocationConfirmed)
+                    .OnEntry(()=>{_machine.Fire(Trigger.TriggerInitializeGPS);})
+                    .Permit(Trigger.TriggerInitializeGPS, State.InitializingGPS);
+
+                _machine.Configure(State.InitializingGPS)
+                    .OnEntry(async () => { await RequestEnableGps(); })
+                //  .Permit(Trigger.TriggerRetryEnabaGPS, State.RetryEnabaGPS)
+                    .Permit(Trigger.TriggerConfirmGpsOn, State.ConfirmGpsOn);
+
+                //_machine.Configure(State.RetryEnabaGPS)
+
+                _machine.Configure(State.ConfirmGpsOn)
+                    .OnEntry(() => { _machine.Fire(Trigger.TriggerInsertingPages); })
+                    .Permit(Trigger.TriggerInsertingPages, State.InsertingPages);
+
+                _machine.Configure(State.InsertingPages)
+                    .OnEntry(() =>
+                    {
+                        InsertPagesNeedingLocation();
+                        _machine.Fire(Trigger.TriggerInsertingPagesFinished);
+                    })
+                    .Permit(Trigger.TriggerInsertingPagesFinished, State.InsertingPagesFinished);
 
 
-                //_machine.Configure(State.JoinPageAdded)
-                //    .OnEntryAsync(async () =>
-                //    {
-                //        var gpsEnabled = await PermissionHelper.HasGpsEnabled();
-                //        if (gpsEnabled)
-                //        {
-                //            _machine.Fire(Trigger.ConfirmLocationOn);
-                //        }
-                //        else
-                //        {
-                //            await PermissionHelper.RequestGpsEnable();
-                //            PermissionRequest.SetInterval(() =>
-                //            {
-                //                _machine.Fire(Trigger.GpsPermissionsNeeded);
-                //            }, 15000);
-
-                //        }
-                //    })
-                //    .PermitReentry(Trigger.GpsPermissionsNeeded)               
-                //    .Permit(Trigger.GpsPermissionsNeeded, State.JoinPageAdded)
-                //    .Permit(Trigger.ConfirmLocationOn, State.LocationOn);
+                _machine.Configure(State.InsertingPagesFinished);
 
 
-                //_machine.Configure(State.LocationOn)
-                //    .Permit(Trigger.ConfirmLocationOn, State.LocationConfirmed);
-
-                //_machine.Configure(State.LocationConfirmed)
-                //    .OnEntry(() =>
-                //    {
-                //        InsertPageBeforeAbout(new MapPage(), "Map");
-                //        InsertPageBeforeAbout(new ChatPage(), "Chat");
-                //        InsertPageBeforeAbout(new JoinPage(), "Join");
-                //    })
-                //    .Permit(Trigger.ConfirmLocationPermission, State.Initialized);
-
+                //Configuration Finished, start Initializing
                 _machine.FireAsync(Trigger.TriggerStartInitializing);
             }
             catch(System.Exception ex)
@@ -211,6 +235,53 @@ namespace WheresChris
                     {"State", _machine.State.ToString()},
                     {"PermittedTriggers", _machine.PermittedTriggers.ToString() }
                 });
+            }
+        }
+
+        private static void InsertPagesNeedingLocation()
+        {
+            InsertPageBeforeAbout(new MapPage(), "Map");
+            InsertPageBeforeAbout(new ChatPage(), "Chat");
+            InsertPageBeforeAbout(new JoinPage(), "Join");
+        }
+
+        private async Task RequestEnableGps()
+        {
+            var gpsEnabled = await PermissionHelper.HasGpsEnabled();
+            if(gpsEnabled)
+            {
+                _machine.Fire(Trigger.TriggerConfirmGpsOn);
+            }
+            else
+            {
+                PermissionRequest.SetInterval(() => { _machine.Fire(Trigger.TriggerRetryEnabaGPS); }, 15000);
+            }
+        }
+
+        private async Task RequestLocationPermission()
+        {
+            var locationPermission = await PermissionHelper.HasOrRequestLocationPermission();
+            if(locationPermission)
+            {
+                _machine.Fire(Trigger.ConfirmLocationPermission);
+            }
+            else
+            {
+                PermissionRequest.SetInterval(() => { _machine.Fire(Trigger.TriggerRetryLocationPermission); }, 10000);
+            }
+        }
+
+        private async Task RequestContactsPermissions()
+        {
+            var hasContactPermission = await PermissionHelper.HasOrRequestContactPermission();
+            if(hasContactPermission)
+            {
+                _machine.Fire(Trigger.ConfirmContactsPermission);
+            }
+            else
+            {
+                //wait a few seconds and try again
+                InitializeInterval.SetInterval(() => { _machine.FireAsync(Trigger.TriggerRetryContactsPermission); }, 10000);
             }
         }
 
