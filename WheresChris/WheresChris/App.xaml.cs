@@ -232,7 +232,8 @@ namespace WheresChris
                     .Permit(Trigger.TriggerInsertingPagesFinished, State.InsertingPagesFinished);
 
 
-                _workflowStateMachine.Configure(State.InsertingPagesFinished);
+                _workflowStateMachine.Configure(State.InsertingPagesFinished)
+                    .OnEntry(FinishInitializing);
 
 
                 //Configuration Finished, start Initializing
